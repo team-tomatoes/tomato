@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "reactnative-expo-firebase-boilerplate-v2",
-    "slug": "reactnative-expo-firebase-boilerplate-v2",
+    "name": "tomato",
+    "slug": "tomato",
     "privacy": "public",
     "platforms": [
       "ios",
