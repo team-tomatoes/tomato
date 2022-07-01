@@ -2,13 +2,14 @@ import React, { useEffect, useState, useContext, useLayoutEffect } from 'react'
 import { Text, View, ScrollView, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
-import ScreenTemplate from '../../components/ScreenTemplate'
-import Button from '../../components/Button'
-import { firestore } from '../../firebase/config'
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
+import Button from '../../components/Button'
+import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
+import ScreenTemplate from '../../components/ScreenTemplate'
 
 export default function Home() {
   const navigation = useNavigation()
@@ -19,6 +20,10 @@ export default function Home() {
   const colorScheme = {
     content: isDark ? styles.darkContent : styles.lightContent,
     text: isDark ? colors.white : colors.primaryText,
+  }
+
+  const headerButtonPress = () => {
+    alert('Tapped header button')
   }
 
   useLayoutEffect(() => {
@@ -33,10 +38,6 @@ export default function Home() {
       ),
     })
   }, [navigation])
-
-  const headerButtonPress = () => {
-    alert('Tapped header button')
-  }
 
   useEffect(() => {
     const tokensRef = doc(firestore, 'tokens', userData.id)
@@ -53,6 +54,16 @@ export default function Home() {
 
   return (
     <ScreenTemplate>
+      <MapView
+        style={{ flex: 1 }}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={{
+          latitude: 40.7128,
+          longitude: -74.006,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+      />
       <ScrollView style={styles.main}>
         <View style={colorScheme.content}>
           <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
