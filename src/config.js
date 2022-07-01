@@ -16,7 +16,7 @@ const firebaseConfig = {
   measurementId: 'G-3N394GK8Y1',
 }
 
-const defaultAvatar = 'gs://tomato-d9ece.appspot.com/tomatoicon.png'
+const defaultAvatar = 'https://firebasestorage.googleapis.com/v0/u/tomato-d9ece.appspot.com/tomatoicon.png'
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)

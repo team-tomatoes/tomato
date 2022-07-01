@@ -1,9 +1,9 @@
 import React, { useEffect, useContext, useState } from 'react'
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import Loading from '../../components/Loading';
+import Loading from '../../components/Loading'
 import axios from 'axios'
-import RenderItem from './RenderItem';
+import RenderItem from './RenderItem'
 
 export default function Print() {
   const [data, setData] = useState([])
@@ -13,12 +13,14 @@ export default function Print() {
     fetchData()
   }, [])
 
-  const fetchData = async() => {
+  const fetchData = async () => {
     try {
       setIsLoading(true)
-      const { data } = await axios.get('https://jsonplaceholder.typicode.com/posts')
+      const { data } = await axios.get(
+        'https://jsonplaceholder.typicode.com/posts',
+      )
       setData(data)
-    } catch(e) {
+    } catch (e) {
       console.log('error', e)
     } finally {
       setIsLoading(false)
@@ -27,19 +29,17 @@ export default function Print() {
 
   return (
     <ScreenTemplate>
-      {!isLoading?
+      {!isLoading ? (
         <ScrollView style={styles.main}>
           {data.map((item, i) => {
-            return (
-              <RenderItem item={item} key={i} />
-            )
+            return <RenderItem item={item} key={i} />
           })}
         </ScrollView>
-        :
+      ) : (
         <View style={styles.container}>
           <Loading />
         </View>
-      }
+      )}
     </ScreenTemplate>
   )
 }
