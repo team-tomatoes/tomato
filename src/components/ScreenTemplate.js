@@ -1,18 +1,18 @@
-import React, { useContext } from "react";
-import { StyleSheet, SafeAreaView } from "react-native";
-import { colors } from "../theme";
-import { StatusBar } from 'expo-status-bar';
-import { ColorSchemeContext } from "../context/ColorSchemeContext";
+import React, { useContext } from 'react'
+import { StyleSheet, SafeAreaView } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
+import { colors } from '../theme'
+import { ColorSchemeContext } from '../context/ColorSchemeContext'
 
 export default function ScreenTemplate(props) {
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
-  const container = isDark?styles.darkContainer: styles.container
+  const container = isDark ? styles.darkContainer : styles.container
 
   return (
     <SafeAreaView style={container}>
-      <StatusBar style='light' />
-        {props.children}
+      <StatusBar style="light" />
+      {props.children}
     </SafeAreaView>
   )
 }
@@ -23,6 +23,6 @@ const styles = StyleSheet.create({
   },
   darkContainer: {
     flex: 1,
-    backgroundColor: colors.black
-  }
+    backgroundColor: colors.black,
+  },
 })

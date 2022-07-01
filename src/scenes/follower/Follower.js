@@ -18,7 +18,7 @@ export default function Follower() {
   return (
     <ScreenTemplate>
       <View style={styles.container}>
-        <Text style={[styles.field, {color: colorScheme.text}]}>Follower Screen</Text>
+        <Text style={[styles.field, {color: colorScheme.text}]}>:D</Text>
       </View>
     </ScreenTemplate>
   )

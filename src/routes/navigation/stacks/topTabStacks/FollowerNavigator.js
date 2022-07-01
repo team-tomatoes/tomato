@@ -12,10 +12,7 @@ export const FollowerNavigator = () => {
         headerShown: false,
       })}
     >
-      <Stack.Screen
-        name="Follower"
-        component={Follower}
-      />
+      <Stack.Screen name="Follower" component={Follower} />
     </Stack.Navigator>
   )
 }
