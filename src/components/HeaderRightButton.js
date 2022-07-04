@@ -1,8 +1,8 @@
-import React from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import React from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { TouchableOpacity, StyleSheet } from 'react-native'
 import FontIcon from 'react-native-vector-icons/FontAwesome5'
-import { colors } from "../theme";
-import { useNavigation } from "@react-navigation/native";
+import { colors } from '../theme'
 
 export default function HeaderRightButton(props) {
   const { from, userData } = props
@@ -13,21 +13,14 @@ export default function HeaderRightButton(props) {
       screen: 'Post',
       params: {
         data: userData,
-        from: from
-      }
+        from: from,
+      },
     })
   }
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => onButtonPress()}
-    >
-      <FontIcon
-        name="bars"
-        color={colors.lightPurple}
-        size={24}
-      />
+    <TouchableOpacity style={styles.container} onPress={() => onButtonPress()}>
+      <FontIcon name="bars" color={colors.primary} size={24} />
     </TouchableOpacity>
   )
 }
@@ -36,6 +29,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10
-  }
+    marginRight: 10,
+  },
 })
