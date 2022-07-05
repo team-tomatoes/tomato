@@ -32,7 +32,6 @@ const analytics = getAnalytics(app)
 //   measurementId: "G-1894ZG59D5"
 // }
 
-const eulaLink =
-  'https://github.com/kiyohken2000/ReactNative-Expo-Firebase-Boilerplate-v2'
+const eulaLink = 'https://github.com/kiyohken2000/ReactNative-Expo-Firebase-Boilerplate-v2'
 
 export { defaultAvatar, firebaseConfig, eulaLink }

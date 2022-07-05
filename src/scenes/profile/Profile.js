@@ -28,6 +28,7 @@ export default function Profile() {
 
   useEffect(() => {
     console.log('Profile screen')
+    console.log(userData)
   }, [])
 
   const goDetail = () => {
@@ -110,7 +111,7 @@ export default function Profile() {
         <Button label="Edit" color={colors.primary} onPress={goDetail} />
         {/* <Button
           label="Open Modal"
-          color={colors.tertiary}
+          color={colors.darkBlue}
           onPress={() => {
             navigation.navigate('ModalStacks', {
               screen: 'Post',
@@ -123,7 +124,7 @@ export default function Profile() {
         /> */}
         <Button
           label="Account delete"
-          color={colors.secondary}
+          color={colors.tertiary}
           onPress={showDialog}
         />
         <View style={styles.footerView}>
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   footerLink: {
-    color: colors.blueLight,
+    color: colors.redLight,
     fontWeight: 'bold',
     fontSize: fontSize.large,
   },

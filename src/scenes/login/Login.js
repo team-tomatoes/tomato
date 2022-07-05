@@ -1,19 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { Text, View, StyleSheet, LogBox } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { doc, getDoc } from 'firebase/firestore'
+import Spinner from 'react-native-loading-spinner-overlay'
+import { useNavigation } from '@react-navigation/native'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Button from '../../components/Button'
 import TextInputBox from '../../components/TextInputBox'
 import Logo from '../../components/Logo'
-import { firestore } from '../../firebase/config'
-import { doc, getDoc } from 'firebase/firestore'
-import Spinner from 'react-native-loading-spinner-overlay'
-import { useNavigation } from '@react-navigation/native'
+import { firestore, auth } from '../../firebase/config'
 import { colors, fontSize } from '../../theme'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
-import { LogBox } from 'react-native'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../../firebase/config'
 
 // To ignore a useless warning in terminal.
 // https://stackoverflow.com/questions/44603362/setting-a-timer-for-a-long-period-of-time-i-e-multiple-minutes
@@ -35,14 +33,14 @@ export default function Login() {
   }
 
   useEffect(() => {
-    console.log('Login screen, ログイン画面')
+    console.log('Login screen, ٩(◕‿◕｡)۶')
   }, [])
 
   const onLoginPress = async () => {
     try {
       setSpinner(true)
       const response = await signInWithEmailAndPassword(auth, email, password)
-      const uid = response.user.uid
+      const { uid } = response.user
       const usersRef = doc(firestore, 'users', uid)
       const firestoreDocument = await getDoc(usersRef)
       if (!firestoreDocument.exists) {
@@ -68,10 +66,10 @@ export default function Login() {
           onChangeText={(text) => setEmail(text)}
           autoCapitalize="none"
           value={email}
-          keyboardType={'email-address'}
+          keyboardType="email-address"
         />
         <TextInputBox
-          secureTextEntry={true}
+          secureTextEntry
           placeholder="Password"
           onChangeText={(text) => setPassword(text)}
           value={password}
@@ -110,12 +108,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     marginTop: 20,
+    justifyContent: 'space-between',
   },
   footerText: {
     fontSize: fontSize.large,
+    justifyContent: 'space-between',
   },
   footerLink: {
-    color: colors.blueLight,
+    color: colors.redLight,
     fontWeight: 'bold',
     fontSize: fontSize.large,
   },

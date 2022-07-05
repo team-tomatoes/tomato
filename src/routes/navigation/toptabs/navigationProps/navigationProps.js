@@ -3,16 +3,16 @@ import { Platform } from 'react-native'
 
 const labelSize = Platform.select({
   ios: 14,
-  android: 12
+  android: 12,
 })
 
-const screenOptions= {
+const screenOptions = {
   tabBarLabelStyle: {
-    fontSize: labelSize
+    fontSize: labelSize,
   },
-  tabBarActiveTintColor: colors.purple,
-  tabBarInactiveTintColor: colors.lightPurple,
-  tabBarShowLabel: true
+  tabBarActiveTintColor: colors.primary,
+  tabBarInactiveTintColor: colors.grayLight,
+  tabBarShowLabel: true,
 }
 
 export { screenOptions }

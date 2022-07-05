@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler'
-import React, { useEffect, useState, useContext } from 'react'
-import { NavigationContainer } from '@react-navigation/native'
-import { DefaultTheme, DarkTheme } from '@react-navigation/native'
+import React, { useContext } from 'react'
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 

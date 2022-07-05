@@ -27,6 +27,14 @@ module.exports = {
     'global-require': 'off',
     'no-console': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'import/prefer-default-export': 'off',
+    'object-curly-newline': 'off',
+    'no-use-before-define': 'off',
+    'prefer-destructuring': 'off',
+    'react/jsx-boolean-value': 'off',
+    'no-unused-vars': 'warn',
+    'arrow-body-style': 'warn',
+    'react/destructuring-assignment': 'off',
     'import/no-extraneous-dependencies': [
       'error',
       {
