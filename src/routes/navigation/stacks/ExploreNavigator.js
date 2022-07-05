@@ -6,7 +6,6 @@ import { UserDataContext } from '../../../context/UserDataContext'
 
 import { lightProps, darkProps } from './navigationProps/navigationProps'
 import HeaderStyle from './headerComponents/HeaderStyle'
-import HeaderRightButton from '../../../components/HeaderRightButton'
 import HeaderSearchButton from '../../../components/HeaderSearchButton'
 
 import Explore from '../../../scenes/explore'

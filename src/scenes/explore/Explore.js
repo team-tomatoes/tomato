@@ -5,11 +5,11 @@ import { IconButton, Colors } from 'react-native-paper'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
-import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
+import { PinnedMap } from '../../components/PinnedMap'
 
 export default function Explore() {
   const navigation = useNavigation()
@@ -67,16 +67,7 @@ export default function Explore() {
 
   return (
     <ScreenTemplate>
-      <MapView
-        style={{ flex: 1 }}
-        provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
-          latitudeDelta: 0.055,
-          longitudeDelta: 0.055,
-        }}
-      />
+      <PinnedMap />
     </ScreenTemplate>
   )
 }
