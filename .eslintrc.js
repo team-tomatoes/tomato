@@ -34,6 +34,7 @@ module.exports = {
     'react/jsx-boolean-value': 'off',
     'no-unused-vars': 'warn',
     'arrow-body-style': 'warn',
+    'react/destructuring-assignment': 'off',
     'import/no-extraneous-dependencies': [
       'error',
       {

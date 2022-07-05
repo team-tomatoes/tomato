@@ -28,14 +28,14 @@ export default function Home() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          icon="cast"
-          color={Colors.blue500}
-          size={24}
-          onPress={() => headerButtonPress()}
-        />
-      ),
+      // headerRight: () => (
+      // <IconButton
+      //   icon="cast"
+      //   color={Colors.blue500}
+      //   size={24}
+      //   onPress={() => headerButtonPress()}
+      // />
+      // ),
     })
   }, [navigation])
 
@@ -65,7 +65,7 @@ export default function Home() {
         }}
       />
       <ScrollView style={styles.main}>
-        <View style={colorScheme.content}>
+        {/* <View style={colorScheme.content}>
           <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
           <Text style={[styles.title, { color: colorScheme.text }]}>
             {userData.email}
@@ -80,10 +80,11 @@ export default function Home() {
               </Text>
             </>
           ) : null}
-        </View>
+        </View> */}
         <Button
-          label="Go to Detail"
+          label="Drop a Pin"
           color={colors.primary}
+          // Change onpress function to open a text field and image/video option
           onPress={() => navigation.navigate('Detail',
             {
               userData,
@@ -91,7 +92,7 @@ export default function Home() {
               title: userData.email,
             })}
         />
-        <Button
+        {/* <Button
           label="Open Modal"
           color={colors.tertiary}
           onPress={() => {
@@ -103,7 +104,7 @@ export default function Home() {
               },
             })
           }}
-        />
+        /> */}
       </ScrollView>
     </ScreenTemplate>
   )
