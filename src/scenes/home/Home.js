@@ -2,7 +2,8 @@ import React, { useEffect, useState, useContext, useLayoutEffect } from 'react'
 import { Text, View, ScrollView, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import * as Location from 'expo-location'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
 import Button from '../../components/Button'
@@ -12,6 +13,10 @@ import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
 
 export default function Home() {
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   const navigation = useNavigation()
   const [token, setToken] = useState('')
   const { userData } = useContext(UserDataContext)
@@ -24,6 +29,19 @@ export default function Home() {
 
   const headerButtonPress = () => {
     alert('Tapped header button')
+  }
+
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      setErrorMessage('Permission not granted')
+    } else {
+      const userLocation = await Location.getCurrentPositionAsync({})
+      console.log(userLocation)
+      setLatitude(Number(userLocation.coords.latitude))
+      setLongitude(Number(userLocation.coords.longitude))
+      setLocation(userLocation)
+    }
   }
 
   useLayoutEffect(() => {
@@ -45,6 +63,7 @@ export default function Home() {
       if (querySnapshot.exists) {
         const data = querySnapshot.data()
         setToken(data)
+        getLocation()
       } else {
         console.log('No such document!')
       }
@@ -57,13 +76,14 @@ export default function Home() {
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
+        region={{
+          latitude: Number(currLatitude),
+          longitude: Number(currLongitude),
           latitudeDelta: 0.055,
           longitudeDelta: 0.055,
         }}
       />
+
       <ScrollView style={styles.main}>
         {/* <View style={colorScheme.content}>
           <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
@@ -81,16 +101,20 @@ export default function Home() {
             </>
           ) : null}
         </View> */}
+        <Text>{JSON.stringify(location)}</Text>
+        <Text>{Number(currLatitude)}</Text>
+        <Text>{Number(currLongitude)}</Text>
         <Button
           label="Drop a Pin"
           color={colors.primary}
           // Change onpress function to open a text field and image/video option
-          onPress={() => navigation.navigate('Detail',
-            {
+          onPress={() =>
+            navigation.navigate('Detail', {
               userData,
               from: 'Home',
               title: userData.email,
-            })}
+            })
+          }
         />
         {/* <Button
           label="Open Modal"
