@@ -23,7 +23,7 @@ export default function Explore() {
   }
 
   const headerRightPress = () => {
-    alert('Tapped header button')
+    alert('Oops we dont have this filter function yet (ಥ﹏ಥ)')
   }
 
   const headerLeftPress = () => {

@@ -21,18 +21,31 @@ export default function MyPins() {
     text: isDark ? colors.white : colors.primaryText,
   }
 
-  const headerButtonPress = () => {
-    alert('Tapped header button')
+  const headerRightPress = () => {
+    alert('Oops we dont have this filter function yet (ಥ﹏ಥ)')
+  }
+
+  const headerLeftPress = () => {
+    navigation.navigate('Home')
   }
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <IconButton
-          icon="cast"
-          color={Colors.blue500}
+          icon="map-search"
+          color={Colors.white}
           size={24}
-          onPress={() => headerButtonPress()}
+          // add in a filter option later, not necessary rn tho
+          onPress={() => headerRightPress()}
+        />
+      ),
+      headerLeft: () => (
+        <IconButton
+          icon="home-map-marker"
+          color={Colors.white}
+          size={24}
+          onPress={() => headerLeftPress()}
         />
       ),
     })
