@@ -12,3 +12,4 @@ web-report/
 *.idea
 *.DS_Store
 googleAPIKey.js
+secrets.js
