@@ -1,8 +1,8 @@
 import React, { useEffect, useContext, useState } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import axios from 'axios'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Loading from '../../components/Loading'
-import axios from 'axios'
 import RenderItem from './RenderItem'
 
 export default function Print() {
