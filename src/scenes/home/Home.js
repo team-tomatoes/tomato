@@ -1,5 +1,15 @@
 import React, { useEffect, useState, useContext, useLayoutEffect } from 'react'
-import { Text, View, ScrollView, StyleSheet } from 'react-native'
+import {
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
@@ -21,23 +31,6 @@ export default function Home() {
     content: isDark ? styles.darkContent : styles.lightContent,
     text: isDark ? colors.white : colors.primaryText,
   }
-
-  const headerButtonPress = () => {
-    alert('Tapped header button')
-  }
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      // headerRight: () => (
-      // <IconButton
-      //   icon="cast"
-      //   color={Colors.blue500}
-      //   size={24}
-      //   onPress={() => headerButtonPress()}
-      // />
-      // ),
-    })
-  }, [navigation])
 
   useEffect(() => {
     const tokensRef = doc(firestore, 'tokens', userData.id)
@@ -64,48 +57,45 @@ export default function Home() {
           longitudeDelta: 0.055,
         }}
       />
-      <ScrollView style={styles.main}>
-        {/* <View style={colorScheme.content}>
-          <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
-          <Text style={[styles.title, { color: colorScheme.text }]}>
-            {userData.email}
-          </Text>
-          {token ? (
-            <>
-              <Text style={[styles.field, { color: colorScheme.text }]}>
-                Expo push token:
-              </Text>
-              <Text style={[styles.title, { color: colorScheme.text }]}>
-                {token.token}
-              </Text>
-            </>
-          ) : null}
-        </View> */}
-        <Button
-          label="Drop a Pin"
-          color={colors.primary}
-          // Change onpress function to open a text field and image/video option
-          onPress={() => navigation.navigate('Detail',
-            {
-              userData,
-              from: 'Home',
-              title: userData.email,
-            })}
-        />
-        {/* <Button
-          label="Open Modal"
-          color={colors.tertiary}
-          onPress={() => {
-            navigation.navigate('ModalStacks', {
-              screen: 'Post',
-              params: {
-                data: userData,
-                from: 'Home screen',
-              },
-            })
-          }}
-        /> */}
-      </ScrollView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.main}>
+          <TextInput
+            style={styles.textBox}
+            defaultValue="What's going on here?"
+          />
+          <Button
+            label="Drop a Pin"
+            color={colors.primary}
+            // Change onpress function to open a text field and image/video option
+            onPress={() =>
+              navigation.navigate('Detail', {
+                userData,
+                from: 'Home',
+                title: userData.email,
+              })
+            }
+          />
+          <View style={styles.iconHorizontal}>
+            <IconButton
+              icon="image-plus"
+              color={Colors.grey500}
+              size={30}
+              // add in a filter option later, not necessary rn tho
+              onPress={() => alert('add photos from camera')}
+            />
+            <IconButton
+              icon="video-plus"
+              color={Colors.grey500}
+              size={30}
+              // add in a filter option later, not necessary rn tho
+              onPress={() => alert('add videos from camera')}
+            />
+          </View>
+        </View>
+      </KeyboardAvoidingView>
     </ScreenTemplate>
   )
 }
@@ -128,8 +118,17 @@ const styles = StyleSheet.create({
     marginRight: 30,
   },
   main: {
-    flex: 1,
+    flex: 0.4,
     width: '100%',
+    alignContent: 'center',
+  },
+  textBox: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    width: '100%',
+    padding: 15,
   },
   title: {
     fontSize: fontSize.xxxLarge,
@@ -139,5 +138,11 @@ const styles = StyleSheet.create({
   field: {
     fontSize: fontSize.middle,
     textAlign: 'center',
+  },
+  iconHorizontal: {
+    paddingHorizontal: 120,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 })
