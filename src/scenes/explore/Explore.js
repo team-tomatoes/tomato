@@ -22,7 +22,7 @@ export default function Explore() {
     text: isDark ? colors.white : colors.primaryText,
   }
 
-  const headerButtonPress = () => {
+  const headerRightPress = () => {
     alert('Tapped header button')
   }
 
@@ -37,7 +37,8 @@ export default function Explore() {
           icon="map-search"
           color={Colors.white}
           size={24}
-          onPress={() => headerButtonPress()}
+          // add in a filter option later, not necessary rn tho
+          onPress={() => headerRightPress()}
         />
       ),
       headerLeft: () => (
@@ -76,47 +77,6 @@ export default function Explore() {
           longitudeDelta: 0.055,
         }}
       />
-      {/* <ScrollView style={styles.main}>
-        <View style={colorScheme.content}>
-          <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
-          <Text style={[styles.title, { color: colorScheme.text }]}>
-            {userData.email}
-          </Text>
-          {token ? (
-            <>
-              <Text style={[styles.field, { color: colorScheme.text }]}>
-                Expo push token:
-              </Text>
-              <Text style={[styles.title, { color: colorScheme.text }]}>
-                {token.token}
-              </Text>
-            </>
-          ) : null}
-        </View>
-        <Button
-          label="Go to Detail"
-          color={colors.primary}
-          onPress={() => navigation.navigate('Detail',
-            {
-              userData,
-              from: 'Home',
-              title: userData.email,
-            })}
-        />
-        <Button
-          label="Open Modal"
-          color={colors.tertiary}
-          onPress={() => {
-            navigation.navigate('ModalStacks', {
-              screen: 'Post',
-              params: {
-                data: userData,
-                from: 'Home screen',
-              },
-            })
-          }}
-        />
-      </ScrollView> */}
     </ScreenTemplate>
   )
 }
