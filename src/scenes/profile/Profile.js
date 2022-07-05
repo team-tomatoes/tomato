@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react'
+// eslint-disable-next-line object-curly-newline
 import { Text, View, StyleSheet, ScrollView } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import Dialog from 'react-native-dialog'
 import Spinner from 'react-native-loading-spinner-overlay'
+import { signOut, deleteUser } from 'firebase/auth'
 import { doc, deleteDoc } from 'firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
-import { signOut, deleteUser } from 'firebase/auth'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Button from '../../components/Button'
 import { Restart } from '../../utils/Restart'
@@ -88,10 +89,17 @@ export default function Profile() {
           <Avatar
             size="xlarge"
             rounded
-            title="NI"
+            title="CY"
             source={{ uri: userData.avatar }}
           />
         </View>
+        <Text style={[styles.field, { color: colorScheme.text }]}>Pin Count:</Text>
+        <Text style={[styles.title, { color: colorScheme.text }]}>
+          # here
+        </Text>
+        {/* <Text style={[styles.field, { color: colorScheme.text }]}>Username:</Text>
+        <Text style={[styles.title, { color: colorScheme.text }]}>
+          {userData.userName} */}
         <Text style={[styles.field, { color: colorScheme.text }]}>Name:</Text>
         <Text style={[styles.title, { color: colorScheme.text }]}>
           {userData.fullName}
@@ -101,7 +109,7 @@ export default function Profile() {
           {userData.email}
         </Text>
         <Button label="Edit" color={colors.primary} onPress={goDetail} />
-        <Button
+        {/* <Button
           label="Open Modal"
           color={colors.darkBlue}
           onPress={() => {
@@ -113,7 +121,7 @@ export default function Profile() {
               },
             })
           }}
-        />
+        /> */}
         <Button
           label="Account delete"
           color={colors.tertiary}
