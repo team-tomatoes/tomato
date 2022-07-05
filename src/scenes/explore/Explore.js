@@ -30,8 +30,8 @@ export default function Explore() {
     navigation.setOptions({
       headerRight: () => (
         <IconButton
-          icon="cast"
-          color={Colors.blue500}
+          icon="map-search"
+          color={Colors.white}
           size={24}
           onPress={() => headerButtonPress()}
         />
