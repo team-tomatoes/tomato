@@ -3,6 +3,7 @@ import { HomeNavigator } from './HomeNavigator'
 import { ProfileNavigator } from './ProfileNavigator'
 import { ConnectNavigator } from './ConnectNavigator'
 import { ExploreNavigator } from './ExploreNavigator'
+import { MyPinsNavigator } from './MyPinsNavigator'
 
 export {
   LoginNavigator,
@@ -10,4 +11,5 @@ export {
   ProfileNavigator,
   ConnectNavigator,
   ExploreNavigator,
+  MyPinsNavigator,
 }
