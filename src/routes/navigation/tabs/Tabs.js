@@ -18,11 +18,11 @@ const TabNavigator = () => {
           // borderTopWidth: 1,
           // paddingBottom: 5,
           // paddingTop: 5,
-        }
+        },
       }}
       defaultScreenOptions={{
         headerShown: false,
-        headerTransparent: true
+        headerTransparent: true,
       }}
       screenOptions={({ route }) => ({
         headerShown: false,

@@ -8,6 +8,8 @@ import { lightProps, darkProps } from './navigationProps/navigationProps'
 import HeaderStyle from './headerComponents/HeaderStyle'
 import HeaderRightButton from '../../../components/HeaderRightButton'
 
+import Explore from '../../../scenes/explore'
+
 const Stack = createStackNavigator()
 const RootStack = createStackNavigator()
 
@@ -18,9 +20,18 @@ export const ExploreNavigator = () => {
 
   return (
     <Stack.Navigator screenOptions={navigationProps}>
-      {/* <RootStack.Group>
-
-      </RootStack.Group> */}
+      <RootStack.Group>
+        <Stack.Screen
+          name="Explore"
+          component={Explore}
+          options={({ navigation }) => ({
+            headerBackground: scheme === 'dark' ? null : () => <HeaderStyle />,
+            headerRight: () => (
+              <HeaderRightButton from="Connect" userData={userData} />
+            ),
+          })}
+        />
+      </RootStack.Group>
     </Stack.Navigator>
   )
 }
