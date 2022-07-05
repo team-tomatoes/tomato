@@ -58,10 +58,10 @@ export default function Home() {
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
         initialRegion={{
-          latitude: 40.7237,
-          longitude: -73.9898,
-          latitudeDelta: 0.04,
-          longitudeDelta: 0.04,
+          latitude: 40.77949,
+          longitude: -73.96634,
+          latitudeDelta: 0.055,
+          longitudeDelta: 0.055,
         }}
       />
       <ScrollView style={styles.main}>
