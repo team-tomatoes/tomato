@@ -13,7 +13,7 @@ export default function HeaderRightButton(props) {
       screen: 'Post',
       params: {
         data: userData,
-        from: from,
+        from,
       },
     })
   }
