@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Text, View, StyleSheet, Platform } from 'react-native'
-import ScreenTemplate from '../../components/ScreenTemplate'
-import Button from '../../components/Button'
-import TextInputBox from '../../components/TextInputBox'
-import { firestore, storage } from '../../firebase/config'
-import { doc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+  Text, View, StyleSheet, Platform,
+} from 'react-native'
+import { doc, updateDoc } from 'firebase/firestore'
+import { getAuth, updateEmail } from 'firebase/auth'
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { Avatar } from 'react-native-elements'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as ImagePicker from 'expo-image-picker'
 import * as ImageManipulator from 'expo-image-manipulator'
 import { useNavigation } from '@react-navigation/native'
+import ScreenTemplate from '../../components/ScreenTemplate'
+import Button from '../../components/Button'
+import TextInputBox from '../../components/TextInputBox'
+import { firestore, storage } from '../../firebase/config'
 import { colors, fontSize } from '../../theme'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
@@ -22,10 +25,11 @@ export default function Edit() {
   const [fullName, setFullName] = useState(userData.fullName)
   const [progress, setProgress] = useState('')
   const [avatar, setAvatar] = useState(userData.avatar)
+  const [userName, setUserName] = useState(userData.userName)
   const isDark = scheme === 'dark'
   const colorScheme = {
-    text: isDark? colors.white : colors.primaryText,
-    progress: isDark? styles.darkprogress : styles.progress,
+    text: isDark ? colors.white : colors.primaryText,
+    progress: isDark ? styles.darkprogress : styles.progress,
   }
 
   useEffect(() => {
@@ -37,61 +41,69 @@ export default function Edit() {
       if (Platform.OS === 'ios') {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if (status !== 'granted') {
-          alert("Permission is required for use.");
-          return;
+          // eslint-disable-next-line no-alert
+          alert('Permission is required for use.')
+          return
         }
       }
-      const result = await ImagePicker.launchImageLibraryAsync();
-        if (!result.cancelled) {
-          let actions = [];
-          actions.push({ resize: { width: 300 } });
-          const manipulatorResult = await ImageManipulator.manipulateAsync(
-            result.uri,
-            actions,
-            {
-              compress: 0.4,
-            },
-          );
-          const localUri = await fetch(manipulatorResult.uri);
-          const localBlob = await localUri.blob();
-          const filename = userData.id + new Date().getTime()
-          const storageRef = ref(storage, `avatar/${userData.id}/` + filename)
-          const uploadTask = uploadBytesResumable(storageRef, localBlob)
-          uploadTask.on('state_changed',
-            (snapshot) => {
-              let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              setProgress(parseInt(progress) + '%')
-            },
-            (error) => {
-              console.log(error);
-              alert("Upload failed.");
-            },
-            () => {
-              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                setProgress('')
-                setAvatar(downloadURL)
-              });
-            }
-          );
-        }
+      const result = await ImagePicker.launchImageLibraryAsync()
+      if (!result.cancelled) {
+        const actions = []
+        actions.push({ resize: { width: 300 } })
+        const manipulatorResult = await ImageManipulator.manipulateAsync(
+          result.uri,
+          actions,
+          {
+            compress: 0.4,
+          },
+        )
+        const localUri = await fetch(manipulatorResult.uri)
+        const localBlob = await localUri.blob()
+        const filename = userData.id + new Date().getTime()
+        const storageRef = ref(storage, `avatar/${userData.id}/${filename}`)
+        const uploadTask = uploadBytesResumable(storageRef, localBlob)
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            setProgress(`${parseInt(progress)}%`)
+          },
+          (error) => {
+            console.log(error)
+            alert('Upload failed.')
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              setProgress('')
+              setAvatar(downloadURL)
+            })
+          })
+      }
     } catch (e) {
-      console.log('error',e.message);
-      alert("The size may be too much.");
+      console.log('error', e.message)
+      alert('The size may be too much.')
     }
   }
 
-  const profileUpdate = async() => {
+  const auth = getAuth()
+  updateEmail(auth.currentUser, 'user@example.com').then(() => {
+    // Email updated!
+  }).catch((error) => {
+    console.log(error)
+  })
+
+  const profileUpdate = async () => {
     try {
       const data = {
         id: userData.id,
         email: userData.email,
-        fullName: fullName,
-        avatar: avatar,
+        fullName,
+        avatar,
+        userName,
       }
-      const usersRef = doc(firestore, 'users', userData.id);
+      const usersRef = doc(firestore, 'users', userData.id)
       await updateDoc(usersRef, data)
       navigation.goBack()
-    } catch(e) {
+    } catch (e) {
       alert(e)
     }
   }
@@ -106,23 +118,35 @@ export default function Edit() {
           <Avatar
             size="xlarge"
             rounded
-            title="NI"
+            title="CY"
             onPress={ImageChoiceAndUpload}
             source={{ uri: avatar }}
           />
         </View>
         <Text style={colorScheme.progress}>{progress}</Text>
-        <Text style={[styles.field, {color: colorScheme.text}]}>Name:</Text>
+        <Text style={[styles.field, { color: colorScheme.text }]}>Name:</Text>
         <TextInputBox
           placeholder={fullName}
           onChangeText={(text) => setFullName(text)}
           value={fullName}
           autoCapitalize="none"
         />
-        <Text style={[styles.field, {color: colorScheme.text}]}>Mail:</Text>
-        <Text style={[styles.title, {color: colorScheme.text}]}>{userData.email}</Text>
+        <Text style={[styles.field, { color: colorScheme.text }]}>Username:</Text>
+        <TextInputBox
+          placeholder={fullName}
+          onChangeText={(text) => setUserName(text)}
+          value={userName}
+          autoCapitalize="none"
+        />
+        {/* <Text style={[styles.field, { color: colorScheme.text }]}>E-mail:</Text>
+        <TextInputBox
+          placeholder={userData.email}
+          onChangeText={(text) => setUserName(text)}
+          value={userData.email}
+          autoCapitalize="none"
+        /> */}
         <Button
-          label='Update'
+          label="Update"
           color={colors.primary}
           onPress={profileUpdate}
           disable={!fullName}
@@ -147,7 +171,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.xxxLarge,
     marginBottom: 20,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   field: {
     fontSize: fontSize.middle,
@@ -155,6 +179,6 @@ const styles = StyleSheet.create({
   },
   avatar: {
     margin: 30,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
 })
