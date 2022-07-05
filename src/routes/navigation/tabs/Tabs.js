@@ -4,7 +4,7 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5'
 import { colors } from 'theme'
 
 // stack navigators
-import { HomeNavigator, ProfileNavigator, ConnectNavigator } from '../stacks'
+import { HomeNavigator, ProfileNavigator, ConnectNavigator, ExploreNavigator } from '../stacks'
 
 const Tab = createBottomTabNavigator()
 
@@ -40,6 +40,20 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <FontIcon
               name="home"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Explore"
+        component={ExploreNavigator}
+        options={{
+          tabBarLabel: 'Explore',
+          tabBarIcon: ({ color, size }) => (
+            <FontIcon
+              name="search-location"
               color={color}
               size={size}
             />

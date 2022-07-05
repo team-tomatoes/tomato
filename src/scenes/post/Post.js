@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
-import ScreenTemplate from '../../components/ScreenTemplate'
-import Button from '../../components/Button'
 import {
   useRoute,
   useFocusEffect,
   useNavigation,
 } from '@react-navigation/native'
+import moment from 'moment'
 import { colors, fontSize } from 'theme'
+import ScreenTemplate from '../../components/ScreenTemplate'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { HomeTitleContext } from '../../context/HomeTitleContext'
 import { storage } from '../../utils/Storage'
-import moment from 'moment'
+import Button from '../../components/Button'
 
 export default function Post() {
   const route = useRoute()

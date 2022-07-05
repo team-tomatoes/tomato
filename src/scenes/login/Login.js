@@ -40,7 +40,7 @@ export default function Login() {
     try {
       setSpinner(true)
       const response = await signInWithEmailAndPassword(auth, email, password)
-      const uid = response.user.uid
+      const { uid } = response.user
       const usersRef = doc(firestore, 'users', uid)
       const firestoreDocument = await getDoc(usersRef)
       if (!firestoreDocument.exists) {
@@ -66,10 +66,10 @@ export default function Login() {
           onChangeText={(text) => setEmail(text)}
           autoCapitalize="none"
           value={email}
-          keyboardType={'email-address'}
+          keyboardType="email-address"
         />
         <TextInputBox
-          secureTextEntry={true}
+          secureTextEntry
           placeholder="Password"
           onChangeText={(text) => setPassword(text)}
           value={password}

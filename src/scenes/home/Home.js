@@ -84,13 +84,12 @@ export default function Home() {
         <Button
           label="Go to Detail"
           color={colors.primary}
-          onPress={() =>
-            navigation.navigate('Detail', {
-              userData: userData,
+          onPress={() => navigation.navigate('Detail',
+            {
+              userData,
               from: 'Home',
               title: userData.email,
-            })
-          }
+            })}
         />
         <Button
           label="Open Modal"
