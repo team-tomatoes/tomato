@@ -1,22 +1,23 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
+import { config } from '../secrets'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyC9SB_2B_Ffzdw1y_qn17Vdk15puWszjBk',
-  authDomain: 'tomato-d9ece.firebaseapp.com',
-  projectId: 'tomato-d9ece',
-  storageBucket: 'tomato-d9ece.appspot.com',
-  messagingSenderId: '764902374604',
-  appId: '1:764902374604:web:d6ead29ee682cb54301669',
-  measurementId: 'G-3N394GK8Y1',
+  apiKey: config.FIREBASE_API_KEY,
+  authDomain: config.FIREBASE_AUTH_DOMAIN,
+  projectId: config.FIREBASE_PROJECT_ID,
+  storageBucket: config.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: config.FIREBASE_MESSAGING_SENDER_ID,
+  appId: config.FIREBASE_APP_ID,
 }
 
-const defaultAvatar = 'https://firebasestorage.googleapis.com/v0/u/tomato-d9ece.appspot.com/tomatoicon.png'
+const defaultAvatar =
+  'https://firebasestorage.googleapis.com/v0/u/tomato-d9ece.appspot.com/tomatoicon.png'
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
@@ -32,6 +33,7 @@ const analytics = getAnalytics(app)
 //   measurementId: "G-1894ZG59D5"
 // }
 
-const eulaLink = 'https://github.com/kiyohken2000/ReactNative-Expo-Firebase-Boilerplate-v2'
+const eulaLink =
+  'https://github.com/kiyohken2000/ReactNative-Expo-Firebase-Boilerplate-v2'
 
 export { defaultAvatar, firebaseConfig, eulaLink }
