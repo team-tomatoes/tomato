@@ -64,7 +64,7 @@ export default function Home() {
           longitudeDelta: 0.055,
         }}
       />
-      <ScrollView style={styles.main}>
+      <View style={styles.main}>
         {/* <View style={colorScheme.content}>
           <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
           <Text style={[styles.title, { color: colorScheme.text }]}>
@@ -92,20 +92,7 @@ export default function Home() {
               title: userData.email,
             })}
         />
-        {/* <Button
-          label="Open Modal"
-          color={colors.tertiary}
-          onPress={() => {
-            navigation.navigate('ModalStacks', {
-              screen: 'Post',
-              params: {
-                data: userData,
-                from: 'Home screen',
-              },
-            })
-          }}
-        /> */}
-      </ScrollView>
+      </View>
     </ScreenTemplate>
   )
 }
@@ -128,7 +115,7 @@ const styles = StyleSheet.create({
     marginRight: 30,
   },
   main: {
-    flex: 1,
+    flex: 0.15,
     width: '100%',
   },
   title: {
