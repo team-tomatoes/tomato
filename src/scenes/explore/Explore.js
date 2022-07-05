@@ -26,6 +26,10 @@ export default function Explore() {
     alert('Tapped header button')
   }
 
+  const headerLeftPress = () => {
+    navigation.navigate('Home')
+  }
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -34,6 +38,14 @@ export default function Explore() {
           color={Colors.white}
           size={24}
           onPress={() => headerButtonPress()}
+        />
+      ),
+      headerLeft: () => (
+        <IconButton
+          icon="home-map-marker"
+          color={Colors.white}
+          size={24}
+          onPress={() => headerLeftPress()}
         />
       ),
     })
