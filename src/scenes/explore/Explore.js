@@ -76,7 +76,7 @@ export default function Explore() {
           longitudeDelta: 0.055,
         }}
       />
-      <ScrollView style={styles.main}>
+      {/* <ScrollView style={styles.main}>
         <View style={colorScheme.content}>
           <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
           <Text style={[styles.title, { color: colorScheme.text }]}>
@@ -116,7 +116,7 @@ export default function Explore() {
             })
           }}
         />
-      </ScrollView>
+      </ScrollView> */}
     </ScreenTemplate>
   )
 }
