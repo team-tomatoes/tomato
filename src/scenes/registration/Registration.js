@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.large,
   },
   footerLink: {
-    color: colors.blueLight,
+    color: colors.redLight,
     fontWeight: 'bold',
     fontSize: fontSize.large,
   },
