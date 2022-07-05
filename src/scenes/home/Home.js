@@ -75,7 +75,15 @@ export default function Home() {
           latitudeDelta: 0.055,
           longitudeDelta: 0.055,
         }}
-      />
+      >
+        <MapView.Marker
+          coordinate={{
+            latitude: Number(currLatitude),
+            longitude: Number(currLongitude),
+          }}
+        />
+      </MapView>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
