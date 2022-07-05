@@ -3,17 +3,16 @@ import { Text, View, StyleSheet, ScrollView } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import Dialog from 'react-native-dialog'
 import Spinner from 'react-native-loading-spinner-overlay'
+import { doc, deleteDoc } from 'firebase/firestore'
+import { useNavigation } from '@react-navigation/native'
+import { signOut, deleteUser } from 'firebase/auth'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Button from '../../components/Button'
 import { Restart } from '../../utils/Restart'
-import { firestore } from '../../firebase/config'
-import { doc, deleteDoc } from 'firebase/firestore'
+import { firestore, auth } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
-import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from '../../theme'
-import { signOut, deleteUser } from 'firebase/auth'
-import { auth } from '../../firebase/config'
 
 export default function Profile() {
   const { userData, setUserData } = useContext(UserDataContext)
@@ -28,10 +27,11 @@ export default function Profile() {
 
   useEffect(() => {
     console.log('Profile screen')
+    console.log(userData)
   }, [])
 
   const goDetail = () => {
-    navigation.navigate('Edit', { userData: userData })
+    navigation.navigate('Edit', { userData })
   }
 
   const onSignOutPress = () => {
@@ -103,7 +103,7 @@ export default function Profile() {
         <Button label="Edit" color={colors.primary} onPress={goDetail} />
         <Button
           label="Open Modal"
-          color={colors.tertiary}
+          color={colors.darkBlue}
           onPress={() => {
             navigation.navigate('ModalStacks', {
               screen: 'Post',
@@ -116,7 +116,7 @@ export default function Profile() {
         />
         <Button
           label="Account delete"
-          color={colors.secondary}
+          color={colors.tertiary}
           onPress={showDialog}
         />
         <View style={styles.footerView}>
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   footerLink: {
-    color: colors.blueLight,
+    color: colors.redLight,
     fontWeight: 'bold',
     fontSize: fontSize.large,
   },

@@ -5,21 +5,21 @@ const fontSize = 18
 const headerMode = 'float'
 
 const lightProps = {
-  headerTintColor: headerTintColor,
+  headerTintColor,
   headerStyle: {
-    backgroundColor: colors.darkPurple,
+    backgroundColor: colors.darkBlue,
   },
-  headerTitleStyle: { fontSize: fontSize },
-  headerMode: headerMode,
+  headerTitleStyle: { fontSize },
+  headerMode,
 }
 
 const darkProps = {
-  headerTintColor: headerTintColor,
+  headerTintColor,
   headerStyle: {
     backgroundColor: colors.dark,
   },
-  headerTitleStyle: { fontSize: fontSize },
-  headerMode: headerMode,
+  headerTitleStyle: { fontSize },
+  headerMode,
 }
 
 export { lightProps, darkProps }
