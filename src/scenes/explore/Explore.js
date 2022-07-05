@@ -5,11 +5,11 @@ import { IconButton, Colors } from 'react-native-paper'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
-import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
+import { PinnedMap } from '../../components/PinnedMap'
 
 export default function Explore() {
   const navigation = useNavigation()
@@ -22,18 +22,31 @@ export default function Explore() {
     text: isDark ? colors.white : colors.primaryText,
   }
 
-  const headerButtonPress = () => {
-    alert('Tapped header button')
+  const headerRightPress = () => {
+    alert('Oops we dont have this filter function yet (ಥ﹏ಥ)')
+  }
+
+  const headerLeftPress = () => {
+    navigation.navigate('Home')
   }
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <IconButton
-          icon="cast"
-          color={Colors.blue500}
+          icon="map-search"
+          color={Colors.white}
           size={24}
-          onPress={() => headerButtonPress()}
+          // add in a filter option later, not necessary rn tho
+          onPress={() => headerRightPress()}
+        />
+      ),
+      headerLeft: () => (
+        <IconButton
+          icon="home-map-marker"
+          color={Colors.white}
+          size={24}
+          onPress={() => headerLeftPress()}
         />
       ),
     })
@@ -54,57 +67,7 @@ export default function Explore() {
 
   return (
     <ScreenTemplate>
-      <MapView
-        style={{ flex: 1 }}
-        provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
-          latitudeDelta: 0.055,
-          longitudeDelta: 0.055,
-        }}
-      />
-      <ScrollView style={styles.main}>
-        <View style={colorScheme.content}>
-          <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
-          <Text style={[styles.title, { color: colorScheme.text }]}>
-            {userData.email}
-          </Text>
-          {token ? (
-            <>
-              <Text style={[styles.field, { color: colorScheme.text }]}>
-                Expo push token:
-              </Text>
-              <Text style={[styles.title, { color: colorScheme.text }]}>
-                {token.token}
-              </Text>
-            </>
-          ) : null}
-        </View>
-        <Button
-          label="Go to Detail"
-          color={colors.primary}
-          onPress={() => navigation.navigate('Detail',
-            {
-              userData,
-              from: 'Home',
-              title: userData.email,
-            })}
-        />
-        <Button
-          label="Open Modal"
-          color={colors.tertiary}
-          onPress={() => {
-            navigation.navigate('ModalStacks', {
-              screen: 'Post',
-              params: {
-                data: userData,
-                from: 'Home screen',
-              },
-            })
-          }}
-        />
-      </ScrollView>
+      <PinnedMap />
     </ScreenTemplate>
   )
 }
