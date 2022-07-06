@@ -132,11 +132,11 @@ export default function Edit() {
     )
     reauthenticateWithCredential(user, credential).then(() => {
       updateEmail(user, newEmail).then(async () => {
-        Alert.alert('Email has changed')
+        // Alert.alert('Email has changed')
         const data = { email: newEmail }
         const usersRef = doc(firestore, 'users', userData.id)
         await updateDoc(usersRef, data)
-        // navigation.goBack()
+        navigation.goBack()
       })
     }).catch((error) => {
       if (currentPassword) {
@@ -183,7 +183,7 @@ export default function Edit() {
           disable={!fullName}
         />
         {/* Password change field */}
-        <Text style={[styles.field, { color: colorScheme.text }]}>Password:</Text>
+        <Text style={[styles.underButtonField, { color: colorScheme.text }]}>Password:</Text>
         <TextInputBox
           placeholder="Current Password"
           onChangeText={(text) => setCurrentPassword(text)}
@@ -204,8 +204,9 @@ export default function Edit() {
           onPress={onChangePasswordPress}
         />
         {/* Email change field */}
-        <Text style={[styles.field, { color: colorScheme.text }]}>Email:</Text>
+        <Text style={[styles.underButtonField, { color: colorScheme.text }]}>Email:</Text>
         <TextInputBox
+          placeholder={userData.email}
           onChangeText={(text) => setNewEmail(text)}
           value={newEmail}
           autoCapitalize="none"
@@ -239,6 +240,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   field: {
+    fontSize: fontSize.middle,
+    textAlign: 'center',
+  },
+  underButtonField: {
+    marginTop: 20,
     fontSize: fontSize.middle,
     textAlign: 'center',
   },
