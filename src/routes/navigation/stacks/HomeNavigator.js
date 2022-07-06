@@ -7,6 +7,7 @@ import HeaderStyle from './headerComponents/HeaderStyle'
 
 import Home from '../../../scenes/home'
 import Detail from '../../../scenes/detail'
+import CameraComp from '../../../scenes/home/Camera'
 
 const Stack = createStackNavigator()
 
@@ -41,6 +42,7 @@ export const HomeNavigator = () => {
                   scheme === 'dark' ? null : () => <HeaderStyle />,
               }}
             />
+            <Stack.Screen name="Camera" component={CameraComp} options={{}} />
           </Stack.Navigator>
         )}
       </HomeTitleContext.Consumer>
