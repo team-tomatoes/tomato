@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react'
 import {
-  Text, View, StyleSheet, Platform,
+  Text, View, StyleSheet, Platform, Alert,
 } from 'react-native'
 import { doc, updateDoc } from 'firebase/firestore'
-import { getAuth, updateEmail } from 'firebase/auth'
+import { getAuth, updateEmail, updatePassword } from 'firebase/auth'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { Avatar } from 'react-native-elements'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -26,6 +26,9 @@ export default function Edit() {
   const [progress, setProgress] = useState('')
   const [avatar, setAvatar] = useState(userData.avatar)
   const [userName, setUserName] = useState(userData.userName)
+  const [newEmail, setNewEmail] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
   const isDark = scheme === 'dark'
   const colorScheme = {
     text: isDark ? colors.white : colors.primaryText,
@@ -84,18 +87,12 @@ export default function Edit() {
     }
   }
 
-  const auth = getAuth()
-  updateEmail(auth.currentUser, 'user@example.com').then(() => {
-    // Email updated!
-  }).catch((error) => {
-    console.log(error)
-  })
-
   const profileUpdate = async () => {
     try {
       const data = {
         id: userData.id,
         email: userData.email,
+        password: userData.password,
         fullName,
         avatar,
         userName,
@@ -108,6 +105,25 @@ export default function Edit() {
     }
   }
 
+  const onChangeEmailPress = () => {
+    const auth = getAuth()
+    updateEmail(auth.currentUser, newEmail).then(() => {
+      Alert.alert('Email has changed')
+    }).catch((error) => {
+      Alert.alert(error.message)
+    })
+  }
+
+  const onChangePasswordPress = () => {
+    const auth = getAuth()
+    const user = auth.currentUser
+    updatePassword(user, newPassword).then(() => {
+      Alert.alert('Password has changed')
+    }).catch((error) => {
+      Alert.alert(error.message)
+    })
+  }
+
   return (
     <ScreenTemplate>
       <KeyboardAwareScrollView
@@ -118,12 +134,12 @@ export default function Edit() {
           <Avatar
             size="xlarge"
             rounded
-            title="CY"
+            // title="CY"
             onPress={ImageChoiceAndUpload}
             source={{ uri: avatar }}
           />
         </View>
-        <Text style={colorScheme.progress}>{progress}</Text>
+        {/* <Text style={colorScheme.progress}>{progress}</Text> */}
         <Text style={[styles.field, { color: colorScheme.text }]}>Name:</Text>
         <TextInputBox
           placeholder={fullName}
@@ -138,18 +154,44 @@ export default function Edit() {
           value={userName}
           autoCapitalize="none"
         />
-        {/* <Text style={[styles.field, { color: colorScheme.text }]}>E-mail:</Text>
-        <TextInputBox
-          placeholder={userData.email}
-          onChangeText={(text) => setUserName(text)}
-          value={userData.email}
-          autoCapitalize="none"
-        /> */}
         <Button
           label="Update"
           color={colors.primary}
           onPress={profileUpdate}
           disable={!fullName}
+        />
+        <Text style={[styles.field, { color: colorScheme.text }]}>Email:</Text>
+        <TextInputBox
+          placeholder={userData.email}
+          onChangeText={(text) => setNewEmail(text)}
+          value={newEmail}
+          autoCapitalize="none"
+        />
+        <Button
+          label="Change Email"
+          color={colors.primary}
+          onPress={onChangeEmailPress}
+        />
+
+        <Text style={[styles.field, { color: colorScheme.text }]}>Password:</Text>
+        <TextInputBox
+          placeholder="Current Password"
+          onChangeText={(text) => setCurrentPassword(text)}
+          value={userData.password}
+          autoCapitalize="none"
+          secureTextEntry={true}
+        />
+        <TextInputBox
+          placeholder="New Password"
+          onChangeText={(text) => setNewPassword(text)}
+          value={userData.password}
+          autoCapitalize="none"
+          secureTextEntry={true}
+        />
+        <Button
+          label="Change Password"
+          color={colors.primary}
+          onPress={onChangePasswordPress}
         />
       </KeyboardAwareScrollView>
     </ScreenTemplate>
