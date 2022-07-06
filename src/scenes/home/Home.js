@@ -81,7 +81,17 @@ export default function Home() {
             latitude: Number(currLatitude),
             longitude: Number(currLongitude),
           }}
-        />
+        >
+          <View
+            style={{
+              backgroundColor: '#007FFF',
+              padding: 10,
+              borderRadius: 20,
+              borderWidth: 4,
+              borderColor: 'white',
+            }}
+          />
+        </MapView.Marker>
       </MapView>
 
       <KeyboardAvoidingView
@@ -150,7 +160,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   textBox: {
-    height: 40,
+    height: 50,
     borderColor: 'gray',
     borderWidth: 1,
     backgroundColor: 'white',
