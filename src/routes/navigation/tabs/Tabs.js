@@ -4,7 +4,7 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5'
 import { colors } from 'theme'
 
 // stack navigators
-import { HomeNavigator, ProfileNavigator, ConnectNavigator, ExploreNavigator, MyPinsNavigator } from '../stacks'
+import { HomeNavigator, ProfileNavigator, ConnectNavigator, ExploreNavigator, MyPinsNavigator, FriendsNavigator } from '../stacks'
 
 const Tab = createBottomTabNavigator()
 
@@ -60,8 +60,8 @@ const TabNavigator = () => (
       }}
     />
     <Tab.Screen
-      name="ConnectTab"
-      component={ConnectNavigator}
+      name="FriendsTab"
+      component={FriendsNavigator}
       options={{
         tabBarLabel: 'Friends',
         tabBarIcon: ({ color, size }) => (
