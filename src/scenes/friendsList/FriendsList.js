@@ -7,7 +7,7 @@ import { UserDataContext } from '../../context/UserDataContext'
 import Button from '../../components/Button'
 import ScreenTemplate from '../../components/ScreenTemplate'
 
-export default function Follow() {
+export default function Friends() {
   const navigation = useNavigation()
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)

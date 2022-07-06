@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-
-import Follow from '../../../../scenes/friendsList'
+import Friends from '../../../../scenes/friendsList/FriendsList'
 
 const Stack = createStackNavigator()
 
@@ -12,7 +11,7 @@ export const FriendsNavigator = () => {
         headerShown: false,
       })}
     >
-      <Stack.Screen name="Friends List" component={Follow} />
+      <Stack.Screen name="Friends List" component={Friends} />
     </Stack.Navigator>
   )
 }

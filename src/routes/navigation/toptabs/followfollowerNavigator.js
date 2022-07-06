@@ -16,6 +16,7 @@ export const FollowFollowerNavigator = () => (
   >
     <Tab.Screen
       name="FriendsMap"
+      // need to filter by if friends show pins
       component={PinnedMap}
       options={{ tabBarLabel: 'Map' }}
     />
