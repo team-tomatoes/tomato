@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  Image,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
@@ -12,7 +13,8 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import * as Location from 'expo-location'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
 import Button from '../../components/Button'
@@ -22,6 +24,11 @@ import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
 
 export default function Home() {
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
+  const [image, setImage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   const navigation = useNavigation()
   const [token, setToken] = useState('')
   const { userData } = useContext(UserDataContext)
@@ -32,12 +39,26 @@ export default function Home() {
     text: isDark ? colors.white : colors.primaryText,
   }
 
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      setErrorMessage('Permission not granted')
+    } else {
+      const userLocation = await Location.getCurrentPositionAsync({})
+      console.log(userLocation)
+      setLatitude(Number(userLocation.coords.latitude))
+      setLongitude(Number(userLocation.coords.longitude))
+      setLocation(userLocation)
+    }
+  }
+
   useEffect(() => {
     const tokensRef = doc(firestore, 'tokens', userData.id)
     const tokenListner = onSnapshot(tokensRef, (querySnapshot) => {
       if (querySnapshot.exists) {
         const data = querySnapshot.data()
         setToken(data)
+        getLocation()
       } else {
         console.log('No such document!')
       }
@@ -50,13 +71,31 @@ export default function Home() {
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
+        region={{
+          latitude: Number(currLatitude),
+          longitude: Number(currLongitude),
           latitudeDelta: 0.055,
           longitudeDelta: 0.055,
         }}
-      />
+      >
+        <MapView.Marker
+          coordinate={{
+            latitude: Number(currLatitude),
+            longitude: Number(currLongitude),
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: '#007FFF',
+              padding: 10,
+              borderRadius: 20,
+              borderWidth: 4,
+              borderColor: 'white',
+            }}
+          />
+        </MapView.Marker>
+      </MapView>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -64,7 +103,7 @@ export default function Home() {
         <View style={styles.main}>
           <TextInput
             style={styles.textBox}
-            defaultValue="What's going on here?"
+            placeholder="What's going on here?"
           />
           <Button
             label="Drop a Pin"
@@ -84,7 +123,11 @@ export default function Home() {
               color={Colors.grey500}
               size={30}
               // add in a filter option later, not necessary rn tho
-              onPress={() => alert('add photos from camera')}
+              onPress={() =>
+                navigation.navigate('Camera', {
+                  setImage,
+                })
+              }
             />
             <IconButton
               icon="video-plus"
@@ -92,6 +135,14 @@ export default function Home() {
               size={30}
               // add in a filter option later, not necessary rn tho
               onPress={() => alert('add videos from camera')}
+            />
+          </View>
+          <View>
+            <Image
+              style={{ width: 200, height: 200 }}
+              source={{
+                uri: image,
+              }}
             />
           </View>
         </View>
@@ -123,7 +174,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   textBox: {
-    height: 40,
+    height: 50,
     borderColor: 'gray',
     borderWidth: 1,
     backgroundColor: 'white',
