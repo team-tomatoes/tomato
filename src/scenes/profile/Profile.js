@@ -105,7 +105,7 @@ export default function Profile() {
         <Text style={[styles.title, { color: colorScheme.text }]}>
           {userData.fullName}
         </Text>
-        <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
+        <Text style={[styles.field, { color: colorScheme.text }]}>Email:</Text>
         <Text style={[styles.title, { color: colorScheme.text }]}>
           {userData.email}
         </Text>

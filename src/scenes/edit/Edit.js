@@ -26,6 +26,7 @@ export default function Edit() {
   const [progress, setProgress] = useState('')
   const [avatar, setAvatar] = useState(userData.avatar)
   const [userName, setUserName] = useState(userData.userName)
+  const [newEmail, setNewEmail] = useState('')
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const isDark = scheme === 'dark'
@@ -104,11 +105,18 @@ export default function Edit() {
     }
   }
 
+  const onChangeEmailPress = () => {
+    const auth = getAuth()
+    updateEmail(auth.currentUser, newEmail).then(() => {
+      Alert.alert('Email has changed')
+    }).catch((error) => {
+      Alert.alert(error.message)
+    })
+  }
+
   const onChangePasswordPress = () => {
     const auth = getAuth()
-
     const user = auth.currentUser
-    // const newPassword = getASecureRandomPassword();
     updatePassword(user, newPassword).then(() => {
       Alert.alert('Password has changed')
     }).catch((error) => {
@@ -152,14 +160,18 @@ export default function Edit() {
           onPress={profileUpdate}
           disable={!fullName}
         />
-        <Text style={[styles.field, { color: colorScheme.text }]}>E-mail:</Text>
+        <Text style={[styles.field, { color: colorScheme.text }]}>Email:</Text>
         <TextInputBox
           placeholder={userData.email}
-          // onChangeText={(text) => setEmail(text)}
-          value={userData.email}
+          onChangeText={(text) => setNewEmail(text)}
+          value={newEmail}
           autoCapitalize="none"
         />
-        {/* <Button title="Change E-mail" onPress={} /> */}
+        <Button
+          label="Change Email"
+          color={colors.primary}
+          onPress={onChangeEmailPress}
+        />
 
         <Text style={[styles.field, { color: colorScheme.text }]}>Password:</Text>
         <TextInputBox
