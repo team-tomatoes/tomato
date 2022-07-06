@@ -12,7 +12,7 @@ export default function Requests() {
   }
 
   useEffect(() => {
-    console.log('Follower screen')
+    console.log('Friend Requests screen')
   }, [])
 
   return (

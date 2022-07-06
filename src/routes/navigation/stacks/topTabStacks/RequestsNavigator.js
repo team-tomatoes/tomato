@@ -11,7 +11,7 @@ export const RequestsNavigator = () => {
         headerShown: false,
       })}
     >
-      <Stack.Screen name="Follower" component={Requests} />
+      <Stack.Screen name="Requests" component={Requests} />
     </Stack.Navigator>
   )
 }

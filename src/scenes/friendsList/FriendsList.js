@@ -25,7 +25,7 @@ export default function Friends() {
       <View style={[styles.container]}>
         <View style={{ width: '100%' }}>
           <Text style={[styles.field, { color: colorScheme.text }]}>
-            Friends List Screen
+            Friends List goes here
           </Text>
           <Button
             label="Open Modal"
