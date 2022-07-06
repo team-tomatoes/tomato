@@ -3,7 +3,7 @@ import {
   Text, View, StyleSheet, Platform, Alert,
 } from 'react-native'
 import { doc, updateDoc } from 'firebase/firestore'
-import { getAuth, updateEmail, updatePassword } from 'firebase/auth'
+import { getAuth, EmailAuthProvider, updateEmail, updatePassword, reauthenticateWithCredential } from 'firebase/auth'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { Avatar } from 'react-native-elements'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -92,9 +92,8 @@ export default function Edit() {
       const data = {
         id: userData.id,
         email: userData.email,
-        password: userData.password,
-        fullName,
         avatar,
+        fullName,
         userName,
       }
       const usersRef = doc(firestore, 'users', userData.id)
@@ -105,22 +104,46 @@ export default function Edit() {
     }
   }
 
-  const onChangeEmailPress = () => {
-    const auth = getAuth()
-    updateEmail(auth.currentUser, newEmail).then(() => {
-      Alert.alert('Email has changed')
-    }).catch((error) => {
-      Alert.alert(error.message)
-    })
-  }
-
   const onChangePasswordPress = () => {
     const auth = getAuth()
     const user = auth.currentUser
-    updatePassword(user, newPassword).then(() => {
-      Alert.alert('Password has changed')
+    // prompt user to re-provide credentials to fix error:auth/requires-recent-login
+    const credential = EmailAuthProvider.credential(
+      user.email, currentPassword,
+    )
+    reauthenticateWithCredential(user, credential).then(() => {
+      updatePassword(user, newPassword).then(() => {
+        Alert.alert('Password has changed')
+        navigation.goBack()
+      }).catch((error) => {
+        Alert.alert('Please provide your current password before changing.')
+      })
     }).catch((error) => {
-      Alert.alert(error.message)
+      Alert.alert('Oops! Password is incorrect. Please try again.')
+    })
+  }
+
+  const onChangeEmailPress = () => {
+    const auth = getAuth()
+    const user = auth.currentUser
+
+    const credential = EmailAuthProvider.credential(
+      user.email, currentPassword,
+    )
+    reauthenticateWithCredential(user, credential).then(() => {
+      updateEmail(user, newEmail).then(async () => {
+        Alert.alert('Email has changed')
+        const data = { email: newEmail }
+        const usersRef = doc(firestore, 'users', userData.id)
+        await updateDoc(usersRef, data)
+        // navigation.goBack()
+      })
+    }).catch((error) => {
+      if (currentPassword) {
+        Alert.alert('Oops! Password is incorrect. Please try again.')
+      } else {
+        Alert.alert('Please enter your current password to change your email.')
+      }
     })
   }
 
@@ -134,7 +157,6 @@ export default function Edit() {
           <Avatar
             size="xlarge"
             rounded
-            // title="CY"
             onPress={ImageChoiceAndUpload}
             source={{ uri: avatar }}
           />
@@ -142,14 +164,14 @@ export default function Edit() {
         {/* <Text style={colorScheme.progress}>{progress}</Text> */}
         <Text style={[styles.field, { color: colorScheme.text }]}>Name:</Text>
         <TextInputBox
-          placeholder={fullName}
+          placeholder="Change name"
           onChangeText={(text) => setFullName(text)}
           value={fullName}
-          autoCapitalize="none"
+          autoCapitalize="words"
         />
         <Text style={[styles.field, { color: colorScheme.text }]}>Username:</Text>
         <TextInputBox
-          placeholder={fullName}
+          placeholder={userData.userName}
           onChangeText={(text) => setUserName(text)}
           value={userName}
           autoCapitalize="none"
@@ -160,19 +182,7 @@ export default function Edit() {
           onPress={profileUpdate}
           disable={!fullName}
         />
-        <Text style={[styles.field, { color: colorScheme.text }]}>Email:</Text>
-        <TextInputBox
-          placeholder={userData.email}
-          onChangeText={(text) => setNewEmail(text)}
-          value={newEmail}
-          autoCapitalize="none"
-        />
-        <Button
-          label="Change Email"
-          color={colors.primary}
-          onPress={onChangeEmailPress}
-        />
-
+        {/* Password change field */}
         <Text style={[styles.field, { color: colorScheme.text }]}>Password:</Text>
         <TextInputBox
           placeholder="Current Password"
@@ -192,6 +202,19 @@ export default function Edit() {
           label="Change Password"
           color={colors.primary}
           onPress={onChangePasswordPress}
+        />
+        {/* Email change field */}
+        <Text style={[styles.field, { color: colorScheme.text }]}>Email:</Text>
+        <TextInputBox
+          onChangeText={(text) => setNewEmail(text)}
+          value={newEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+        <Button
+          label="Change Email"
+          color={colors.primary}
+          onPress={onChangeEmailPress}
         />
       </KeyboardAwareScrollView>
     </ScreenTemplate>
