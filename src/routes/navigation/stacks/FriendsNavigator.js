@@ -24,7 +24,7 @@ export const FriendsNavigator = () => {
   }
 
   const headerRightPress = () => {
-    navigation1.navigate('followfollowerNavigation')
+    alert('search for a friend by username')
   }
 
   return (
@@ -38,7 +38,7 @@ export const FriendsNavigator = () => {
             headerBackground: scheme === 'dark' ? null : () => <HeaderStyle />,
             headerRight: () => (
               <IconButton
-                icon="account-group"
+                icon="account-multiple-plus"
                 color={Colors.white}
                 size={24}
                 onPress={() => headerRightPress()}
