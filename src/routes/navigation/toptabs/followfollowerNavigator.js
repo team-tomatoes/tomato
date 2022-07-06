@@ -5,6 +5,7 @@ import { screenOptions } from './navigationProps/navigationProps'
 
 import { FollowNavigator } from '../stacks/topTabStacks/FollowNavigator'
 import { FollowerNavigator } from '../stacks/topTabStacks/FollowerNavigator'
+import { PinnedMap } from '../../../components/PinnedMap'
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -13,6 +14,11 @@ export const FollowFollowerNavigator = () => (
     initialRouteName="FollowTab"
     screenOptions={screenOptions}
   >
+    <Tab.Screen
+      name="FriendsMap"
+      component={PinnedMap}
+      options={{ tabBarLabel: 'Map' }}
+    />
     <Tab.Screen
       name="FollowTab"
       component={FollowNavigator}
