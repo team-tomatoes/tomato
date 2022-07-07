@@ -1,5 +1,6 @@
-const defaultIcons = [
+// image={defaultIcons[0].image}
 
+const defaultIcons = [
   { image: require('./Icons/tomato.png') },
   { image: require('./Icons/Animal-Sightings/Animal-Dog.png') },
   { image: require('./Icons/Meetups/Meetups-Default.png') },

@@ -81,7 +81,6 @@ export default function Home() {
             latitude: Number(currLatitude),
             longitude: Number(currLongitude),
           }}
-          image={defaultIcons[0].image}
         />
       </MapView>
 
