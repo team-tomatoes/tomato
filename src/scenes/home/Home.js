@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext, useLayoutEffect } from 'react'
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  useLayoutEffect,
+} from 'react'
 import {
   Text,
   View,
@@ -17,6 +23,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
+import { Video, AVPlaybackStatus } from 'expo-av'
 import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
@@ -29,6 +36,9 @@ export default function Home() {
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
   const [image, setImage] = useState(null)
+  const [record, setRecord] = useState(null)
+  const video = React.useRef(null)
+  const [videoStatus, setStatus] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
   const navigation = useNavigation()
   const [token, setToken] = useState('')
@@ -134,16 +144,41 @@ export default function Home() {
               color={Colors.grey500}
               size={30}
               // add in a filter option later, not necessary rn tho
-              onPress={() => alert('add videos from camera')}
+              onPress={() =>
+                navigation.navigate('VidCamera', {
+                  setRecord,
+                })
+              }
             />
           </View>
-          <View>
-            <Image
-              style={{ width: 200, height: 200 }}
-              source={{
-                uri: image,
-              }}
-            />
+          <View style={styles.imageContainer}>
+            {(() => {
+              if (image) {
+                return (
+                  <Image
+                    style={{ width: 200, height: 225, alignSelf: 'center' }}
+                    source={{
+                      uri: image,
+                    }}
+                  />
+                )
+              }
+              if (record) {
+                return (
+                  <Video
+                    ref={video}
+                    style={{ width: 320, height: 200, alignSelf: 'center' }}
+                    source={{
+                      uri: record,
+                    }}
+                    useNativeControls
+                    isLooping
+                    resizeMode="contain"
+                    onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+                  />
+                )
+              }
+            })()}
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -152,6 +187,9 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  // imageContainer: {
+  //   position: 'absolute',
+  // },
   lightContent: {
     backgroundColor: colors.lightyellow,
     padding: 20,

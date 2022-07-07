@@ -5,25 +5,45 @@ import { Camera, CameraType } from 'expo-camera'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
-export default function CameraComp({ route }) {
+export default function VidCamera({ route }) {
   const [cameraRef, setCameraRef] = useState(null)
-  const [hasPermission, setHasPermission] = useState(null)
+  const [record, setRecord] = useState(null)
+  const [hasAudioPermission, setHasAudioPermission] = useState(null)
+  const [hasCameraPermission, setHasCameraPermission] = useState(null)
   const [type, setType] = useState(CameraType.back)
+  const [toggleOn, setToggleOn] = useState(false)
   const navigation = useNavigation()
 
   useEffect(() => {
     ;(async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync()
-      setHasPermission(status === 'granted')
+      const cameraStatus = await Camera.requestCameraPermissionsAsync()
+      setHasCameraPermission(cameraStatus.status === 'granted')
+      const audioStatus = await Camera.requestMicrophonePermissionsAsync()
+      setHasAudioPermission(audioStatus.status === 'granted')
     })()
   }, [])
 
-  if (hasPermission === null) {
+  if (hasCameraPermission === null || hasAudioPermission === null) {
     return <View />
   }
-  if (hasPermission === false) {
+  if (hasCameraPermission === false || hasAudioPermission === false) {
     return <Text>No access to camera</Text>
   }
+
+  const takeVideo = async () => {
+    if (cameraRef) {
+      const video = await cameraRef.recordAsync({
+        maxDuration: 10,
+      })
+      console.log(video)
+      route.params.setRecord(video.uri)
+    }
+  }
+
+  const stopVideo = async () => {
+    cameraRef.stopRecording()
+  }
+
   return (
     <View style={styles.container}>
       <Camera
@@ -46,17 +66,28 @@ export default function CameraComp({ route }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.takePictureButton}
-            onPress={async () => {
-              if (cameraRef) {
-                const photo = await cameraRef.takePictureAsync()
-                console.log(photo)
-                route.params.setImage(photo.uri)
+            onPress={() => {
+              if (!toggleOn) {
+                takeVideo()
+                setToggleOn(true)
+              } else {
+                stopVideo()
+                setToggleOn(false)
                 navigation.navigate('Home')
               }
             }}
           >
             <View style={styles.outerCircle}>
-              <View style={styles.innerCircle} />
+              <View
+                style={{
+                  borderWidth: 2,
+                  borderRadius: toggleOn ? '2' : '50',
+                  borderColor: 'red',
+                  height: toggleOn ? 20 : 40,
+                  width: toggleOn ? 20 : 40,
+                  backgroundColor: 'red',
+                }}
+              />
             </View>
           </TouchableOpacity>
         </View>
@@ -97,14 +128,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // marginBottom: 16,
     // marginTop: 16,
-  },
-  innerCircle: {
-    borderWidth: 2,
-    borderRadius: 50,
-    borderColor: 'white',
-    height: 40,
-    width: 40,
-    backgroundColor: 'white',
   },
   takePictureButton: {
     // display: 'flex',
