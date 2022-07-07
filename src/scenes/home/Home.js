@@ -34,6 +34,7 @@ import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
+import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import { defaultIcons } from '../PinData/PinData'
 
@@ -41,6 +42,7 @@ export default function Home() {
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
+  const [description, setDescription] = useState('')
   const [image, setImage] = useState(null)
   const [record, setRecord] = useState(null)
   const video = React.useRef(null)
@@ -93,6 +95,7 @@ export default function Home() {
           latitudeDelta: 0.055,
           longitudeDelta: 0.055,
         }}
+        annotations={collection(firestore, 'pins')}
       >
         <MapView.Marker
           coordinate={{
@@ -120,6 +123,8 @@ export default function Home() {
           <TextInput
             style={styles.textBox}
             placeholder="What's going on here?"
+            onChangeText={(newDescription) => setDescription(newDescription)}
+            defaultValue={description}
           />
           <Button
             label="Drop a Pin"
@@ -129,19 +134,25 @@ export default function Home() {
                 await addDoc(collection(firestore, 'pins'), {
                   category: 'Animal-Sightings',
                   coordinates: [Number(currLatitude), Number(currLongitude)],
-                  // text input matches description
-                  description: 'saw a rat',
+                  date: new Date(),
+                  description,
                   photo: '',
                   subcategory: 'Rat',
                   user: userData.id,
                   video: '',
                   visibleToOthers: true,
                 })
+
+                setDescription('')
               } catch (err) {
                 console.log(err)
               }
             }}
           />
+          <View>
+            <EmojiMenu />
+          </View>
+
           <View style={styles.iconHorizontal}>
             <IconButton
               icon="image-plus"
