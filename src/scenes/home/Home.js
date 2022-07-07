@@ -140,6 +140,7 @@ export default function Home() {
                   video: '',
                   visibleToOthers: true,
                 })
+                setDescription('')
               } catch (err) {
                 console.log(err)
               }
