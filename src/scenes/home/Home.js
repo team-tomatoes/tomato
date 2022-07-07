@@ -21,6 +21,7 @@ import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
+import defaultIcons from '../PinData/PinData'
 
 export default function Home() {
   const [location, setLocation] = useState(null)
@@ -81,6 +82,7 @@ export default function Home() {
             latitude: Number(currLatitude),
             longitude: Number(currLongitude),
           }}
+          image={defaultIcons[0].image}
         />
       </MapView>
 
