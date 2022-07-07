@@ -41,6 +41,7 @@ export default function Home() {
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
+  const [description, setDescription] = useState('')
   const [image, setImage] = useState(null)
   const [record, setRecord] = useState(null)
   const video = React.useRef(null)
@@ -120,6 +121,8 @@ export default function Home() {
           <TextInput
             style={styles.textBox}
             placeholder="What's going on here?"
+            onChangeText={(newDescription) => setDescription(newDescription)}
+            defaultValue={description}
           />
           <Button
             label="Drop a Pin"
@@ -130,7 +133,7 @@ export default function Home() {
                   category: 'Animal-Sightings',
                   coordinates: [Number(currLatitude), Number(currLongitude)],
                   // text input matches description
-                  description: 'saw a rat',
+                  description,
                   photo: '',
                   subcategory: 'Rat',
                   user: userData.id,
