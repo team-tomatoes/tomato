@@ -34,6 +34,7 @@ import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
+import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import { defaultIcons } from '../PinData/PinData'
 
@@ -141,12 +142,17 @@ export default function Home() {
                   video: '',
                   visibleToOthers: true,
                 })
+
                 setDescription('')
               } catch (err) {
                 console.log(err)
               }
             }}
           />
+          <View>
+            <EmojiMenu />
+          </View>
+
           <View style={styles.iconHorizontal}>
             <IconButton
               icon="image-plus"
