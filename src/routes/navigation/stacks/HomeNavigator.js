@@ -43,8 +43,22 @@ export const HomeNavigator = () => {
                   scheme === 'dark' ? null : () => <HeaderStyle />,
               }}
             />
-            <Stack.Screen name="Camera" component={CameraComp} options={{}} />
-            <Stack.Screen name="VidCamera" component={VidCamera} options={{}} />
+            <Stack.Screen
+              name="Camera"
+              component={CameraComp}
+              options={{
+                title: '',
+                headerStyle: { backgroundColor: '#f07167' },
+              }}
+            />
+            <Stack.Screen
+              name="VidCamera"
+              component={VidCamera}
+              options={{
+                title: '',
+                headerStyle: { backgroundColor: '#f07167' },
+              }}
+            />
           </Stack.Navigator>
         )}
       </HomeTitleContext.Consumer>

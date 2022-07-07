@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext, useLayoutEffect } from 'react'
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  useLayoutEffect,
+} from 'react'
 import {
   Text,
   View,
@@ -17,7 +23,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
-import { Video } from 'expo-av'
+import { Video, AVPlaybackStatus } from 'expo-av'
 import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
@@ -30,6 +36,8 @@ export default function Home() {
   const [currLongitude, setLongitude] = useState(null)
   const [image, setImage] = useState(null)
   const [record, setRecord] = useState(null)
+  const video = React.useRef(null)
+  const [videoStatus, setStatus] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
   const navigation = useNavigation()
   const [token, setToken] = useState('')
@@ -144,19 +152,32 @@ export default function Home() {
             />
           </View>
           <View style={styles.imageContainer}>
-            <Image
-              style={{ width: 200, height: 225, alignSelf: 'center' }}
-              source={{
-                uri: image,
-              }}
-            />
-            <Video
-              styles={{ width: 200, height: 225 }}
-              source={{ uri: record }}
-              useNativeControls
-              isLooping
-              resizeMode="contain"
-            />
+            {(() => {
+              if (image) {
+                return (
+                  <Image
+                    style={{ width: 200, height: 225, alignSelf: 'center' }}
+                    source={{
+                      uri: image,
+                    }}
+                  />
+                )
+              }
+              if (record) {
+                return (
+                  <Video
+                    ref={video}
+                    style={{ width: 320, height: 200, alignSelf: 'center' }}
+                    source={{
+                      uri: record,
+                    }}
+                    useNativeControls
+                    isLooping
+                    onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+                  />
+                )
+              }
+            })()}
           </View>
         </View>
       </KeyboardAvoidingView>

@@ -73,6 +73,7 @@ export default function VidCamera({ route }) {
               } else {
                 stopVideo()
                 setToggleOn(false)
+                navigation.navigate('Home')
               }
             }}
           >
