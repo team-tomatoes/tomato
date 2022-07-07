@@ -173,6 +173,7 @@ export default function Home() {
                     }}
                     useNativeControls
                     isLooping
+                    resizeMode="contain"
                     onPlaybackStatusUpdate={(status) => setStatus(() => status)}
                   />
                 )
