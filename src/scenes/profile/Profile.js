@@ -89,7 +89,6 @@ export default function Profile() {
           <Avatar
             size="xlarge"
             rounded
-            title="CY"
             source={{ uri: userData.avatar }}
           />
         </View>
@@ -97,14 +96,15 @@ export default function Profile() {
         <Text style={[styles.title, { color: colorScheme.text }]}>
           # here
         </Text>
-        {/* <Text style={[styles.field, { color: colorScheme.text }]}>Username:</Text>
+        <Text style={[styles.field, { color: colorScheme.text }]}>Username:</Text>
         <Text style={[styles.title, { color: colorScheme.text }]}>
-          {userData.userName} */}
+          {userData.userName}
+        </Text>
         <Text style={[styles.field, { color: colorScheme.text }]}>Name:</Text>
         <Text style={[styles.title, { color: colorScheme.text }]}>
           {userData.fullName}
         </Text>
-        <Text style={[styles.field, { color: colorScheme.text }]}>Mail:</Text>
+        <Text style={[styles.field, { color: colorScheme.text }]}>Email:</Text>
         <Text style={[styles.title, { color: colorScheme.text }]}>
           {userData.email}
         </Text>

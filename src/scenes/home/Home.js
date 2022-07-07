@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  Image,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
@@ -27,6 +28,7 @@ export default function Home() {
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
+  const [image, setImage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const navigation = useNavigation()
   const [token, setToken] = useState('')
@@ -81,7 +83,17 @@ export default function Home() {
             latitude: Number(currLatitude),
             longitude: Number(currLongitude),
           }}
-        />
+        >
+          <View
+            style={{
+              backgroundColor: '#007FFF',
+              padding: 10,
+              borderRadius: 20,
+              borderWidth: 4,
+              borderColor: 'white',
+            }}
+          />
+        </MapView.Marker>
       </MapView>
 
       <KeyboardAvoidingView
@@ -111,7 +123,11 @@ export default function Home() {
               color={Colors.grey500}
               size={30}
               // add in a filter option later, not necessary rn tho
-              onPress={() => alert('add photos from camera')}
+              onPress={() =>
+                navigation.navigate('Camera', {
+                  setImage,
+                })
+              }
             />
             <IconButton
               icon="video-plus"
@@ -119,6 +135,14 @@ export default function Home() {
               size={30}
               // add in a filter option later, not necessary rn tho
               onPress={() => alert('add videos from camera')}
+            />
+          </View>
+          <View>
+            <Image
+              style={{ width: 200, height: 200 }}
+              source={{
+                uri: image,
+              }}
             />
           </View>
         </View>
@@ -150,7 +174,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   textBox: {
-    height: 40,
+    height: 50,
     borderColor: 'gray',
     borderWidth: 1,
     backgroundColor: 'white',

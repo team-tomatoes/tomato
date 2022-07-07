@@ -3,8 +3,9 @@ import React from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { screenOptions } from './navigationProps/navigationProps'
 
-import { FollowNavigator } from '../stacks/topTabStacks/FollowNavigator'
-import { FollowerNavigator } from '../stacks/topTabStacks/FollowerNavigator'
+import { FriendsNavigator } from '../stacks/topTabStacks/FriendsNavigator'
+import { RequestsNavigator } from '../stacks/topTabStacks/RequestsNavigator'
+import { PinnedMap } from '../../../components/PinnedMap'
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -14,14 +15,20 @@ export const FollowFollowerNavigator = () => (
     screenOptions={screenOptions}
   >
     <Tab.Screen
-      name="FollowTab"
-      component={FollowNavigator}
-      options={{ tabBarLabel: 'Follow' }}
+      name="FriendsMap"
+      // need to filter by if friends show pins
+      component={PinnedMap}
+      options={{ tabBarLabel: 'Map' }}
     />
     <Tab.Screen
-      name="FollowerTab"
-      component={FollowerNavigator}
-      options={{ tabBarLabel: 'Follower' }}
+      name="FriendsTab"
+      component={FriendsNavigator}
+      options={{ tabBarLabel: 'Friends List' }}
+    />
+    <Tab.Screen
+      name="RequestsTab"
+      component={RequestsNavigator}
+      options={{ tabBarLabel: 'Requests' }}
     />
   </Tab.Navigator>
 )

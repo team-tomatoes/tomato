@@ -29,16 +29,16 @@ const DrawerMenu = (props) => (
     <View style={styles.head}>
       <FontIcon.Button
         name="times"
-        size={20}
+        size={10}
         color={colors.gray}
         backgroundColor="white"
         onPress={() => {
-          props.navigation.dispatch(DrawerActions.closeDrawer())
+          props.navigation.dispatch(DrawerActions.openDrawer())
         }}
       />
     </View>
     <View style={styles.main}>
-      <Text>Drawer Menu</Text>
+      <Text>Drawer</Text>
     </View>
   </SafeAreaView>
 )

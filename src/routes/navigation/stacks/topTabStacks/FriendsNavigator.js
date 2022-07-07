@@ -1,18 +1,17 @@
 import React, { useContext } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-
-import Follow from '../../../../scenes/follow'
+import Friends from '../../../../scenes/friendsList/FriendsList'
 
 const Stack = createStackNavigator()
 
-export const FollowNavigator = () => {
+export const FriendsNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={({ route, navigation }) => ({
         headerShown: false,
       })}
     >
-      <Stack.Screen name="Follow" component={Follow} />
+      <Stack.Screen name="Friends List" component={Friends} />
     </Stack.Navigator>
   )
 }
