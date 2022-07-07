@@ -1,7 +1,9 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 import { Text, View, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
+import { firestore } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import Button from '../../components/Button'
@@ -15,9 +17,39 @@ export default function Friends() {
   const colorScheme = {
     text: isDark ? colors.white : colors.primaryText,
   }
+  const userId = userData.id
+  const [friends, setFriends] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log('Friends List screen')
+    async function fetchFriends() {
+      try {
+        // const querySnapshot = await getDocs(collection(firestore, 'users'))
+        // querySnapshot.forEach((doc) => {
+        //   console.log(doc.id, ' => ', doc.data())
+        // })
+        // console.log('USER DATA FRIENDS', userData.friends)
+
+        const usersRef = collection(firestore, 'users')
+        const q = query(usersRef, where('id', '==', `${userId}`))
+
+        const userDetails = []
+
+        const querySnapshot = await getDocs(q)
+
+        querySnapshot.forEach((doc) => {
+          userDetails.push(doc.data())
+          console.log('USER DETAILS', userDetails)
+          // console.log(doc.id, ' => ', doc.data())
+        })
+        // console.log('QUERY SNAPSHOT', querySnapshot)
+        setFriends(userDetails.friends)
+        setLoading(false)
+      } catch (error) {
+        console.log('error fetching user friends!', error)
+      }
+    }
+    fetchFriends()
   }, [])
 
   return (
