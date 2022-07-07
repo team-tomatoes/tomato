@@ -21,7 +21,7 @@ import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import defaultIcons from '../PinData/PinData'
+import { defaultIcons } from '../PinData/PinData'
 
 export default function Home() {
   const [location, setLocation] = useState(null)
@@ -44,7 +44,6 @@ export default function Home() {
       setErrorMessage('Permission not granted')
     } else {
       const userLocation = await Location.getCurrentPositionAsync({})
-      console.log(userLocation)
       setLatitude(Number(userLocation.coords.latitude))
       setLongitude(Number(userLocation.coords.longitude))
       setLocation(userLocation)
