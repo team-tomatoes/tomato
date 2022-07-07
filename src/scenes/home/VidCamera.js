@@ -16,23 +16,25 @@ export default function VidCamera({ route }) {
 
   useEffect(() => {
     ;(async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync()
-      hasCameraPermission(status === 'granted')
+      const cameraStatus = await Camera.requestCameraPermissionsAsync()
+      setHasCameraPermission(cameraStatus.status === 'granted')
       const audioStatus = await Camera.requestMicrophonePermissionsAsync()
       setHasAudioPermission(audioStatus.status === 'granted')
     })()
   }, [])
 
-  if (hasCameraPermission === null) {
+  if (hasCameraPermission === null || hasAudioPermission === null) {
     return <View />
   }
-  if (hasCameraPermission === false) {
+  if (hasCameraPermission === false || hasAudioPermission === false) {
     return <Text>No access to camera</Text>
   }
 
   const takeVideo = async () => {
     if (cameraRef) {
-      const video = await cameraRef.recordAsync()
+      const video = await cameraRef.recordAsync({
+        maxDuration: 10,
+      })
       console.log(video)
       route.params.setRecord(video.uri)
     }

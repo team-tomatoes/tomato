@@ -89,7 +89,6 @@ export default function Profile() {
           <Avatar
             size="xlarge"
             rounded
-            // title="CY"
             source={{ uri: userData.avatar }}
           />
         </View>
