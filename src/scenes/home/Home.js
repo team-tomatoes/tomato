@@ -94,6 +94,7 @@ export default function Home() {
           latitudeDelta: 0.055,
           longitudeDelta: 0.055,
         }}
+        annotations={collection(firestore, 'pins')}
       >
         <MapView.Marker
           coordinate={{
