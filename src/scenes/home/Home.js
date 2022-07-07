@@ -21,7 +21,13 @@ import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
-import { doc, onSnapshot } from 'firebase/firestore'
+import {
+  doc,
+  addDoc,
+  onSnapshot,
+  getFirestore,
+  collection,
+} from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import Button from '../../components/Button'
@@ -118,14 +124,23 @@ export default function Home() {
           <Button
             label="Drop a Pin"
             color={colors.primary}
-            // Change onpress function to open a text field and image/video option
-            onPress={() =>
-              navigation.navigate('Detail', {
-                userData,
-                from: 'Home',
-                title: userData.email,
-              })
-            }
+            onPress={async () => {
+              try {
+                await addDoc(collection(firestore, 'pins'), {
+                  category: 'Animal-Sightings',
+                  coordinates: [Number(currLatitude), Number(currLongitude)],
+                  // text input matches description
+                  description: 'saw a rat',
+                  photo: '',
+                  subcategory: 'Rat',
+                  user: userData.id,
+                  video: '',
+                  visibleToOthers: true,
+                })
+              } catch (err) {
+                console.log(err)
+              }
+            }}
           />
           <View style={styles.iconHorizontal}>
             <IconButton
