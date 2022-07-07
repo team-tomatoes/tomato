@@ -28,7 +28,6 @@ import {
   getFirestore,
   collection,
 } from 'firebase/firestore'
-import firebase from 'firebase/app'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import Button from '../../components/Button'
@@ -133,7 +132,7 @@ export default function Home() {
                 await addDoc(collection(firestore, 'pins'), {
                   category: 'Animal-Sightings',
                   coordinates: [Number(currLatitude), Number(currLongitude)],
-                  date: firebase.firestore.Timestamp.now(),
+                  date: new Date(),
                   description,
                   photo: '',
                   subcategory: 'Rat',
