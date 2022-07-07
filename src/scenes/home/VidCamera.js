@@ -77,7 +77,16 @@ export default function VidCamera({ route }) {
             }}
           >
             <View style={styles.outerCircle}>
-              <View style={styles.innerCircle} />
+              <View
+                style={{
+                  borderWidth: 2,
+                  borderRadius: toggleOn ? '2' : '50',
+                  borderColor: 'red',
+                  height: toggleOn ? 20 : 40,
+                  width: toggleOn ? 20 : 40,
+                  backgroundColor: 'red',
+                }}
+              />
             </View>
           </TouchableOpacity>
         </View>
@@ -118,14 +127,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // marginBottom: 16,
     // marginTop: 16,
-  },
-  innerCircle: {
-    borderWidth: 2,
-    borderRadius: 50,
-    borderColor: 'red',
-    height: 40,
-    width: 40,
-    backgroundColor: 'red',
   },
   takePictureButton: {
     // display: 'flex',

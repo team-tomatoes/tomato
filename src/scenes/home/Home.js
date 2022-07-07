@@ -150,6 +150,13 @@ export default function Home() {
                 uri: image,
               }}
             />
+            <Video
+              styles={{ width: 200, height: 225 }}
+              source={{ uri: record }}
+              useNativeControls
+              isLooping
+              resizeMode="contain"
+            />
           </View>
         </View>
       </KeyboardAvoidingView>
