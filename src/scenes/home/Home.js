@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
   actionButtonIconDark: {
     fontSize: 20,
     height: 22,
-    color: '#6c757d',
+    color: 'black',
   },
   lightContent: {
     backgroundColor: colors.lightyellow,
