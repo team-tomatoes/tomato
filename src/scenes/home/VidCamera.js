@@ -74,6 +74,7 @@ export default function VidCamera({ route }) {
                 stopVideo()
                 setToggleOn(false)
                 navigation.navigate('Home')
+                route.params.setModalVisible(true)
               }
             }}
           >

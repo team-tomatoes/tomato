@@ -162,7 +162,7 @@ export default function Home() {
               isVisible={isModalVisible}
               onBackdropPress={() => setModalVisible(false)}
             >
-              <View style={{ backgroundColor: 'white', flex: 0.4 }}>
+              <View style={{ backgroundColor: 'white', flex: 0.6 }}>
                 <TextInput
                   style={styles.textBox}
                   placeholder="What's going on here?"
@@ -180,8 +180,12 @@ export default function Home() {
                     onPress={() =>
                       navigation.navigate('Camera', {
                         setImage,
+                        setModalVisible,
                       })
                     }
+                    onPressIn={() => {
+                      toggleModal()
+                    }}
                   />
                   <IconButton
                     icon="video-plus"
@@ -191,9 +195,52 @@ export default function Home() {
                     onPress={() =>
                       navigation.navigate('VidCamera', {
                         setRecord,
+                        setModalVisible,
                       })
                     }
+                    onPressIn={() => {
+                      toggleModal()
+                    }}
                   />
+                </View>
+                <View style={styles.imageContainer}>
+                  {(() => {
+                    if (image) {
+                      return (
+                        <Image
+                          style={{
+                            width: 250,
+                            height: 325,
+                            alignSelf: 'center',
+                          }}
+                          source={{
+                            uri: image,
+                          }}
+                        />
+                      )
+                    }
+                    if (record) {
+                      return (
+                        <Video
+                          ref={video}
+                          style={{
+                            width: 325,
+                            height: 250,
+                            alignSelf: 'center',
+                          }}
+                          source={{
+                            uri: record,
+                          }}
+                          useNativeControls
+                          isLooping
+                          resizeMode="contain"
+                          onPlaybackStatusUpdate={(status) =>
+                            setStatus(() => status)
+                          }
+                        />
+                      )
+                    }
+                  })()}
                 </View>
                 {/* <EmojiMenu currLatitude={currLatitude} currLongitude={currLongitude} description={description} user={userData.id} /> */}
                 <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
@@ -377,60 +424,6 @@ export default function Home() {
                 </View>
               </View>
             </Modal>
-          </View>
-
-          <View style={styles.iconHorizontal}>
-            <IconButton
-              icon="image-plus"
-              color={Colors.grey500}
-              size={30}
-              // add in a filter option later, not necessary rn tho
-              onPress={() =>
-                navigation.navigate('Camera', {
-                  setImage,
-                })
-              }
-            />
-            <IconButton
-              icon="video-plus"
-              color={Colors.grey500}
-              size={30}
-              // add in a filter option later, not necessary rn tho
-              onPress={() =>
-                navigation.navigate('VidCamera', {
-                  setRecord,
-                })
-              }
-            />
-          </View>
-          <View style={styles.imageContainer}>
-            {(() => {
-              if (image) {
-                return (
-                  <Image
-                    style={{ width: 200, height: 225, alignSelf: 'center' }}
-                    source={{
-                      uri: image,
-                    }}
-                  />
-                )
-              }
-              if (record) {
-                return (
-                  <Video
-                    ref={video}
-                    style={{ width: 320, height: 200, alignSelf: 'center' }}
-                    source={{
-                      uri: record,
-                    }}
-                    useNativeControls
-                    isLooping
-                    resizeMode="contain"
-                    onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-                  />
-                )
-              }
-            })()}
           </View>
         </View>
       </KeyboardAvoidingView>
