@@ -35,6 +35,7 @@ module.exports = {
     'no-unused-vars': 'warn',
     'arrow-body-style': 'warn',
     'react/destructuring-assignment': 'off',
+    'implicit-arrow-linebreak': 'off',
     'import/no-extraneous-dependencies': [
       'error',
       {
