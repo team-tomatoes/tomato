@@ -121,41 +121,13 @@ export default function Home() {
         </MapView.Marker>
       </MapView>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
         <View style={styles.main}>
-          <TextInput
-            style={styles.textBox}
-            placeholder="What's going on here?"
-            onChangeText={(newDescription) => setDescription(newDescription)}
-            defaultValue={description}
-          />
           <Button
             label="Drop a Pin"
             color={colors.primary}
             onPress={() => {
               toggleModal()
             }}
-            // onPress={async () => {
-            //   try {
-            //     await addDoc(collection(firestore, 'pins'), {
-            //       category: 'Animal-Sightings',
-            //       coordinates: [Number(currLatitude), Number(currLongitude)],
-            //       date: new Date(),
-            //       description,
-            //       photo: image,
-            //       subcategory: 'Rat',
-            //       user: userData.id,
-            //       video,
-            //       visibleToOthers: true,
-            //     })
-            //     setDescription('')
-            //   } catch (err) {
-            //     console.log(err)
-            //   }
-            // }}
           />
           <View>
             <Modal
@@ -273,7 +245,7 @@ export default function Home() {
                     >
                       <AntDesign
                         name="smile-circle"
-                        style={styles.actionButtonIcon}
+                        style={styles.actionButtonIconDark}
                       />
                     </ActionButton.Item>
                     <ActionButton.Item
@@ -301,7 +273,7 @@ export default function Home() {
                         }
                       }}
                     >
-                      <AntDesign name="star" style={styles.actionButtonIcon} />
+                      <AntDesign name="star" style={styles.actionButtonIconDark} />
                     </ActionButton.Item>
                     <ActionButton.Item
                       buttonColor="#ffd6a5"
@@ -328,7 +300,7 @@ export default function Home() {
                         }
                       }}
                     >
-                      <FontIcon name="dog" style={styles.actionButtonIcon} />
+                      <FontIcon name="dog" style={styles.actionButtonIconDark} />
                     </ActionButton.Item>
                     <ActionButton.Item
                       buttonColor="#fdffb6"
@@ -387,7 +359,7 @@ export default function Home() {
                     >
                       <FontIcon
                         name="people-arrows"
-                        style={styles.actionButtonIcon}
+                        style={styles.actionButtonIconDark}
                       />
                     </ActionButton.Item>
                     <ActionButton.Item
@@ -417,7 +389,7 @@ export default function Home() {
                     >
                       <FontIcon
                         name="hand-peace"
-                        style={styles.actionButtonIcon}
+                        style={styles.actionButtonIconDark}
                       />
                     </ActionButton.Item>
                   </ActionButton>
@@ -426,7 +398,6 @@ export default function Home() {
             </Modal>
           </View>
         </View>
-      </KeyboardAvoidingView>
     </ScreenTemplate>
   )
 }
@@ -462,12 +433,12 @@ const styles = StyleSheet.create({
     marginRight: 30,
   },
   main: {
-    flex: 0.5,
+    flex: 0.15,
     width: '100%',
     alignContent: 'center',
   },
   textBox: {
-    height: 50,
+    height: 90,
     borderColor: 'gray',
     borderWidth: 1,
     backgroundColor: 'white',
