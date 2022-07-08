@@ -95,6 +95,7 @@ export default function Home() {
           latitudeDelta: 0.055,
           longitudeDelta: 0.055,
         }}
+        // get all pins from db and reflect on map
         annotations={collection(firestore, 'pins')}
       >
         <MapView.Marker
@@ -117,7 +118,7 @@ export default function Home() {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
+        style={{ flex: 0.5 }}
       >
         <View style={styles.main}>
           <TextInput
@@ -142,7 +143,6 @@ export default function Home() {
                   video: '',
                   visibleToOthers: true,
                 })
-
                 setDescription('')
               } catch (err) {
                 console.log(err)
