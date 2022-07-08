@@ -30,13 +30,14 @@ import {
 } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
+import Modal from 'react-native-modal'
 import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import { defaultIcons } from '../PinData/PinData'
+import DropPinModal from '../../components/DescriptionEntry'
 
 export default function Home() {
   const [location, setLocation] = useState(null)
@@ -68,6 +69,10 @@ export default function Home() {
       setLongitude(Number(userLocation.coords.longitude))
       setLocation(userLocation)
     }
+  }
+  const [isModalVisible, setModalVisible] = useState(false)
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible)
   }
 
   useEffect(() => {
@@ -118,7 +123,7 @@ export default function Home() {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 0.5 }}
+        style={{ flex: 1 }}
       >
         <View style={styles.main}>
           <TextInput
@@ -130,27 +135,40 @@ export default function Home() {
           <Button
             label="Drop a Pin"
             color={colors.primary}
-            onPress={async () => {
-              try {
-                await addDoc(collection(firestore, 'pins'), {
-                  category: 'Animal-Sightings',
-                  coordinates: [Number(currLatitude), Number(currLongitude)],
-                  date: new Date(),
-                  description,
-                  photo: '',
-                  subcategory: 'Rat',
-                  user: userData.id,
-                  video: '',
-                  visibleToOthers: true,
-                })
-                setDescription('')
-              } catch (err) {
-                console.log(err)
-              }
+            onPress={() => {
+              toggleModal()
             }}
+            // onPress={async () => {
+            //   try {
+            //     await addDoc(collection(firestore, 'pins'), {
+            //       category: 'Animal-Sightings',
+            //       coordinates: [Number(currLatitude), Number(currLongitude)],
+            //       date: new Date(),
+            //       description,
+            //       photo: image,
+            //       subcategory: 'Rat',
+            //       user: userData.id,
+            //       video,
+            //       visibleToOthers: true,
+            //     })
+            //     setDescription('')
+            //   } catch (err) {
+            //     console.log(err)
+            //   }
+            // }}
           />
           <View>
             <EmojiMenu />
+
+            <Modal
+              isVisible={isModalVisible}
+            >
+              <View style={{ flex: 1 }}>
+                <Text>Hello!</Text>
+
+                <Button title="Hide modal" onPress={toggleModal} />
+              </View>
+            </Modal>
           </View>
 
           <View style={styles.iconHorizontal}>
