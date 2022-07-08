@@ -29,6 +29,9 @@ import {
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import Modal from 'react-native-modal'
+import FontIcon from 'react-native-vector-icons/FontAwesome5'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import ActionButton from 'react-native-circular-action-menu'
 import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
@@ -160,12 +163,6 @@ export default function Home() {
               onBackdropPress={() => setModalVisible(false)}
             >
               <View style={{ backgroundColor: 'white', flex: 0.4 }}>
-                {/* <IconButton
-                  icon="close-circle-outline"
-                  color={Colors.black}
-                  size={24}
-                  onPress={toggleModal}
-                /> */}
                 <TextInput
                   style={styles.textBox}
                   placeholder="What's going on here?"
@@ -198,7 +195,186 @@ export default function Home() {
                     }
                   />
                 </View>
-                <EmojiMenu />
+                {/* <EmojiMenu currLatitude={currLatitude} currLongitude={currLongitude} description={description} user={userData.id} /> */}
+                <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
+                  {/* Rest of App come ABOVE the action button component! */}
+                  <ActionButton buttonColor="#f07167">
+                    <ActionButton.Item
+                      buttonColor="#8EECF5"
+                      title="Mood"
+                      onPress={async () => {
+                        try {
+                          await addDoc(collection(firestore, 'pins'), {
+                            category: 'Mood',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          })
+                          setDescription('')
+                        } catch (err) {
+                          console.log(err)
+                        }
+                      }}
+                    >
+                      <AntDesign
+                        name="smile-circle"
+                        style={styles.actionButtonIcon}
+                      />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#FFCFD2"
+                      title="Recommendations"
+                      onPress={async () => {
+                        try {
+                          await addDoc(collection(firestore, 'pins'), {
+                            category: 'Recommendations',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          })
+                          setDescription('')
+                        } catch (err) {
+                          console.log(err)
+                        }
+                      }}
+                    >
+                      <AntDesign name="star" style={styles.actionButtonIcon} />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#ffd6a5"
+                      title="Animal-Sightings"
+                      onPress={async () => {
+                        try {
+                          await addDoc(collection(firestore, 'pins'), {
+                            category: 'Animal-Sightings',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          })
+                          setDescription('')
+                        } catch (err) {
+                          console.log(err)
+                        }
+                      }}
+                    >
+                      <FontIcon name="dog" style={styles.actionButtonIcon} />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#fdffb6"
+                      title="Safety"
+                      onPress={async () => {
+                        try {
+                          await addDoc(collection(firestore, 'pins'), {
+                            category: 'Safety',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          })
+                          setDescription('')
+                        } catch (err) {
+                          console.log(err)
+                        }
+                      }}
+                    >
+                      <AntDesign
+                        name="warning"
+                        style={styles.actionButtonIconDark}
+                      />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#B9FBC0"
+                      title="Missed-Connections"
+                      onPress={async () => {
+                        try {
+                          await addDoc(collection(firestore, 'pins'), {
+                            category: 'Missed-Connections',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          })
+                          setDescription('')
+                        } catch (err) {
+                          console.log(err)
+                        }
+                      }}
+                    >
+                      <FontIcon
+                        name="people-arrows"
+                        style={styles.actionButtonIcon}
+                      />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#CFBAF0"
+                      title="Meetups"
+                      onPress={async () => {
+                        try {
+                          await addDoc(collection(firestore, 'pins'), {
+                            category: 'Meetups',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          })
+                          setDescription('')
+                        } catch (err) {
+                          console.log(err)
+                        }
+                      }}
+                    >
+                      <FontIcon
+                        name="hand-peace"
+                        style={styles.actionButtonIcon}
+                      />
+                    </ActionButton.Item>
+                  </ActionButton>
+                </View>
               </View>
             </Modal>
           </View>
@@ -266,6 +442,16 @@ const styles = StyleSheet.create({
   // imageContainer: {
   //   position: 'absolute',
   // },
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  },
+  actionButtonIconDark: {
+    fontSize: 20,
+    height: 22,
+    color: '#6c757d',
+  },
   lightContent: {
     backgroundColor: colors.lightyellow,
     padding: 20,
