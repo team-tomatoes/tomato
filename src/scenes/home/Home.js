@@ -180,8 +180,12 @@ export default function Home() {
                     onPress={() =>
                       navigation.navigate('Camera', {
                         setImage,
+                        setModalVisible,
                       })
                     }
+                    onPressIn={() => {
+                      toggleModal()
+                    }}
                   />
                   <IconButton
                     icon="video-plus"
@@ -191,8 +195,12 @@ export default function Home() {
                     onPress={() =>
                       navigation.navigate('VidCamera', {
                         setRecord,
+                        setModalVisible,
                       })
                     }
+                    onPressIn={() => {
+                      toggleModal()
+                    }}
                   />
                 </View>
                 <View style={styles.imageContainer}>

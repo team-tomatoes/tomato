@@ -52,6 +52,7 @@ export default function CameraComp({ route }) {
                 console.log(photo)
                 route.params.setImage(photo.uri)
                 navigation.navigate('Home')
+                route.params.setModalVisible(true)
               }
             }}
           >
