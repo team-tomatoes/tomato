@@ -245,7 +245,7 @@ export default function Home() {
                     >
                       <AntDesign
                         name="smile-circle"
-                        style={styles.actionButtonIcon}
+                        style={styles.actionButtonIconDark}
                       />
                     </ActionButton.Item>
                     <ActionButton.Item
@@ -273,7 +273,7 @@ export default function Home() {
                         }
                       }}
                     >
-                      <AntDesign name="star" style={styles.actionButtonIcon} />
+                      <AntDesign name="star" style={styles.actionButtonIconDark} />
                     </ActionButton.Item>
                     <ActionButton.Item
                       buttonColor="#ffd6a5"
@@ -300,7 +300,7 @@ export default function Home() {
                         }
                       }}
                     >
-                      <FontIcon name="dog" style={styles.actionButtonIcon} />
+                      <FontIcon name="dog" style={styles.actionButtonIconDark} />
                     </ActionButton.Item>
                     <ActionButton.Item
                       buttonColor="#fdffb6"
@@ -359,7 +359,7 @@ export default function Home() {
                     >
                       <FontIcon
                         name="people-arrows"
-                        style={styles.actionButtonIcon}
+                        style={styles.actionButtonIconDark}
                       />
                     </ActionButton.Item>
                     <ActionButton.Item
@@ -389,7 +389,7 @@ export default function Home() {
                     >
                       <FontIcon
                         name="hand-peace"
-                        style={styles.actionButtonIcon}
+                        style={styles.actionButtonIconDark}
                       />
                     </ActionButton.Item>
                   </ActionButton>
