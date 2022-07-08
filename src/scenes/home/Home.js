@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   textBox: {
-    height: 50,
+    height: 90,
     borderColor: 'gray',
     borderWidth: 1,
     backgroundColor: 'white',
