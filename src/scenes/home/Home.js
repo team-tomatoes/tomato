@@ -13,8 +13,6 @@ import {
   TextInput,
   Image,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
   Platform,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
@@ -37,7 +35,6 @@ import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import DropPinModal from '../../components/DescriptionEntry'
 
 export default function Home() {
   const [location, setLocation] = useState(null)
@@ -158,15 +155,50 @@ export default function Home() {
             // }}
           />
           <View>
-            <EmojiMenu />
-
             <Modal
               isVisible={isModalVisible}
+              onBackdropPress={() => setModalVisible(false)}
             >
-              <View style={{ flex: 1 }}>
-                <Text>Hello!</Text>
-
-                <Button title="Hide modal" onPress={toggleModal} />
+              <View style={{ backgroundColor: 'white', flex: 0.4 }}>
+                {/* <IconButton
+                  icon="close-circle-outline"
+                  color={Colors.black}
+                  size={24}
+                  onPress={toggleModal}
+                /> */}
+                <TextInput
+                  style={styles.textBox}
+                  placeholder="What's going on here?"
+                  onChangeText={(newDescription) =>
+                    setDescription(newDescription)
+                  }
+                  defaultValue={description}
+                />
+                <View style={styles.iconHorizontal}>
+                  <IconButton
+                    icon="image-plus"
+                    color={Colors.grey500}
+                    size={30}
+                    // add in a filter option later, not necessary rn tho
+                    onPress={() =>
+                      navigation.navigate('Camera', {
+                        setImage,
+                      })
+                    }
+                  />
+                  <IconButton
+                    icon="video-plus"
+                    color={Colors.grey500}
+                    size={30}
+                    // add in a filter option later, not necessary rn tho
+                    onPress={() =>
+                      navigation.navigate('VidCamera', {
+                        setRecord,
+                      })
+                    }
+                  />
+                </View>
+                <EmojiMenu />
               </View>
             </Modal>
           </View>
@@ -251,7 +283,7 @@ const styles = StyleSheet.create({
     marginRight: 30,
   },
   main: {
-    flex: 0.4,
+    flex: 0.5,
     width: '100%',
     alignContent: 'center',
   },
