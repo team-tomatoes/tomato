@@ -224,8 +224,8 @@ export default function Home() {
                         <Video
                           ref={video}
                           style={{
-                            width: 320,
-                            height: 200,
+                            width: 325,
+                            height: 250,
                             alignSelf: 'center',
                           }}
                           source={{
@@ -424,31 +424,6 @@ export default function Home() {
                 </View>
               </View>
             </Modal>
-          </View>
-
-          <View style={styles.iconHorizontal}>
-            <IconButton
-              icon="image-plus"
-              color={Colors.grey500}
-              size={30}
-              // add in a filter option later, not necessary rn tho
-              onPress={() =>
-                navigation.navigate('Camera', {
-                  setImage,
-                })
-              }
-            />
-            <IconButton
-              icon="video-plus"
-              color={Colors.grey500}
-              size={30}
-              // add in a filter option later, not necessary rn tho
-              onPress={() =>
-                navigation.navigate('VidCamera', {
-                  setRecord,
-                })
-              }
-            />
           </View>
         </View>
       </KeyboardAvoidingView>
