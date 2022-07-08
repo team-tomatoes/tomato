@@ -40,8 +40,6 @@ import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
 
-
-
 export default function Home() {
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
@@ -226,28 +224,35 @@ export default function Home() {
                     title="Mood"
                     onPress={async () => {
                       try {
-                       console.log( await addDoc(collection(firestore, 'pins'), {
-                          category: 'Mood',
-                          coordinates: [
-                            Number(currLatitude),
-                            Number(currLongitude),
-                          ],
-                          date: new Date(),
-                          description,
-                          photo: image,
-                          subcategory: '',
-                          user: userData.id,
-                          video,
-                          visibleToOthers: true,
-                        }))
+                        const newPin = await addDoc(
+                          collection(firestore, 'pins'),
+                          {
+                            category: 'Mood',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          },
+                        )
 
+                        console.log('NEWPINKEY', newPin.key)
+
+                        const actions = []
+                        actions.push({ resize: { width: 300 } })
                         const manipulatorResult = await ImageManipulator.manipulateAsync(
-                          image,
+                          String(image),
+                          actions,
                           {
                             compress: 0.4,
                           },
                         )
-
 
                         // const localUri = await fetch(manipulatorResult.uri)
                         // const localBlob = await localUri.blob()
