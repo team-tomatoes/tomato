@@ -121,41 +121,13 @@ export default function Home() {
         </MapView.Marker>
       </MapView>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
         <View style={styles.main}>
-          <TextInput
-            style={styles.textBox}
-            placeholder="What's going on here?"
-            onChangeText={(newDescription) => setDescription(newDescription)}
-            defaultValue={description}
-          />
           <Button
             label="Drop a Pin"
             color={colors.primary}
             onPress={() => {
               toggleModal()
             }}
-            // onPress={async () => {
-            //   try {
-            //     await addDoc(collection(firestore, 'pins'), {
-            //       category: 'Animal-Sightings',
-            //       coordinates: [Number(currLatitude), Number(currLongitude)],
-            //       date: new Date(),
-            //       description,
-            //       photo: image,
-            //       subcategory: 'Rat',
-            //       user: userData.id,
-            //       video,
-            //       visibleToOthers: true,
-            //     })
-            //     setDescription('')
-            //   } catch (err) {
-            //     console.log(err)
-            //   }
-            // }}
           />
           <View>
             <Modal
@@ -426,7 +398,6 @@ export default function Home() {
             </Modal>
           </View>
         </View>
-      </KeyboardAvoidingView>
     </ScreenTemplate>
   )
 }
@@ -462,7 +433,7 @@ const styles = StyleSheet.create({
     marginRight: 30,
   },
   main: {
-    flex: 0.5,
+    flex: 0.15,
     width: '100%',
     alignContent: 'center',
   },
