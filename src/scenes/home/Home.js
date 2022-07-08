@@ -32,12 +32,15 @@ import Modal from 'react-native-modal'
 import FontIcon from 'react-native-vector-icons/FontAwesome5'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import ActionButton from 'react-native-circular-action-menu'
+import * as ImageManipulator from 'expo-image-manipulator'
 import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
+
+
 
 export default function Home() {
   const [location, setLocation] = useState(null)
@@ -223,7 +226,7 @@ export default function Home() {
                     title="Mood"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                       console.log( await addDoc(collection(firestore, 'pins'), {
                           category: 'Mood',
                           coordinates: [
                             Number(currLatitude),
@@ -236,7 +239,32 @@ export default function Home() {
                           user: userData.id,
                           video,
                           visibleToOthers: true,
-                        })
+                        }))
+
+                        const manipulatorResult = await ImageManipulator.manipulateAsync(
+                          image,
+                          {
+                            compress: 0.4,
+                          },
+                        )
+
+
+                        // const localUri = await fetch(manipulatorResult.uri)
+                        // const localBlob = await localUri.blob()
+                        // const filename = id + new Date().getTime()
+                        // const storageRef = ref(storage, `images/${pins.id}/${filename}`)
+                        // const uploadTask = uploadBytesResumable(storageRef, localBlob)
+                        // uploadTask.on('state_changed',
+                        //   (snapshot) => {
+                        //     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                        //     setProgress(`${parseInt(progress)}%`)
+                        //   },
+                        //   () => {
+                        //     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        //       setProgress('')
+                        //       setAvatar(downloadURL)
+                        //     })
+                        //   })
                         setDescription('')
                       } catch (err) {
                         console.log(err)
