@@ -19,7 +19,14 @@ import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
-import { doc, addDoc, onSnapshot, collection } from 'firebase/firestore'
+import {
+  doc,
+  addDoc,
+  getDoc,
+  setDoc,
+  onSnapshot,
+  collection,
+} from 'firebase/firestore'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
@@ -41,6 +48,10 @@ export default function Home() {
   const [currLongitude, setLongitude] = useState(null)
   const [description, setDescription] = useState('')
   const [image, setImage] = useState(null)
+
+  // used for firebase image storage
+  const [photo, setPhoto] = useState('')
+
   const [record, setRecord] = useState(null)
   const video = React.useRef(null)
   const [videoStatus, setStatus] = useState({})
@@ -228,7 +239,6 @@ export default function Home() {
                             ],
                             date: new Date(),
                             description,
-                            photo: image,
                             subcategory: '',
                             user: userData.id,
                             video,
@@ -262,22 +272,50 @@ export default function Home() {
                           uploadTask.on(
                             'state_changed',
                             (snapshot) => {
+                              // Observe state change events such as progress, pause, and resume
+                              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                               const progress =
                                 (snapshot.bytesTransferred /
                                   snapshot.totalBytes) *
                                 100
-                              setProgress(`${parseInt(progress)}%`)
+                              console.log(`Upload is ${progress}% done`)
+                            },
+                            (error) => {
+                              // Handle unsuccessful uploads
+                              console.log(error)
                             },
                             () => {
+                              // Handle successful uploads on complete
+                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                               getDownloadURL(uploadTask.snapshot.ref).then(
-                                (downloadURL) => {
-                                  setProgress('')
-                                  console.log(downloadURL)
+                                async (downloadURL) => {
+                                  setPhoto(downloadURL)
+                                  console.log(photo)
+                                  console.log('File available at', downloadURL)
+                                  // get the document we just made so that we can set the image in there as well
+                                  const docSnap = await getDoc(docRef)
+
+                                  if (docSnap.exists()) {
+                                    // console.log(
+                                    //   'Document data:',
+                                    //   docSnap.data(),
+                                    // )
+                                    setDoc(
+                                      docRef,
+                                      { picture: downloadURL },
+                                      { merge: true },
+                                    )
+                                  } else {
+                                    // doc.data() will be undefined in this case
+                                    console.log('No such document!')
+                                  }
                                 },
                               )
                             },
                           )
                         }
+
+                        // clear description from textbox
                         setDescription('')
                         // remove the image from state so it clears out
                         setImage(null)
