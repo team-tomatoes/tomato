@@ -219,7 +219,7 @@ export default function Home() {
                       />
                     )
                   }
-                })()}
+                })}
               </View>
               <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
                 {/* Rest of App come ABOVE the action button component! */}

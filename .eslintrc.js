@@ -32,6 +32,7 @@ module.exports = {
     'no-use-before-define': 'off',
     'prefer-destructuring': 'off',
     'react/jsx-boolean-value': 'off',
+    'react/jsx-curly-newline': 'off',
     'no-unused-vars': 'warn',
     'operator-linebreak': 'off',
     'arrow-body-style': 'warn',
