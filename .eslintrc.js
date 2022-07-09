@@ -33,6 +33,7 @@ module.exports = {
     'prefer-destructuring': 'off',
     'react/jsx-boolean-value': 'off',
     'no-unused-vars': 'warn',
+    'operator-linebreak': 'off',
     'arrow-body-style': 'warn',
     'react/destructuring-assignment': 'off',
     'implicit-arrow-linebreak': 'off',
