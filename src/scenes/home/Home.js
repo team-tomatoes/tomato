@@ -272,8 +272,6 @@ export default function Home() {
                           uploadTask.on(
                             'state_changed',
                             (snapshot) => {
-                              // Observe state change events such as progress, pause, and resume
-                              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                               const progress =
                                 (snapshot.bytesTransferred /
                                   snapshot.totalBytes) *
@@ -290,7 +288,6 @@ export default function Home() {
                               getDownloadURL(uploadTask.snapshot.ref).then(
                                 async (downloadURL) => {
                                   setPhoto(downloadURL)
-                                  console.log(photo)
                                   console.log('File available at', downloadURL)
                                   // get the document we just made so that we can set the image in there as well
                                   const docSnap = await getDoc(docRef)
