@@ -292,18 +292,15 @@ export default function Home() {
                                   // get the document we just made so that we can set the image in there as well
                                   const docSnap = await getDoc(docRef)
 
+                                  // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
-                                    // console.log(
-                                    //   'Document data:',
-                                    //   docSnap.data(),
-                                    // )
                                     setDoc(
                                       docRef,
                                       { picture: downloadURL },
                                       { merge: true },
                                     )
                                   } else {
-                                    // doc.data() will be undefined in this case
+                                    // otherwise, the pin does not exist
                                     console.log('No such document!')
                                   }
                                 },
