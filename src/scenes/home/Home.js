@@ -19,13 +19,8 @@ import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
-import {
-  doc,
-  addDoc,
-  onSnapshot,
-  getFirestore,
-  collection,
-} from 'firebase/firestore'
+import { doc, addDoc, onSnapshot, collection } from 'firebase/firestore'
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import Modal from 'react-native-modal'
@@ -34,7 +29,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import ActionButton from 'react-native-circular-action-menu'
 import * as ImageManipulator from 'expo-image-manipulator'
 import Button from '../../components/Button'
-import { firestore } from '../../firebase/config'
+import { firestore, storage } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { EmojiMenu } from '../../components/EmojiMenu'
@@ -52,6 +47,7 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState(null)
   const navigation = useNavigation()
   const [token, setToken] = useState('')
+  const [progress, setProgress] = useState('')
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
@@ -149,7 +145,6 @@ export default function Home() {
                   icon="image-plus"
                   color={Colors.grey500}
                   size={30}
-                  // add in a filter option later, not necessary rn tho
                   onPress={() =>
                     navigation.navigate('Camera', {
                       setImage,
@@ -215,7 +210,6 @@ export default function Home() {
                   }
                 })()}
               </View>
-              {/* <EmojiMenu currLatitude={currLatitude} currLongitude={currLongitude} description={description} user={userData.id} /> */}
               <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
                 {/* Rest of App come ABOVE the action button component! */}
                 <ActionButton buttonColor="#f07167">
@@ -224,7 +218,7 @@ export default function Home() {
                     title="Mood"
                     onPress={async () => {
                       try {
-                        const newPin = await addDoc(
+                        const docRef = await addDoc(
                           collection(firestore, 'pins'),
                           {
                             category: 'Mood',
@@ -242,35 +236,53 @@ export default function Home() {
                           },
                         )
 
-                        console.log('NEWPINKEY', newPin.key)
+                        // If there's an image on state, send the image into the DB
+                        if (image) {
+                          const actions = []
+                          actions.push({ resize: { width: 300 } })
+                          const manipulatorResult = await ImageManipulator.manipulateAsync(
+                            String(image),
+                            actions,
+                            {
+                              compress: 0.4,
+                            },
+                          )
 
-                        const actions = []
-                        actions.push({ resize: { width: 300 } })
-                        const manipulatorResult = await ImageManipulator.manipulateAsync(
-                          String(image),
-                          actions,
-                          {
-                            compress: 0.4,
-                          },
-                        )
-
-                        // const localUri = await fetch(manipulatorResult.uri)
-                        // const localBlob = await localUri.blob()
-                        // const filename = id + new Date().getTime()
-                        // const storageRef = ref(storage, `images/${pins.id}/${filename}`)
-                        // const uploadTask = uploadBytesResumable(storageRef, localBlob)
-                        // uploadTask.on('state_changed',
-                        //   (snapshot) => {
-                        //     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                        //     setProgress(`${parseInt(progress)}%`)
-                        //   },
-                        //   () => {
-                        //     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        //       setProgress('')
-                        //       setAvatar(downloadURL)
-                        //     })
-                        //   })
+                          const localUri = await fetch(manipulatorResult.uri)
+                          const localBlob = await localUri.blob()
+                          const filename = docRef.id + new Date().getTime()
+                          const storageRef = ref(
+                            storage,
+                            `images/${docRef.id}/${filename}`,
+                          )
+                          const uploadTask = uploadBytesResumable(
+                            storageRef,
+                            localBlob,
+                          )
+                          uploadTask.on(
+                            'state_changed',
+                            (snapshot) => {
+                              const progress =
+                                (snapshot.bytesTransferred /
+                                  snapshot.totalBytes) *
+                                100
+                              setProgress(`${parseInt(progress)}%`)
+                            },
+                            () => {
+                              getDownloadURL(uploadTask.snapshot.ref).then(
+                                (downloadURL) => {
+                                  setProgress('')
+                                  console.log(downloadURL)
+                                },
+                              )
+                            },
+                          )
+                        }
                         setDescription('')
+                        // remove the image from state so it clears out
+                        setImage(null)
+                        // close the modal once the transaction is finished
+                        toggleModal()
                       } catch (err) {
                         console.log(err)
                       }
