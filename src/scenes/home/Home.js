@@ -51,6 +51,7 @@ export default function Home() {
 
   // used for firebase image storage
   const [photo, setPhoto] = useState('')
+  const [videorec, setVideo] = useState('')
 
   const [record, setRecord] = useState(null)
   const video = React.useRef(null)
@@ -58,7 +59,7 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState(null)
   const navigation = useNavigation()
   const [token, setToken] = useState('')
-  const [progress, setProgress] = useState('')
+
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
@@ -113,9 +114,7 @@ export default function Home() {
           useNativeControls
           isLooping
           resizeMode="contain"
-          onPlaybackStatusUpdate={(status) =>
-            setStatus(() => status)
-          }
+          onPlaybackStatusUpdate={(status) => setStatus(() => status)}
         />
       )
     }
@@ -220,9 +219,7 @@ export default function Home() {
                   }}
                 />
               </View>
-              <View style={styles.imageContainer}>
-                {showPhotoVideo()}
-              </View>
+              <View style={styles.imageContainer}>{showPhotoVideo()}</View>
               <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
                 {/* Rest of App come ABOVE the action button component! */}
                 <ActionButton buttonColor="#f07167">
@@ -243,7 +240,6 @@ export default function Home() {
                             description,
                             subcategory: '',
                             user: userData.id,
-                            video,
                             visibleToOthers: true,
                           },
                         )
@@ -296,9 +292,54 @@ export default function Home() {
 
                                   // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
+                                    setDoc(docRef, { photo }, { merge: true })
+                                  } else {
+                                    // otherwise, the pin does not exist
+                                    console.log('No such document!')
+                                  }
+                                },
+                              )
+                            },
+                          )
+                        }
+                        if (record) {
+                          const fetchedVideo = await fetch(record)
+                          const localBlob = await fetchedVideo.blob()
+                          const filename = docRef.id + new Date().getTime()
+                          const storageRef = ref(
+                            storage,
+                            `videos/${docRef.id}/${filename}`,
+                          )
+                          const uploadTask = uploadBytesResumable(
+                            storageRef,
+                            localBlob,
+                          )
+                          uploadTask.on(
+                            'state_changed',
+                            (snapshot) => {
+                              const progress =
+                                (snapshot.bytesTransferred /
+                                  snapshot.totalBytes) *
+                                100
+                              console.log(`Upload is ${progress}% done`)
+                            },
+                            (error) => {
+                              // Handle unsuccessful uploads
+                              console.log(error)
+                            },
+                            () => {
+                              // Handle successful uploads on complete
+                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                              getDownloadURL(uploadTask.snapshot.ref).then(
+                                async (downloadURL) => {
+                                  setVideo(downloadURL)
+                                  console.log('File available at', downloadURL)
+                                  // get the document we just made so that we can set the image in there as well
+                                  const docSnap = await getDoc(docRef)
+                                  if (docSnap.exists()) {
                                     setDoc(
                                       docRef,
-                                      { photo },
+                                      { videorec },
                                       { merge: true },
                                     )
                                   } else {
@@ -316,6 +357,7 @@ export default function Home() {
                         // remove the image from state so it clears out
                         setImage(null)
                         // close the modal once the transaction is finished
+                        setRecord(null)
                         toggleModal()
                       } catch (err) {
                         console.log(err)

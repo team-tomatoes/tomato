@@ -1,10 +1,11 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
+import { getDocs, collection, query, where } from 'firebase/firestore'
+import { firestore } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
-import Button from '../../components/Button'
 import ScreenTemplate from '../../components/ScreenTemplate'
 
 export default function Friends() {
@@ -15,9 +16,28 @@ export default function Friends() {
   const colorScheme = {
     text: isDark ? colors.white : colors.primaryText,
   }
+  const uid = userData.id
+  const [friends, setFriends] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log('Friends List screen')
+    async function fetchFriends() {
+      try {
+        const friendsRef = collection(firestore, 'friendships')
+        const q = query(friendsRef, where('id', '==', `${uid}`))
+        const friendSnapshot = await getDocs(q)
+        let friendData = []
+        const friendsArr = friendSnapshot.forEach((doc) => {
+          friendData = doc.get('friendsList')
+        })
+        setFriends(friendData)
+        console.log('FRIENDS', friends)
+        setLoading(false)
+      } catch (error) {
+        console.log('error fetching user friends!', error)
+      }
+    }
+    fetchFriends()
   }, [])
 
   return (
@@ -25,21 +45,8 @@ export default function Friends() {
       <View style={[styles.container]}>
         <View style={{ width: '100%' }}>
           <Text style={[styles.field, { color: colorScheme.text }]}>
-            Friends List goes here
+            {friends && friends.map((friend) => friend.userName)}
           </Text>
-          <Button
-            label="Open Modal"
-            color={colors.tertiary}
-            onPress={() => {
-              navigation.navigate('ModalStacks', {
-                screen: 'Post',
-                params: {
-                  data: userData,
-                  from: 'Follow screen',
-                },
-              })
-            }}
-          />
         </View>
       </View>
     </ScreenTemplate>

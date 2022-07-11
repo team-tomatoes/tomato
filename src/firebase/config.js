@@ -23,7 +23,7 @@ const app = initializeApp(firebaseKey)
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 })
-const firestore = getFirestore()
+const firestore = getFirestore(app)
 const storage = getStorage()
 
 export { auth, firestore, storage }
