@@ -59,22 +59,22 @@ export const PinnedMap = () => {
       {pins.map((pin) => {
         const icon = () => {
           if (pin[2] === 'Mood') {
-            return require('../../assets/pinEmojis/blueSmiley.png')
+            return require('../../assets/pinEmojis/blueSmileyPastel.png')
           }
           if (pin[2] === 'Recommendations') {
-            return require('../../assets/pinEmojis/pinkStar.png')
+            return require('../../assets/pinEmojis/pinkStarPastel.png')
           }
           if (pin[2] === 'Animal-Sightings') {
-            return require('../../assets/pinEmojis/orangeDog.png')
+            return require('../../assets/pinEmojis/orangeDogPastel.png')
           }
           if (pin[2] === 'Safety') {
-            return require('../../assets/pinEmojis/yellowSafety.png')
+            return require('../../assets/pinEmojis/yellowSafetyPastel.png')
           }
           if (pin[2] === 'Missed-Connections') {
-            return require('../../assets/pinEmojis/greenConnections.png')
+            return require('../../assets/pinEmojis/greenConnectionsPastel.png')
           }
           if (pin[2] === 'Meetups') {
-            return require('../../assets/pinEmojis/purplePeace.png')
+            return require('../../assets/pinEmojis/purplePeacePastel.png')
           }
         }
         return (
