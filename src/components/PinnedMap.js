@@ -36,6 +36,8 @@ export const PinnedMap = () => {
           document.data().coordinates[0],
           document.data().coordinates[1],
           document.data().category,
+          document.data().description,
+          document.data().user,
           document.id,
         ])
         console.log(document.data())
@@ -64,14 +66,35 @@ export const PinnedMap = () => {
       }}
     >
       {pins.map((pin) => {
+        const icon = () => {
+          if (pin[2] === 'Mood') {
+            return require('../../assets/pinEmojis/blueSmiley.png')
+          }
+          if (pin[2] === 'Recommendations') {
+            return require('../../assets/pinEmojis/pinkStar.png')
+          }
+          if (pin[2] === 'Animal-Sightings') {
+            return require('../../assets/pinEmojis/orangeDog.png')
+          }
+          if (pin[2] === 'Safety') {
+            return require('../../assets/pinEmojis/yellowSafety.png')
+          }
+          if (pin[2] === 'Missed-Connections') {
+            return require('../../assets/pinEmojis/greenConnections.png')
+          }
+          if (pin[2] === 'Meetups') {
+            return require('../../assets/pinEmojis/purplePeace.png')
+          }
+        }
         return (
           <MapView.Marker
-            key={pin[3]}
+            key={pin[5]}
             coordinate={{
               latitude: pin[0],
               longitude: pin[1],
             }}
-            image={require}
+            description={pin[3]}
+            image={icon()}
           />
         )
       })}

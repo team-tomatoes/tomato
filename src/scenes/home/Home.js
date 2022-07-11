@@ -310,7 +310,6 @@ export default function Home() {
                             },
                           )
                         }
-                        const newPin = new google.maps.Marker()
 
                         // clear description from textbox
                         setDescription('')
