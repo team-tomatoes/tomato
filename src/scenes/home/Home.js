@@ -224,15 +224,8 @@ export default function Home() {
                   color="#f07167"
                   size={30}
                   // add in a filter option later, not necessary rn tho
-                  onPress={() =>
-                    navigation.navigate('VidCamera', {
-                      setRecord,
-                      setModalVisible,
-                    })
+                  onPress={() => { setImage(null) }
                   }
-                  onPressIn={() => {
-                    toggleModal()
-                  }}
                 />
               </View>
               <View style={styles.imageContainer}>
