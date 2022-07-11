@@ -224,7 +224,7 @@ export default function Home() {
                   color="#f07167"
                   size={30}
                   // add in a filter option later, not necessary rn tho
-                  onPress={() => { setImage(null) }
+                  onPress={() => { setImage(null); setRecord(null) }
                   }
                 />
               </View>
