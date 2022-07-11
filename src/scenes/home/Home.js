@@ -58,7 +58,6 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState(null)
   const navigation = useNavigation()
   const [token, setToken] = useState('')
-  const [progress, setProgress] = useState('')
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
@@ -310,7 +309,6 @@ export default function Home() {
                             },
                           )
                         }
-
                         // clear description from textbox
                         setDescription('')
                         // remove the image from state so it clears out
@@ -332,7 +330,7 @@ export default function Home() {
                     title="Recommendations"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Recommendations',
                           coordinates: [
                             Number(currLatitude),
@@ -362,7 +360,7 @@ export default function Home() {
                     title="Animal-Sightings"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Animal-Sightings',
                           coordinates: [
                             Number(currLatitude),
@@ -389,7 +387,7 @@ export default function Home() {
                     title="Safety"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Safety',
                           coordinates: [
                             Number(currLatitude),
@@ -419,7 +417,7 @@ export default function Home() {
                     title="Missed-Connections"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Missed-Connections',
                           coordinates: [
                             Number(currLatitude),
@@ -449,7 +447,7 @@ export default function Home() {
                     title="Meetups"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Meetups',
                           coordinates: [
                             Number(currLatitude),
