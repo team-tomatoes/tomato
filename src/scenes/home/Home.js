@@ -35,6 +35,7 @@ import { firestore, storage } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
+import { mapStyle } from '../../constants/mapStyle'
 
 export default function Home() {
   const [location, setLocation] = useState(null)
@@ -138,8 +139,7 @@ export default function Home() {
           latitudeDelta: 0.0085,
           longitudeDelta: 0.0085,
         }}
-        // get all pins from db and reflect on map
-        annotations={collection(firestore, 'pins')}
+        customMapStyle={mapStyle}
       >
         <MapView.Marker
           coordinate={{

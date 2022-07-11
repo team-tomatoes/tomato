@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import { mapStyle } from '../constants/mapStyle'
 import {
   collection,
   query,
@@ -14,6 +15,7 @@ import { firestore } from '../firebase/config'
 
 export const MyPinsMap = () => {
   const { userData } = useContext(UserDataContext)
+  const [errorMessage, setErrorMessage] = useState(null)
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
@@ -72,9 +74,10 @@ export const MyPinsMap = () => {
       initialRegion={{
         latitude: 40.77949,
         longitude: -73.96634,
-        latitudeDelta: 0.055,
-        longitudeDelta: 0.055,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
       }}
+      customMapStyle={mapStyle}
     >
       {pins.map((pin) => {
         const icon = () => {

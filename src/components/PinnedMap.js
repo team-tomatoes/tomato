@@ -9,6 +9,7 @@ import {
   setDoc,
   getDocs,
 } from 'firebase/firestore'
+import { mapStyle } from '../constants/mapStyle'
 import { firestore } from '../firebase/config'
 
 export const PinnedMap = () => {
@@ -53,6 +54,7 @@ export const PinnedMap = () => {
         latitudeDelta: 0.055,
         longitudeDelta: 0.055,
       }}
+      customMapStyle={mapStyle}
     >
       {pins.map((pin) => {
         const icon = () => {
