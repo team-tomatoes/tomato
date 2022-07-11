@@ -12,8 +12,10 @@ export default function App() {
   const { userData } = useContext(UserDataContext)
 
   return (
-    <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <NavigationContainer theme={DarkTheme}>
       {userData ? <RootStack /> : <LoginNavigator />}
     </NavigationContainer>
   )
 }
+
+// <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>

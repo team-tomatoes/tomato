@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import {
   collection,
@@ -10,16 +10,39 @@ import {
   getDocs,
 } from 'firebase/firestore'
 import { mapStyle } from '../constants/mapStyle'
+import { UserDataContext } from '../context/UserDataContext'
 import { firestore } from '../firebase/config'
 
-export const PinnedMap = () => {
+export const MyPinsMap = () => {
+  const { userData } = useContext(UserDataContext)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
   const [pins, setPins] = useState([])
+
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      setErrorMessage('Permission not granted')
+    } else {
+      const userLocation = await Location.getCurrentPositionAsync({})
+      setLatitude(Number(userLocation.coords.latitude))
+      setLongitude(Number(userLocation.coords.longitude))
+      setLocation(userLocation)
+    }
+  }
 
   const loadAllPins = async () => {
     try {
       const pinsArr = []
-      const querySnapshot = await getDocs(collection(firestore, 'pins'))
-      // console.log(querySnapshot.data())
+      const q = query(
+        collection(firestore, 'pins'),
+        where('user', '==', userData.id),
+      )
+
+      const querySnapshot = await getDocs(q)
+
       querySnapshot.forEach((document) => {
         // doc.data() is never undefined for query doc snapshots
         pinsArr.push([
@@ -51,8 +74,8 @@ export const PinnedMap = () => {
       initialRegion={{
         latitude: 40.77949,
         longitude: -73.96634,
-        latitudeDelta: 0.2,
-        longitudeDelta: 0.2,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
       }}
       customMapStyle={mapStyle}
     >

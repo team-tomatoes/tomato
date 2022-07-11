@@ -9,6 +9,7 @@ import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import { PinnedMap } from '../../components/PinnedMap'
+import { MyPinsMap } from '../../components/MyPinsMap'
 
 export default function MyPins() {
   const navigation = useNavigation()
@@ -66,7 +67,7 @@ export default function MyPins() {
 
   return (
     <ScreenTemplate>
-      <PinnedMap />
+      <MyPinsMap />
     </ScreenTemplate>
   )
 }

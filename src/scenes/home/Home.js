@@ -1,23 +1,18 @@
 import React, {
   useEffect,
   useState,
-  useRef,
   useContext,
-  useLayoutEffect,
 } from 'react'
 import {
-  Text,
   View,
-  ScrollView,
   StyleSheet,
   TextInput,
   Image,
   KeyboardAvoidingView,
-  Platform,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
 import {
   doc,
@@ -39,9 +34,8 @@ import Button from '../../components/Button'
 import { firestore, storage } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
-import { blueSmiley } from '../../../assets/pin-emojis'
-import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
+import { mapStyle } from '../../constants/mapStyle'
 
 export default function Home() {
   const [location, setLocation] = useState(null)
@@ -78,6 +72,7 @@ export default function Home() {
       setLocation(userLocation)
     }
   }
+
   const [isModalVisible, setModalVisible] = useState(false)
   const toggleModal = () => {
     setModalVisible(!isModalVisible)
@@ -113,9 +108,7 @@ export default function Home() {
           useNativeControls
           isLooping
           resizeMode="contain"
-          onPlaybackStatusUpdate={(status) =>
-            setStatus(() => status)
-          }
+          onPlaybackStatusUpdate={(status) => setStatus(() => status)}
         />
       )
     }
@@ -146,8 +139,7 @@ export default function Home() {
           latitudeDelta: 0.0085,
           longitudeDelta: 0.0085,
         }}
-        // get all pins from db and reflect on map
-        annotations={collection(firestore, 'pins')}
+        customMapStyle={mapStyle}
       >
         <MapView.Marker
           coordinate={{
@@ -228,9 +220,7 @@ export default function Home() {
                   }
                 />
               </View>
-              <View style={styles.imageContainer}>
-                {showPhotoVideo()}
-              </View>
+              <View style={styles.imageContainer}>{showPhotoVideo()}</View>
               <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
                 {/* Rest of App come ABOVE the action button component! */}
                 <ActionButton buttonColor="#f07167">
@@ -304,11 +294,7 @@ export default function Home() {
 
                                   // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
-                                    setDoc(
-                                      docRef,
-                                      { photo },
-                                      { merge: true },
-                                    )
+                                    setDoc(docRef, { photo }, { merge: true })
                                   } else {
                                     // otherwise, the pin does not exist
                                     console.log('No such document!')
@@ -318,8 +304,6 @@ export default function Home() {
                             },
                           )
                         }
-                        const newPin = new google.maps.Marker()
-
                         // clear description from textbox
                         setDescription('')
                         // remove the image from state so it clears out
@@ -341,21 +325,88 @@ export default function Home() {
                     title="Recommendations"
                     onPress={async () => {
                       try {
-                        const docRef = await addDoc(collection(firestore, 'pins'), {
-                          category: 'Recommendations',
-                          coordinates: [
-                            Number(currLatitude),
-                            Number(currLongitude),
-                          ],
-                          date: new Date(),
-                          description,
-                          photo: image,
-                          subcategory: '',
-                          user: userData.id,
-                          video,
-                          visibleToOthers: true,
-                        })
+                        const docRef = await addDoc(
+                          collection(firestore, 'pins'),
+                          {
+                            category: 'Recommendations',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          },
+                        )
+                        // If there's an image on state, send the image into the DB
+                        if (image) {
+                          const actions = []
+                          actions.push({ resize: { width: 300 } })
+                          const manipulatorResult = await ImageManipulator.manipulateAsync(
+                            String(image),
+                            actions,
+                            {
+                              compress: 0.4,
+                            },
+                          )
+
+                          const localUri = await fetch(manipulatorResult.uri)
+                          const localBlob = await localUri.blob()
+                          const filename = docRef.id + new Date().getTime()
+                          const storageRef = ref(
+                            storage,
+                            `images/${docRef.id}/${filename}`,
+                          )
+                          const uploadTask = uploadBytesResumable(
+                            storageRef,
+                            localBlob,
+                          )
+                          uploadTask.on(
+                            'state_changed',
+                            (snapshot) => {
+                              const progress =
+                                (snapshot.bytesTransferred /
+                                  snapshot.totalBytes) *
+                                100
+                              console.log(`Upload is ${progress}% done`)
+                            },
+                            (error) => {
+                              // Handle unsuccessful uploads
+                              console.log(error)
+                            },
+                            () => {
+                              // Handle successful uploads on complete
+                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                              getDownloadURL(uploadTask.snapshot.ref).then(
+                                async (downloadURL) => {
+                                  setPhoto(downloadURL)
+                                  console.log('File available at', downloadURL)
+                                  // get the document we just made so that we can set the image in there as well
+                                  const docSnap = await getDoc(docRef)
+
+                                  // if the pin document that we just made, add the picture to that specific pin file
+                                  if (docSnap.exists()) {
+                                    setDoc(docRef, { photo }, { merge: true })
+                                  } else {
+                                    // otherwise, the pin does not exist
+                                    console.log('No such document!')
+                                  }
+                                },
+                              )
+                            },
+                          )
+                        }
+                        // clear the download link from state
+                        setPhoto('')
+                        // clear description from textbox
                         setDescription('')
+                        // remove the image from state so it clears out
+                        setImage(null)
+                        // close the modal once the transaction is finished
+                        toggleModal()
                       } catch (err) {
                         console.log(err)
                       }
@@ -371,20 +422,23 @@ export default function Home() {
                     title="Animal-Sightings"
                     onPress={async () => {
                       try {
-                        const docRef = await addDoc(collection(firestore, 'pins'), {
-                          category: 'Animal-Sightings',
-                          coordinates: [
-                            Number(currLatitude),
-                            Number(currLongitude),
-                          ],
-                          date: new Date(),
-                          description,
-                          photo: image,
-                          subcategory: '',
-                          user: userData.id,
-                          video,
-                          visibleToOthers: true,
-                        })
+                        const docRef = await addDoc(
+                          collection(firestore, 'pins'),
+                          {
+                            category: 'Animal-Sightings',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          },
+                        )
                         setDescription('')
                       } catch (err) {
                         console.log(err)
@@ -398,20 +452,23 @@ export default function Home() {
                     title="Safety"
                     onPress={async () => {
                       try {
-                        const docRef = await addDoc(collection(firestore, 'pins'), {
-                          category: 'Safety',
-                          coordinates: [
-                            Number(currLatitude),
-                            Number(currLongitude),
-                          ],
-                          date: new Date(),
-                          description,
-                          photo: image,
-                          subcategory: '',
-                          user: userData.id,
-                          video,
-                          visibleToOthers: true,
-                        })
+                        const docRef = await addDoc(
+                          collection(firestore, 'pins'),
+                          {
+                            category: 'Safety',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          },
+                        )
                         setDescription('')
                       } catch (err) {
                         console.log(err)
@@ -428,20 +485,23 @@ export default function Home() {
                     title="Missed-Connections"
                     onPress={async () => {
                       try {
-                        const docRef = await addDoc(collection(firestore, 'pins'), {
-                          category: 'Missed-Connections',
-                          coordinates: [
-                            Number(currLatitude),
-                            Number(currLongitude),
-                          ],
-                          date: new Date(),
-                          description,
-                          photo: image,
-                          subcategory: '',
-                          user: userData.id,
-                          video,
-                          visibleToOthers: true,
-                        })
+                        const docRef = await addDoc(
+                          collection(firestore, 'pins'),
+                          {
+                            category: 'Missed-Connections',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          },
+                        )
                         setDescription('')
                       } catch (err) {
                         console.log(err)
@@ -458,20 +518,23 @@ export default function Home() {
                     title="Meetups"
                     onPress={async () => {
                       try {
-                        const docRef = await addDoc(collection(firestore, 'pins'), {
-                          category: 'Meetups',
-                          coordinates: [
-                            Number(currLatitude),
-                            Number(currLongitude),
-                          ],
-                          date: new Date(),
-                          description,
-                          photo: image,
-                          subcategory: '',
-                          user: userData.id,
-                          video,
-                          visibleToOthers: true,
-                        })
+                        const docRef = await addDoc(
+                          collection(firestore, 'pins'),
+                          {
+                            category: 'Meetups',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            photo: image,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          },
+                        )
                         setDescription('')
                       } catch (err) {
                         console.log(err)

@@ -18,7 +18,7 @@ const TabNavigator = () => (
   <Tab.Navigator
     options={{
       tabBarStyle: {
-        // backgroundColor: 'white',
+        // backgroundColor: 'black',
         // borderTopColor: 'gray',
         // borderTopWidth: 1,
         // paddingBottom: 5,
