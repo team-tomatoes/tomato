@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
-import { Image } from 'react-native'
 import {
   collection,
   query,
@@ -10,17 +9,7 @@ import {
   setDoc,
   getDocs,
 } from 'firebase/firestore'
-import FontIcon from 'react-native-vector-icons/FontAwesome5'
-import AntDesign from 'react-native-vector-icons/AntDesign'
 import { firestore } from '../firebase/config'
-import {
-  blueSmiley,
-  pinkStar,
-  yellowSafety,
-  purplePeace,
-  greenMeetups,
-  orangeDog,
-} from '../../assets/pin-emojis'
 
 export const PinnedMap = () => {
   const [pins, setPins] = useState([])
