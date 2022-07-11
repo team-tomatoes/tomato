@@ -14,6 +14,7 @@
     "@ramotion/react-native-circle-menu": "^1.0.0",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-community/masked-view": "0.1.10",
+    "@react-native-firebase/app": "^15.1.1",
     "@react-native-firebase/firestore": "^15.1.1",
     "@react-native-menu/menu": "^0.5.2",
     "@react-navigation/bottom-tabs": "^6.0.9",
