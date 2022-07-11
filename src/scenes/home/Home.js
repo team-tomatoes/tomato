@@ -39,6 +39,7 @@ import Button from '../../components/Button'
 import { firestore, storage } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
+import { blueSmiley } from '../../../assets/pin-emojis'
 import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
 
@@ -309,6 +310,8 @@ export default function Home() {
                             },
                           )
                         }
+                        const newPin = new google.maps.Marker()
+
                         // clear description from textbox
                         setDescription('')
                         // remove the image from state so it clears out
