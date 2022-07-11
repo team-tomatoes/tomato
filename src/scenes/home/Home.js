@@ -22,20 +22,24 @@ import * as Location from 'expo-location'
 import {
   doc,
   addDoc,
+  getDoc,
+  setDoc,
   onSnapshot,
-  getFirestore,
   collection,
 } from 'firebase/firestore'
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import Modal from 'react-native-modal'
 import FontIcon from 'react-native-vector-icons/FontAwesome5'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import ActionButton from 'react-native-circular-action-menu'
+import * as ImageManipulator from 'expo-image-manipulator'
 import Button from '../../components/Button'
-import { firestore } from '../../firebase/config'
+import { firestore, storage } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
+import { blueSmiley } from '../../../assets/pin-emojis'
 import { EmojiMenu } from '../../components/EmojiMenu'
 import ScreenTemplate from '../../components/ScreenTemplate'
 
@@ -45,6 +49,10 @@ export default function Home() {
   const [currLongitude, setLongitude] = useState(null)
   const [description, setDescription] = useState('')
   const [image, setImage] = useState(null)
+
+  // used for firebase image storage
+  const [photo, setPhoto] = useState('')
+
   const [record, setRecord] = useState(null)
   const video = React.useRef(null)
   const [videoStatus, setStatus] = useState({})
@@ -73,6 +81,44 @@ export default function Home() {
   const [isModalVisible, setModalVisible] = useState(false)
   const toggleModal = () => {
     setModalVisible(!isModalVisible)
+  }
+
+  const showPhotoVideo = () => {
+    if (image) {
+      return (
+        <Image
+          style={{
+            width: 150,
+            height: 225,
+            alignSelf: 'center',
+          }}
+          source={{
+            uri: image,
+          }}
+        />
+      )
+    }
+    if (record) {
+      return (
+        <Video
+          ref={video}
+          style={{
+            width: 325,
+            height: 250,
+            alignSelf: 'center',
+          }}
+          source={{
+            uri: record,
+          }}
+          useNativeControls
+          isLooping
+          resizeMode="contain"
+          onPlaybackStatusUpdate={(status) =>
+            setStatus(() => status)
+          }
+        />
+      )
+    }
   }
 
   useEffect(() => {
@@ -148,7 +194,6 @@ export default function Home() {
                   icon="image-plus"
                   color={Colors.grey500}
                   size={30}
-                  // add in a filter option later, not necessary rn tho
                   onPress={() =>
                     navigation.navigate('Camera', {
                       setImage,
@@ -174,47 +219,18 @@ export default function Home() {
                     toggleModal()
                   }}
                 />
+                <IconButton
+                  icon="close-circle"
+                  color="#f07167"
+                  size={30}
+                  // add in a filter option later, not necessary rn tho
+                  onPress={() => { setImage(null); setRecord(null) }
+                  }
+                />
               </View>
               <View style={styles.imageContainer}>
-                {(() => {
-                  if (image) {
-                    return (
-                      <Image
-                        style={{
-                          width: 250,
-                          height: 325,
-                          alignSelf: 'center',
-                        }}
-                        source={{
-                          uri: image,
-                        }}
-                      />
-                    )
-                  }
-                  if (record) {
-                    return (
-                      <Video
-                        ref={video}
-                        style={{
-                          width: 325,
-                          height: 250,
-                          alignSelf: 'center',
-                        }}
-                        source={{
-                          uri: record,
-                        }}
-                        useNativeControls
-                        isLooping
-                        resizeMode="contain"
-                        onPlaybackStatusUpdate={(status) =>
-                          setStatus(() => status)
-                        }
-                      />
-                    )
-                  }
-                })()}
+                {showPhotoVideo()}
               </View>
-              {/* <EmojiMenu currLatitude={currLatitude} currLongitude={currLongitude} description={description} user={userData.id} /> */}
               <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
                 {/* Rest of App come ABOVE the action button component! */}
                 <ActionButton buttonColor="#f07167">
@@ -223,21 +239,93 @@ export default function Home() {
                     title="Mood"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
-                          category: 'Mood',
-                          coordinates: [
-                            Number(currLatitude),
-                            Number(currLongitude),
-                          ],
-                          date: new Date(),
-                          description,
-                          photo: image,
-                          subcategory: '',
-                          user: userData.id,
-                          video,
-                          visibleToOthers: true,
-                        })
+                        const docRef = await addDoc(
+                          collection(firestore, 'pins'),
+                          {
+                            category: 'Mood',
+                            coordinates: [
+                              Number(currLatitude),
+                              Number(currLongitude),
+                            ],
+                            date: new Date(),
+                            description,
+                            subcategory: '',
+                            user: userData.id,
+                            video,
+                            visibleToOthers: true,
+                          },
+                        )
+
+                        // If there's an image on state, send the image into the DB
+                        if (image) {
+                          const actions = []
+                          actions.push({ resize: { width: 300 } })
+                          const manipulatorResult = await ImageManipulator.manipulateAsync(
+                            String(image),
+                            actions,
+                            {
+                              compress: 0.4,
+                            },
+                          )
+
+                          const localUri = await fetch(manipulatorResult.uri)
+                          const localBlob = await localUri.blob()
+                          const filename = docRef.id + new Date().getTime()
+                          const storageRef = ref(
+                            storage,
+                            `images/${docRef.id}/${filename}`,
+                          )
+                          const uploadTask = uploadBytesResumable(
+                            storageRef,
+                            localBlob,
+                          )
+                          uploadTask.on(
+                            'state_changed',
+                            (snapshot) => {
+                              const progress =
+                                (snapshot.bytesTransferred /
+                                  snapshot.totalBytes) *
+                                100
+                              console.log(`Upload is ${progress}% done`)
+                            },
+                            (error) => {
+                              // Handle unsuccessful uploads
+                              console.log(error)
+                            },
+                            () => {
+                              // Handle successful uploads on complete
+                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                              getDownloadURL(uploadTask.snapshot.ref).then(
+                                async (downloadURL) => {
+                                  setPhoto(downloadURL)
+                                  console.log('File available at', downloadURL)
+                                  // get the document we just made so that we can set the image in there as well
+                                  const docSnap = await getDoc(docRef)
+
+                                  // if the pin document that we just made, add the picture to that specific pin file
+                                  if (docSnap.exists()) {
+                                    setDoc(
+                                      docRef,
+                                      { photo },
+                                      { merge: true },
+                                    )
+                                  } else {
+                                    // otherwise, the pin does not exist
+                                    console.log('No such document!')
+                                  }
+                                },
+                              )
+                            },
+                          )
+                        }
+                        const newPin = new google.maps.Marker()
+
+                        // clear description from textbox
                         setDescription('')
+                        // remove the image from state so it clears out
+                        setImage(null)
+                        // close the modal once the transaction is finished
+                        toggleModal()
                       } catch (err) {
                         console.log(err)
                       }
@@ -253,7 +341,7 @@ export default function Home() {
                     title="Recommendations"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Recommendations',
                           coordinates: [
                             Number(currLatitude),
@@ -283,7 +371,7 @@ export default function Home() {
                     title="Animal-Sightings"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Animal-Sightings',
                           coordinates: [
                             Number(currLatitude),
@@ -310,7 +398,7 @@ export default function Home() {
                     title="Safety"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Safety',
                           coordinates: [
                             Number(currLatitude),
@@ -340,7 +428,7 @@ export default function Home() {
                     title="Missed-Connections"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Missed-Connections',
                           coordinates: [
                             Number(currLatitude),
@@ -370,7 +458,7 @@ export default function Home() {
                     title="Meetups"
                     onPress={async () => {
                       try {
-                        await addDoc(collection(firestore, 'pins'), {
+                        const docRef = await addDoc(collection(firestore, 'pins'), {
                           category: 'Meetups',
                           coordinates: [
                             Number(currLatitude),
