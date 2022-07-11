@@ -391,6 +391,8 @@ export default function Home() {
                             },
                           )
                         }
+                        // clear the download link from state
+                        setPhoto('')
                         // clear description from textbox
                         setDescription('')
                         // remove the image from state so it clears out

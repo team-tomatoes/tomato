@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
-import { mapStyle } from '../constants/mapStyle'
 import {
   collection,
   query,
@@ -10,6 +9,7 @@ import {
   setDoc,
   getDocs,
 } from 'firebase/firestore'
+import { mapStyle } from '../constants/mapStyle'
 import { UserDataContext } from '../context/UserDataContext'
 import { firestore } from '../firebase/config'
 
