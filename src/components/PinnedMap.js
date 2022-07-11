@@ -51,8 +51,8 @@ export const PinnedMap = () => {
       initialRegion={{
         latitude: 40.77949,
         longitude: -73.96634,
-        latitudeDelta: 0.055,
-        longitudeDelta: 0.055,
+        latitudeDelta: 0.2,
+        longitudeDelta: 0.2,
       }}
       customMapStyle={mapStyle}
     >

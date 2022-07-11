@@ -18,11 +18,11 @@ const TabNavigator = () => (
   <Tab.Navigator
     options={{
       tabBarStyle: {
-        // backgroundColor: 'white',
-        // borderTopColor: 'gray',
-        // borderTopWidth: 1,
-        // paddingBottom: 5,
-        // paddingTop: 5,
+        backgroundColor: 'black',
+        borderTopColor: 'gray',
+        borderTopWidth: 1,
+        paddingBottom: 5,
+        paddingTop: 5,
       },
     }}
     defaultScreenOptions={{
