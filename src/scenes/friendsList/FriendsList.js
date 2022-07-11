@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
 import { getDocs, collection, query, where } from 'firebase/firestore'
@@ -7,6 +7,8 @@ import { firestore } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
+import Button from '../../components/Button'
+import Requests from '../friendRequests/Requests'
 
 export default function Friends() {
   const navigation = useNavigation()
@@ -42,13 +44,18 @@ export default function Friends() {
 
   return (
     <ScreenTemplate>
-      <View style={[styles.container]}>
-        <View style={{ width: '100%' }}>
-          <Text style={[styles.field, { color: colorScheme.text }]}>
-            {friends && friends.map((friend) => friend.userName)}
-          </Text>
-        </View>
-      </View>
+      <SafeAreaView style={[styles.container]}>
+        <FlatList
+          data={friends}
+          renderItem={({ item }) => (
+            <>
+              <Text style={[styles.item, { color: colorScheme.text }]}>{item.userName}</Text>
+              <Button label="View Profile" color={colors.primary}>View Profile</Button>
+            </>
+          )}
+          keyExtractor={(item) => item.id}
+        />
+      </SafeAreaView>
     </ScreenTemplate>
   )
 }
@@ -56,12 +63,16 @@ export default function Friends() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 50,
     width: '100%',
   },
-  field: {
-    fontSize: fontSize.middle,
+  item: {
+    padding: 20,
+    fontSize: 30,
+    marginTop: 5,
+  },
+  button: {
+    fontSize: 30,
     textAlign: 'center',
   },
 })
