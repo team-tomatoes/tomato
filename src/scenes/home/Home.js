@@ -83,6 +83,44 @@ export default function Home() {
     setModalVisible(!isModalVisible)
   }
 
+  const showPhotoVideo = () => {
+    if (image) {
+      return (
+        <Image
+          style={{
+            width: 150,
+            height: 225,
+            alignSelf: 'center',
+          }}
+          source={{
+            uri: image,
+          }}
+        />
+      )
+    }
+    if (record) {
+      return (
+        <Video
+          ref={video}
+          style={{
+            width: 325,
+            height: 250,
+            alignSelf: 'center',
+          }}
+          source={{
+            uri: record,
+          }}
+          useNativeControls
+          isLooping
+          resizeMode="contain"
+          onPlaybackStatusUpdate={(status) =>
+            setStatus(() => status)
+          }
+        />
+      )
+    }
+  }
+
   useEffect(() => {
     const tokensRef = doc(firestore, 'tokens', userData.id)
     const tokenListner = onSnapshot(tokensRef, (querySnapshot) => {
@@ -183,43 +221,7 @@ export default function Home() {
                 />
               </View>
               <View style={styles.imageContainer}>
-                {(() => {
-                  if (image) {
-                    return (
-                      <Image
-                        style={{
-                          width: 250,
-                          height: 325,
-                          alignSelf: 'center',
-                        }}
-                        source={{
-                          uri: image,
-                        }}
-                      />
-                    )
-                  }
-                  if (record) {
-                    return (
-                      <Video
-                        ref={video}
-                        style={{
-                          width: 325,
-                          height: 250,
-                          alignSelf: 'center',
-                        }}
-                        source={{
-                          uri: record,
-                        }}
-                        useNativeControls
-                        isLooping
-                        resizeMode="contain"
-                        onPlaybackStatusUpdate={(status) =>
-                          setStatus(() => status)
-                        }
-                      />
-                    )
-                  }
-                })}
+                {showPhotoVideo()}
               </View>
               <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
                 {/* Rest of App come ABOVE the action button component! */}
@@ -296,7 +298,7 @@ export default function Home() {
                                   if (docSnap.exists()) {
                                     setDoc(
                                       docRef,
-                                      { picture: downloadURL },
+                                      { photo },
                                       { merge: true },
                                     )
                                   } else {
