@@ -168,7 +168,7 @@ export default function Home() {
             isVisible={isModalVisible}
             onBackdropPress={() => setModalVisible(false)}
           >
-            <View style={{ backgroundColor: 'white', flex: 0.6 }}>
+            {image ? <View style={{ backgroundColor: 'white', flex: 0.6 }}> : <View style={{ backgroundColor: 'white', flex: 0.3 }}>}
               <TextInput
                 style={styles.textBox}
                 placeholder="What's going on here?"
