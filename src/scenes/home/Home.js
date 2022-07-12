@@ -198,13 +198,13 @@ export default function Home() {
                     icon="image-plus"
                     color={Colors.grey500}
                     size={30}
-                    onPress={() =>
+                    onPressIn={() =>
                       navigation.navigate('Camera', {
                         setImage,
                         setModalVisible,
                       })
                     }
-                    onPressIn={() => {
+                    onPress={() => {
                       toggleModal()
                     }}
                   />
@@ -212,13 +212,13 @@ export default function Home() {
                     icon="video-plus"
                     color={Colors.grey500}
                     size={30}
-                    onPress={() =>
+                    onPressIn={() =>
                       navigation.navigate('VidCamera', {
                         setRecord,
                         setModalVisible,
                       })
                     }
-                    onPressIn={() => {
+                    onPress={() => {
                       toggleModal()
                     }}
                   />
