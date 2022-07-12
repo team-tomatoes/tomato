@@ -310,6 +310,8 @@ export default function Home() {
                         setImage(null)
                         // close the modal once the transaction is finished
                         toggleModal()
+                        // redirects to explore component
+                        navigation.navigate('Explore')
                       } catch (err) {
                         console.log(err)
                       }
@@ -407,6 +409,8 @@ export default function Home() {
                         setImage(null)
                         // close the modal once the transaction is finished
                         toggleModal()
+                        // redirects to explore component
+                        navigation.navigate('Explore')
                       } catch (err) {
                         console.log(err)
                       }
@@ -439,7 +443,74 @@ export default function Home() {
                             visibleToOthers: true,
                           },
                         )
+                        // If there's an image on state, send the image into the DB
+                        if (image) {
+                          const actions = []
+                          actions.push({ resize: { width: 300 } })
+                          const manipulatorResult = await ImageManipulator.manipulateAsync(
+                            String(image),
+                            actions,
+                            {
+                              compress: 0.4,
+                            },
+                          )
+
+                          const localUri = await fetch(manipulatorResult.uri)
+                          const localBlob = await localUri.blob()
+                          const filename = docRef.id + new Date().getTime()
+                          const storageRef = ref(
+                            storage,
+                            `images/${docRef.id}/${filename}`,
+                          )
+                          const uploadTask = uploadBytesResumable(
+                            storageRef,
+                            localBlob,
+                          )
+                          uploadTask.on(
+                            'state_changed',
+                            (snapshot) => {
+                              const progress =
+                                (snapshot.bytesTransferred /
+                                  snapshot.totalBytes) *
+                                100
+                              console.log(`Upload is ${progress}% done`)
+                            },
+                            (error) => {
+                              // Handle unsuccessful uploads
+                              console.log(error)
+                            },
+                            () => {
+                              // Handle successful uploads on complete
+                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                              getDownloadURL(uploadTask.snapshot.ref).then(
+                                async (downloadURL) => {
+                                  setPhoto(downloadURL)
+                                  console.log('File available at', downloadURL)
+                                  // get the document we just made so that we can set the image in there as well
+                                  const docSnap = await getDoc(docRef)
+
+                                  // if the pin document that we just made, add the picture to that specific pin file
+                                  if (docSnap.exists()) {
+                                    setDoc(docRef, { photo }, { merge: true })
+                                  } else {
+                                    // otherwise, the pin does not exist
+                                    console.log('No such document!')
+                                  }
+                                },
+                              )
+                            },
+                          )
+                        }
+                        // clear the download link from state
+                        setPhoto('')
+                        // clear description from textbox
                         setDescription('')
+                        // remove the image from state so it clears out
+                        setImage(null)
+                        // close the modal once the transaction is finished
+                        toggleModal()
+                        // redirects to explore component
+                        navigation.navigate('Explore')
                       } catch (err) {
                         console.log(err)
                       }
@@ -469,7 +540,74 @@ export default function Home() {
                             visibleToOthers: true,
                           },
                         )
+                        // If there's an image on state, send the image into the DB
+                        if (image) {
+                          const actions = []
+                          actions.push({ resize: { width: 300 } })
+                          const manipulatorResult = await ImageManipulator.manipulateAsync(
+                            String(image),
+                            actions,
+                            {
+                              compress: 0.4,
+                            },
+                          )
+
+                          const localUri = await fetch(manipulatorResult.uri)
+                          const localBlob = await localUri.blob()
+                          const filename = docRef.id + new Date().getTime()
+                          const storageRef = ref(
+                            storage,
+                            `images/${docRef.id}/${filename}`,
+                          )
+                          const uploadTask = uploadBytesResumable(
+                            storageRef,
+                            localBlob,
+                          )
+                          uploadTask.on(
+                            'state_changed',
+                            (snapshot) => {
+                              const progress =
+                                (snapshot.bytesTransferred /
+                                  snapshot.totalBytes) *
+                                100
+                              console.log(`Upload is ${progress}% done`)
+                            },
+                            (error) => {
+                              // Handle unsuccessful uploads
+                              console.log(error)
+                            },
+                            () => {
+                              // Handle successful uploads on complete
+                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                              getDownloadURL(uploadTask.snapshot.ref).then(
+                                async (downloadURL) => {
+                                  setPhoto(downloadURL)
+                                  console.log('File available at', downloadURL)
+                                  // get the document we just made so that we can set the image in there as well
+                                  const docSnap = await getDoc(docRef)
+
+                                  // if the pin document that we just made, add the picture to that specific pin file
+                                  if (docSnap.exists()) {
+                                    setDoc(docRef, { photo }, { merge: true })
+                                  } else {
+                                    // otherwise, the pin does not exist
+                                    console.log('No such document!')
+                                  }
+                                },
+                              )
+                            },
+                          )
+                        }
+                        // clear the download link from state
+                        setPhoto('')
+                        // clear description from textbox
                         setDescription('')
+                        // remove the image from state so it clears out
+                        setImage(null)
+                        // close the modal once the transaction is finished
+                        toggleModal()
+                        // redirects to explore component
+                        navigation.navigate('Explore')
                       } catch (err) {
                         console.log(err)
                       }
@@ -502,7 +640,74 @@ export default function Home() {
                             visibleToOthers: true,
                           },
                         )
+                        // If there's an image on state, send the image into the DB
+                        if (image) {
+                          const actions = []
+                          actions.push({ resize: { width: 300 } })
+                          const manipulatorResult = await ImageManipulator.manipulateAsync(
+                            String(image),
+                            actions,
+                            {
+                              compress: 0.4,
+                            },
+                          )
+
+                          const localUri = await fetch(manipulatorResult.uri)
+                          const localBlob = await localUri.blob()
+                          const filename = docRef.id + new Date().getTime()
+                          const storageRef = ref(
+                            storage,
+                            `images/${docRef.id}/${filename}`,
+                          )
+                          const uploadTask = uploadBytesResumable(
+                            storageRef,
+                            localBlob,
+                          )
+                          uploadTask.on(
+                            'state_changed',
+                            (snapshot) => {
+                              const progress =
+                                (snapshot.bytesTransferred /
+                                  snapshot.totalBytes) *
+                                100
+                              console.log(`Upload is ${progress}% done`)
+                            },
+                            (error) => {
+                              // Handle unsuccessful uploads
+                              console.log(error)
+                            },
+                            () => {
+                              // Handle successful uploads on complete
+                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                              getDownloadURL(uploadTask.snapshot.ref).then(
+                                async (downloadURL) => {
+                                  setPhoto(downloadURL)
+                                  console.log('File available at', downloadURL)
+                                  // get the document we just made so that we can set the image in there as well
+                                  const docSnap = await getDoc(docRef)
+
+                                  // if the pin document that we just made, add the picture to that specific pin file
+                                  if (docSnap.exists()) {
+                                    setDoc(docRef, { photo }, { merge: true })
+                                  } else {
+                                    // otherwise, the pin does not exist
+                                    console.log('No such document!')
+                                  }
+                                },
+                              )
+                            },
+                          )
+                        }
+                        // clear the download link from state
+                        setPhoto('')
+                        // clear description from textbox
                         setDescription('')
+                        // remove the image from state so it clears out
+                        setImage(null)
+                        // close the modal once the transaction is finished
+                        toggleModal()
+                        // redirects to explore component
+                        navigation.navigate('Explore')
                       } catch (err) {
                         console.log(err)
                       }
@@ -536,6 +741,74 @@ export default function Home() {
                           },
                         )
                         setDescription('')
+                        // If there's an image on state, send the image into the DB
+                        if (image) {
+                          const actions = []
+                          actions.push({ resize: { width: 300 } })
+                          const manipulatorResult = await ImageManipulator.manipulateAsync(
+                            String(image),
+                            actions,
+                            {
+                              compress: 0.4,
+                            },
+                          )
+
+                          const localUri = await fetch(manipulatorResult.uri)
+                          const localBlob = await localUri.blob()
+                          const filename = docRef.id + new Date().getTime()
+                          const storageRef = ref(
+                            storage,
+                            `images/${docRef.id}/${filename}`,
+                          )
+                          const uploadTask = uploadBytesResumable(
+                            storageRef,
+                            localBlob,
+                          )
+                          uploadTask.on(
+                            'state_changed',
+                            (snapshot) => {
+                              const progress =
+                                (snapshot.bytesTransferred /
+                                  snapshot.totalBytes) *
+                                100
+                              console.log(`Upload is ${progress}% done`)
+                            },
+                            (error) => {
+                              // Handle unsuccessful uploads
+                              console.log(error)
+                            },
+                            () => {
+                              // Handle successful uploads on complete
+                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                              getDownloadURL(uploadTask.snapshot.ref).then(
+                                async (downloadURL) => {
+                                  setPhoto(downloadURL)
+                                  console.log('File available at', downloadURL)
+                                  // get the document we just made so that we can set the image in there as well
+                                  const docSnap = await getDoc(docRef)
+
+                                  // if the pin document that we just made, add the picture to that specific pin file
+                                  if (docSnap.exists()) {
+                                    setDoc(docRef, { photo }, { merge: true })
+                                  } else {
+                                    // otherwise, the pin does not exist
+                                    console.log('No such document!')
+                                  }
+                                },
+                              )
+                            },
+                          )
+                        }
+                        // clear the download link from state
+                        setPhoto('')
+                        // clear description from textbox
+                        setDescription('')
+                        // remove the image from state so it clears out
+                        setImage(null)
+                        // close the modal once the transaction is finished
+                        toggleModal()
+                        // redirects to explore component
+                        navigation.navigate('Explore')
                       } catch (err) {
                         console.log(err)
                       }
