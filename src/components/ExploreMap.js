@@ -64,23 +64,10 @@ export const PinnedMap = () => {
       querySnapshot.forEach((user) => {
         userArr.push([user.data().id, user.data().userName])
       })
-      console.log('USERARR', userArr)
       setUsers(userArr)
-      console.log('users state', users)
     } catch (err) {
       console.log(err)
     }
-  }
-
-  const findUserName = (userId) => {
-    for (let i = 0; i < users.length; i + 1) {
-      console.log(users[0])
-      if (userId === users[0]) {
-        console.log('USER FOUND!!!')
-        return users[1]
-      }
-    }
-    console.log('no user found!')
   }
 
   useEffect(() => {
@@ -98,7 +85,7 @@ export const PinnedMap = () => {
       console.log(err)
     }
   }
-  // findUserName('h9ixxxS2yUV4AsJYWUa2pk7f6Q92')
+
   return (
     <>
       <MapView
@@ -133,7 +120,23 @@ export const PinnedMap = () => {
               return require('../../assets/pinEmojis/purplePeacePastel.png')
             }
           }
-          console.log(users)
+          const getUserName = async () => {
+            try {
+              let pinUserName = ''
+              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docSnap = await getDoc(docRef)
+
+              if (docSnap.exists()) {
+                pinUserName = (docSnap.data().userName)
+                setUserName(pinUserName)
+              } else {
+                console.log('no such document~')
+              }
+            } catch (err) {
+              console.log(err)
+            }
+          }
+
           return (
             <MapView.Marker
               key={pin[6]}
@@ -144,7 +147,7 @@ export const PinnedMap = () => {
               image={icon()}
               onPress={() => {
                 setModalData(pin)
-                console.log(pin[5])
+                getUserName()
                 loadNear([pin[0], pin[1]])
                 setModalVisible(true)
               }}
@@ -172,7 +175,7 @@ export const PinnedMap = () => {
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
-            <Text style={styles.modalText}>{modalData[5]}</Text>
+            <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}
