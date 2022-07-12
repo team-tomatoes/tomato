@@ -13,12 +13,30 @@ import { PinnedMap } from '../../components/PinnedMap'
 export default function Explore() {
   const navigation = useNavigation()
   const [token, setToken] = useState('')
+  const [location, setLocation] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
   const colorScheme = {
     content: isDark ? styles.darkContent : styles.lightContent,
     text: isDark ? colors.white : colors.primaryText,
+  }
+
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      setErrorMessage('Permission not granted')
+    } else {
+      const userLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
+      setLatitude(Number(userLocation.coords.latitude))
+      setLongitude(Number(userLocation.coords.longitude))
+      setLocation(userLocation)
+    }
   }
 
   const headerRightPress = () => {
