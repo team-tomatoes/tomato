@@ -11,6 +11,8 @@
     "test": "node_modules/.bin/jest --passWithNoTests"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.4.1",
+    "@cloudinary/url-gen": "^1.8.0",
     "@ramotion/react-native-circle-menu": "^1.0.0",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-community/masked-view": "0.1.10",
@@ -25,12 +27,14 @@
     "@reduxjs/toolkit": "^1.5.1",
     "axios": "^0.27.2",
     "base-64": "^1.0.0",
+    "cloudinary-react": "^1.8.0",
     "expo": "^45.0.0",
     "expo-asset": "~8.5.0",
     "expo-av": "^11.2.3",
     "expo-camera": "~12.2.0",
     "expo-cli": "^5.4.8",
     "expo-device": "~4.2.0",
+    "expo-file-system": "^14.0.0",
     "expo-font": "~10.1.0",
     "expo-image-manipulator": "~10.3.1",
     "expo-image-picker": "~13.1.1",
@@ -53,6 +57,7 @@
     "react-native-circular-action-menu": "^0.5.0",
     "react-native-dialog": "^8.2.0",
     "react-native-elements": "^3.4.2",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-loading-spinner-overlay": "^2.0.0",
@@ -74,6 +79,7 @@
     "react-redux": "^7.1.1",
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
+    "rn-fetch-blob": "^0.12.0",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {
