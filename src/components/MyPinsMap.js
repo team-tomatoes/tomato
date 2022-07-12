@@ -74,8 +74,8 @@ export const MyPinsMap = () => {
       initialRegion={{
         latitude: 40.77949,
         longitude: -73.96634,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
+        latitudeDelta: 0.3,
+        longitudeDelta: 0.3,
       }}
       customMapStyle={mapStyle}
     >
