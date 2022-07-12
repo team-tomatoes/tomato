@@ -72,7 +72,9 @@ export default function Home() {
     if (status !== 'granted') {
       setErrorMessage('Permission not granted')
     } else {
-      const userLocation = await Location.getCurrentPositionAsync({})
+      const userLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
       setLatitude(Number(userLocation.coords.latitude))
       setLongitude(Number(userLocation.coords.longitude))
       setLocation(userLocation)
