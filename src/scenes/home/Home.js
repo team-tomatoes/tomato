@@ -179,6 +179,12 @@ export default function Home() {
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!isModalVisible)}
+                >
+                  <Text style={styles.textStyle}>x</Text>
+                </Pressable>
                 <TextInput
                   style={styles.textBox}
                   placeholder="What's going on here?"
