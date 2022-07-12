@@ -159,10 +159,12 @@ export const PinnedMap = () => {
           <View style={styles.modalView}>
             <Text style={styles.modalDescriptionText}>{modalData[2]}</Text>
             <Text style={styles.modalNearText}>Near {near}</Text>
-            <Image
-              style={{ height: 250, width: 150 }}
-              source={{ uri: modalData[4] }}
-            />
+            {modalData[4] ? (
+              <Image
+                style={{ height: 250, width: 150 }}
+                source={{ uri: modalData[4] }}
+              />
+            ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
             <Text style={styles.modalText}>{modalData[5]}</Text>
             <Pressable
