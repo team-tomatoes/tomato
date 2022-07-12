@@ -1,8 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-} from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import {
   View,
   StyleSheet,
@@ -12,6 +8,7 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
+import { Cloudinary, URLConfig, CloudConfig } from '@cloudinary/url-gen'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
 import {
@@ -22,6 +19,8 @@ import {
   onSnapshot,
   collection,
 } from 'firebase/firestore'
+import { ImagePicker } from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
@@ -55,12 +54,19 @@ export default function Home() {
   const [token, setToken] = useState('')
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
+
   const isDark = scheme === 'dark'
   const colorScheme = {
     content: isDark ? styles.darkContent : styles.lightContent,
     text: isDark ? colors.white : colors.primaryText,
   }
 
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: 'dupvhcwji',
+    },
+  })
+  const urlConfig = new URLConfig({ secure: true })
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
     if (status !== 'granted') {
@@ -216,8 +222,10 @@ export default function Home() {
                   color="#f07167"
                   size={30}
                   // add in a filter option later, not necessary rn tho
-                  onPress={() => { setImage(null); setRecord(null) }
-                  }
+                  onPress={() => {
+                    setImage(null)
+                    setRecord(null)
+                  }}
                 />
               </View>
               <View style={styles.imageContainer}>{showPhotoVideo()}</View>
@@ -241,7 +249,6 @@ export default function Home() {
                             description,
                             subcategory: '',
                             user: userData.id,
-                            video,
                             visibleToOthers: true,
                           },
                         )
@@ -291,7 +298,6 @@ export default function Home() {
                                   console.log('File available at', downloadURL)
                                   // get the document we just made so that we can set the image in there as well
                                   const docSnap = await getDoc(docRef)
-
                                   // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
                                     setDoc(docRef, { photo }, { merge: true })
@@ -304,11 +310,46 @@ export default function Home() {
                             },
                           )
                         }
+                        if (record) {
+                          const fsRead = await FileSystem.readAsStringAsync(
+                            record,
+                            {
+                              encoding: 'base64',
+                            },
+                          )
+                          const base64Vid = `data:video/mp4;base64,${fsRead}`
+                          const formData = new FormData()
+
+                          formData.append('file', base64Vid)
+                          formData.append('upload_preset', 'tomato')
+                          const data = await fetch(
+                            'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                            {
+                              method: 'POST',
+                              body: formData,
+                            },
+                          )
+                            .then((r) => r.json())
+                            .catch((err) => console.log(err))
+                          console.log(data.secure_url)
+                          const docSnap = await getDoc(docRef)
+                          if (docSnap.exists()) {
+                            setDoc(
+                              docRef,
+                              { video: data.secure_url },
+                              { merge: true },
+                            )
+                          } else {
+                            // otherwise, the pin does not exist
+                            console.log('No such document!')
+                          }
+                        }
                         // clear description from textbox
                         setDescription('')
                         // remove the image from state so it clears out
                         setImage(null)
                         // close the modal once the transaction is finished
+                        setRecord(null)
                         toggleModal()
                       } catch (err) {
                         console.log(err)
@@ -337,11 +378,9 @@ export default function Home() {
                             description,
                             subcategory: '',
                             user: userData.id,
-                            video,
                             visibleToOthers: true,
                           },
                         )
-                        // If there's an image on state, send the image into the DB
                         if (image) {
                           const actions = []
                           actions.push({ resize: { width: 300 } })
@@ -386,7 +425,6 @@ export default function Home() {
                                   console.log('File available at', downloadURL)
                                   // get the document we just made so that we can set the image in there as well
                                   const docSnap = await getDoc(docRef)
-
                                   // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
                                     setDoc(docRef, { photo }, { merge: true })
@@ -399,13 +437,46 @@ export default function Home() {
                             },
                           )
                         }
-                        // clear the download link from state
-                        setPhoto('')
+                        if (record) {
+                          const fsRead = await FileSystem.readAsStringAsync(
+                            record,
+                            {
+                              encoding: 'base64',
+                            },
+                          )
+                          const base64Vid = `data:video/mp4;base64,${fsRead}`
+                          const formData = new FormData()
+
+                          formData.append('file', base64Vid)
+                          formData.append('upload_preset', 'tomato')
+                          const data = await fetch(
+                            'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                            {
+                              method: 'POST',
+                              body: formData,
+                            },
+                          )
+                            .then((r) => r.json())
+                            .catch((err) => console.log(err))
+                          console.log(data.secure_url)
+                          const docSnap = await getDoc(docRef)
+                          if (docSnap.exists()) {
+                            setDoc(
+                              docRef,
+                              { video: data.secure_url },
+                              { merge: true },
+                            )
+                          } else {
+                            // otherwise, the pin does not exist
+                            console.log('No such document!')
+                          }
+                        }
                         // clear description from textbox
                         setDescription('')
                         // remove the image from state so it clears out
                         setImage(null)
                         // close the modal once the transaction is finished
+                        setRecord(null)
                         toggleModal()
                       } catch (err) {
                         console.log(err)
