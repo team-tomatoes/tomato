@@ -1,8 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-} from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import {
   View,
   StyleSheet,
@@ -216,8 +212,10 @@ export default function Home() {
                   color="#f07167"
                   size={30}
                   // add in a filter option later, not necessary rn tho
-                  onPress={() => { setImage(null); setRecord(null) }
-                  }
+                  onPress={() => {
+                    setImage(null)
+                    setRecord(null)
+                  }}
                 />
               </View>
               <View style={styles.imageContainer}>{showPhotoVideo()}</View>
@@ -287,14 +285,13 @@ export default function Home() {
                               // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                               getDownloadURL(uploadTask.snapshot.ref).then(
                                 async (downloadURL) => {
-                                  setPhoto(downloadURL)
                                   console.log('File available at', downloadURL)
                                   // get the document we just made so that we can set the image in there as well
                                   const docSnap = await getDoc(docRef)
 
                                   // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
-                                    setDoc(docRef, { photo }, { merge: true })
+                                    setDoc(docRef, { picture: downloadURL }, { merge: true })
                                   } else {
                                     // otherwise, the pin does not exist
                                     console.log('No such document!')
@@ -389,7 +386,12 @@ export default function Home() {
 
                                   // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
-                                    setDoc(docRef, { photo }, { merge: true })
+                                    console.log('DOCSNAP EXISTS')
+                                    setDoc(
+                                      docRef,
+                                      { picture: downloadURL },
+                                      { merge: true },
+                                    )
                                   } else {
                                     // otherwise, the pin does not exist
                                     console.log('No such document!')
