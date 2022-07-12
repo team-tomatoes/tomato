@@ -172,6 +172,7 @@ export default function Home() {
             animationType="slide"
             transparent={true}
             visible={isModalVisible}
+            onBackdropPress={() => setModalVisible(false)}
             onRequestClose={() => {
               Alert.alert('Modal has been closed.')
               setModalVisible(!isModalVisible)
@@ -222,15 +223,17 @@ export default function Home() {
                       toggleModal()
                     }}
                   />
-                  <IconButton
-                    icon="close-circle"
-                    color="#f07167"
-                    size={30}
-                    onPress={() => {
-                      setImage(null)
-                      setRecord(null)
-                    }}
-                  />
+                  {(image || video) ? (
+                    <IconButton
+                      icon="close-circle"
+                      color="#f07167"
+                      size={30}
+                      onPress={() => {
+                        setImage(null)
+                        setRecord(null)
+                      }}
+                    />
+                  ) : null}
                 </View>
                 <View style={styles.imageContainer}>{showPhotoVideo()}</View>
                 <View style={{ marginTop: 50, marginRight: 20 }}>
@@ -546,7 +549,7 @@ export default function Home() {
                           const docRef = await addDoc(
                             collection(firestore, 'pins'),
                             {
-                              category: 'Animal-Sightings',
+                              category: 'Safety',
                               coordinates: [
                                 Number(currLatitude),
                                 Number(currLongitude),
@@ -934,8 +937,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   button: {
-    borderRadius: 20,
-    padding: 10,
     elevation: 2,
   },
   buttonOpen: {
@@ -943,6 +944,7 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     backgroundColor: '#2196F3',
+    color: 'black',
   },
   textStyle: {
     color: 'white',
