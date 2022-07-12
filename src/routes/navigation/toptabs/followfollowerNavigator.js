@@ -5,7 +5,7 @@ import { screenOptions } from './navigationProps/navigationProps'
 
 import { FriendsNavigator } from '../stacks/topTabStacks/FriendsNavigator'
 import { RequestsNavigator } from '../stacks/topTabStacks/RequestsNavigator'
-import { PinnedMap } from '../../../components/PinnedMap'
+import { PinnedMap } from '../../../components/ExploreMap'
 
 const Tab = createMaterialTopTabNavigator()
 
