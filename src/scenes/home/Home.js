@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
+import { Cloudinary, URLConfig, CloudConfig } from '@cloudinary/url-gen'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
 import {
@@ -22,6 +23,8 @@ import {
   onSnapshot,
   collection,
 } from 'firebase/firestore'
+import { ImagePicker } from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
@@ -55,18 +58,27 @@ export default function Home() {
   const [token, setToken] = useState('')
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
+
   const isDark = scheme === 'dark'
   const colorScheme = {
     content: isDark ? styles.darkContent : styles.lightContent,
     text: isDark ? colors.white : colors.primaryText,
   }
 
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: 'dupvhcwji',
+    },
+  })
+  const urlConfig = new URLConfig({ secure: true })
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
     if (status !== 'granted') {
       setErrorMessage('Permission not granted')
     } else {
-      const userLocation = await Location.getCurrentPositionAsync({})
+      const userLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
       setLatitude(Number(userLocation.coords.latitude))
       setLongitude(Number(userLocation.coords.longitude))
       setLocation(userLocation)
@@ -325,10 +337,46 @@ export default function Home() {
                               },
                             )
                           }
+
+                          if (record) {
+                            const fsRead = await FileSystem.readAsStringAsync(
+                              record,
+                              {
+                                encoding: 'base64',
+                              },
+                            )
+                            const base64Vid = `data:video/mp4;base64,${fsRead}`
+                            const formData = new FormData()
+
+                            formData.append('file', base64Vid)
+                            formData.append('upload_preset', 'tomato')
+                            const data = await fetch(
+                              'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                              {
+                                method: 'POST',
+                                body: formData,
+                              },
+                            )
+                              .then((r) => r.json())
+                              .catch((err) => console.log(err))
+                            console.log(data.secure_url)
+                            const docSnap = await getDoc(docRef)
+                            if (docSnap.exists()) {
+                              setDoc(
+                                docRef,
+                                { video: data.secure_url },
+                                { merge: true },
+                              )
+                            } else {
+                              // otherwise, the pin does not exist
+                              console.log('No such document!')
+                            }
+                          }
                           // clear description from textbox
                           setDescription('')
                           // remove the image from state so it clears out
                           setImage(null)
+                          setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -425,10 +473,46 @@ export default function Home() {
                               },
                             )
                           }
+
+                          if (record) {
+                            const fsRead = await FileSystem.readAsStringAsync(
+                              record,
+                              {
+                                encoding: 'base64',
+                              },
+                            )
+                            const base64Vid = `data:video/mp4;base64,${fsRead}`
+                            const formData = new FormData()
+
+                            formData.append('file', base64Vid)
+                            formData.append('upload_preset', 'tomato')
+                            const data = await fetch(
+                              'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                              {
+                                method: 'POST',
+                                body: formData,
+                              },
+                            )
+                              .then((r) => r.json())
+                              .catch((err) => console.log(err))
+                            console.log(data.secure_url)
+                            const docSnap = await getDoc(docRef)
+                            if (docSnap.exists()) {
+                              setDoc(
+                                docRef,
+                                { video: data.secure_url },
+                                { merge: true },
+                              )
+                            } else {
+                              // otherwise, the pin does not exist
+                              console.log('No such document!')
+                            }
+                          }
                           // clear description from textbox
                           setDescription('')
                           // remove the image from state so it clears out
                           setImage(null)
+                          setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -525,10 +609,46 @@ export default function Home() {
                               },
                             )
                           }
+
+                          if (record) {
+                            const fsRead = await FileSystem.readAsStringAsync(
+                              record,
+                              {
+                                encoding: 'base64',
+                              },
+                            )
+                            const base64Vid = `data:video/mp4;base64,${fsRead}`
+                            const formData = new FormData()
+
+                            formData.append('file', base64Vid)
+                            formData.append('upload_preset', 'tomato')
+                            const data = await fetch(
+                              'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                              {
+                                method: 'POST',
+                                body: formData,
+                              },
+                            )
+                              .then((r) => r.json())
+                              .catch((err) => console.log(err))
+                            console.log(data.secure_url)
+                            const docSnap = await getDoc(docRef)
+                            if (docSnap.exists()) {
+                              setDoc(
+                                docRef,
+                                { video: data.secure_url },
+                                { merge: true },
+                              )
+                            } else {
+                              // otherwise, the pin does not exist
+                              console.log('No such document!')
+                            }
+                          }
                           // clear description from textbox
                           setDescription('')
                           // remove the image from state so it clears out
                           setImage(null)
+                          setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -625,10 +745,46 @@ export default function Home() {
                               },
                             )
                           }
+
+                          if (record) {
+                            const fsRead = await FileSystem.readAsStringAsync(
+                              record,
+                              {
+                                encoding: 'base64',
+                              },
+                            )
+                            const base64Vid = `data:video/mp4;base64,${fsRead}`
+                            const formData = new FormData()
+
+                            formData.append('file', base64Vid)
+                            formData.append('upload_preset', 'tomato')
+                            const data = await fetch(
+                              'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                              {
+                                method: 'POST',
+                                body: formData,
+                              },
+                            )
+                              .then((r) => r.json())
+                              .catch((err) => console.log(err))
+                            console.log(data.secure_url)
+                            const docSnap = await getDoc(docRef)
+                            if (docSnap.exists()) {
+                              setDoc(
+                                docRef,
+                                { video: data.secure_url },
+                                { merge: true },
+                              )
+                            } else {
+                              // otherwise, the pin does not exist
+                              console.log('No such document!')
+                            }
+                          }
                           // clear description from textbox
                           setDescription('')
                           // remove the image from state so it clears out
                           setImage(null)
+                          setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -725,10 +881,46 @@ export default function Home() {
                               },
                             )
                           }
+
+                          if (record) {
+                            const fsRead = await FileSystem.readAsStringAsync(
+                              record,
+                              {
+                                encoding: 'base64',
+                              },
+                            )
+                            const base64Vid = `data:video/mp4;base64,${fsRead}`
+                            const formData = new FormData()
+
+                            formData.append('file', base64Vid)
+                            formData.append('upload_preset', 'tomato')
+                            const data = await fetch(
+                              'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                              {
+                                method: 'POST',
+                                body: formData,
+                              },
+                            )
+                              .then((r) => r.json())
+                              .catch((err) => console.log(err))
+                            console.log(data.secure_url)
+                            const docSnap = await getDoc(docRef)
+                            if (docSnap.exists()) {
+                              setDoc(
+                                docRef,
+                                { video: data.secure_url },
+                                { merge: true },
+                              )
+                            } else {
+                              // otherwise, the pin does not exist
+                              console.log('No such document!')
+                            }
+                          }
                           // clear description from textbox
                           setDescription('')
                           // remove the image from state so it clears out
                           setImage(null)
+                          setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -825,10 +1017,46 @@ export default function Home() {
                               },
                             )
                           }
+
+                          if (record) {
+                            const fsRead = await FileSystem.readAsStringAsync(
+                              record,
+                              {
+                                encoding: 'base64',
+                              },
+                            )
+                            const base64Vid = `data:video/mp4;base64,${fsRead}`
+                            const formData = new FormData()
+
+                            formData.append('file', base64Vid)
+                            formData.append('upload_preset', 'tomato')
+                            const data = await fetch(
+                              'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                              {
+                                method: 'POST',
+                                body: formData,
+                              },
+                            )
+                              .then((r) => r.json())
+                              .catch((err) => console.log(err))
+                            console.log(data.secure_url)
+                            const docSnap = await getDoc(docRef)
+                            if (docSnap.exists()) {
+                              setDoc(
+                                docRef,
+                                { video: data.secure_url },
+                                { merge: true },
+                              )
+                            } else {
+                              // otherwise, the pin does not exist
+                              console.log('No such document!')
+                            }
+                          }
                           // clear description from textbox
                           setDescription('')
                           // remove the image from state so it clears out
                           setImage(null)
+                          setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -843,12 +1071,6 @@ export default function Home() {
                     </ActionButton.Item>
                   </ActionButton>
                 </View>
-                {/* <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!isModalVisible)}
-                >
-                  <Text style={styles.textStyle}>Hide Modal</Text>
-                </Pressable> */}
               </View>
             </View>
           </Modal>

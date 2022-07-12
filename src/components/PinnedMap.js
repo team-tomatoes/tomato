@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import {
   collection,
@@ -10,39 +10,16 @@ import {
   getDocs,
 } from 'firebase/firestore'
 import { mapStyle } from '../constants/mapStyle'
-import { UserDataContext } from '../context/UserDataContext'
 import { firestore } from '../firebase/config'
 
-export const MyPinsMap = () => {
-  const { userData } = useContext(UserDataContext)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [location, setLocation] = useState(null)
-  const [currLatitude, setLatitude] = useState(null)
-  const [currLongitude, setLongitude] = useState(null)
+export const PinnedMap = () => {
   const [pins, setPins] = useState([])
-
-  const getLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync()
-    if (status !== 'granted') {
-      setErrorMessage('Permission not granted')
-    } else {
-      const userLocation = await Location.getCurrentPositionAsync({})
-      setLatitude(Number(userLocation.coords.latitude))
-      setLongitude(Number(userLocation.coords.longitude))
-      setLocation(userLocation)
-    }
-  }
 
   const loadAllPins = async () => {
     try {
       const pinsArr = []
-      const q = query(
-        collection(firestore, 'pins'),
-        where('user', '==', userData.id),
-      )
-
-      const querySnapshot = await getDocs(q)
-
+      const querySnapshot = await getDocs(collection(firestore, 'pins'))
+      // console.log(querySnapshot.data())
       querySnapshot.forEach((document) => {
         // doc.data() is never undefined for query doc snapshots
         pinsArr.push([
@@ -64,6 +41,8 @@ export const MyPinsMap = () => {
   useEffect(() => {
     loadAllPins()
   }, [])
+
+  console.log(pins)
 
   return (
     <MapView
