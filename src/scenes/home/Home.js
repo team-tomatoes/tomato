@@ -45,7 +45,6 @@ export default function Home() {
 
   // used for firebase image storage
   const [photo, setPhoto] = useState('')
-  const [videorec, setVideo] = useState('')
 
   const [record, setRecord] = useState(null)
   const video = React.useRef(null)
@@ -299,7 +298,6 @@ export default function Home() {
                                   console.log('File available at', downloadURL)
                                   // get the document we just made so that we can set the image in there as well
                                   const docSnap = await getDoc(docRef)
-
                                   // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
                                     setDoc(docRef, { photo }, { merge: true })
@@ -334,52 +332,17 @@ export default function Home() {
                             .then((r) => r.json())
                             .catch((err) => console.log(err))
                           console.log(data.secure_url)
-
-                          // const filename = docRef.id + new Date().getTime()
-                          // const storageRef = ref(
-                          //   storage,
-                          //   `videos/${docRef.id}/${filename}`,
-                          // )
-                          // const uploadTask = uploadBytesResumable(
-                          //   storageRef,
-                          //   localBlob,
-                          // )
-                          // uploadTask.on(
-                          //   'state_changed',
-                          //   (snapshot) => {
-                          //     const progress =
-                          //       (snapshot.bytesTransferred /
-                          //         snapshot.totalBytes) *
-                          //       100
-                          //     console.log(`Upload is ${progress}% done`)
-                          //   },
-                          //   (error) => {
-                          //     // Handle unsuccessful uploads
-                          //     console.log(error)
-                          //   },
-                          //   () => {
-                          //     // Handle successful uploads on complete
-                          //     // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                          //     getDownloadURL(uploadTask.snapshot.ref).then(
-                          //       async (downloadURL) => {
-                          //         setVideo(downloadURL)
-                          //         console.log('File available at', downloadURL)
-                          //         // get the document we just made so that we can set the image in there as well
-                          //         const docSnap = await getDoc(docRef)
-                          //         if (docSnap.exists()) {
-                          //           setDoc(
-                          //             docRef,
-                          //             { videorec },
-                          //             { merge: true },
-                          //           )
-                          //         } else {
-                          //           // otherwise, the pin does not exist
-                          //           console.log('No such document!')
-                          //         }
-                          //       },
-                          //     )
-                          //   },
-                          // )
+                          const docSnap = await getDoc(docRef)
+                          if (docSnap.exists()) {
+                            setDoc(
+                              docRef,
+                              { video: data.secure_url },
+                              { merge: true },
+                            )
+                          } else {
+                            // otherwise, the pin does not exist
+                            console.log('No such document!')
+                          }
                         }
                         // clear description from textbox
                         setDescription('')
@@ -415,11 +378,9 @@ export default function Home() {
                             description,
                             subcategory: '',
                             user: userData.id,
-                            video,
                             visibleToOthers: true,
                           },
                         )
-                        // If there's an image on state, send the image into the DB
                         if (image) {
                           const actions = []
                           actions.push({ resize: { width: 300 } })
@@ -464,7 +425,6 @@ export default function Home() {
                                   console.log('File available at', downloadURL)
                                   // get the document we just made so that we can set the image in there as well
                                   const docSnap = await getDoc(docRef)
-
                                   // if the pin document that we just made, add the picture to that specific pin file
                                   if (docSnap.exists()) {
                                     setDoc(docRef, { photo }, { merge: true })
@@ -477,13 +437,46 @@ export default function Home() {
                             },
                           )
                         }
-                        // clear the download link from state
-                        setPhoto('')
+                        if (record) {
+                          const fsRead = await FileSystem.readAsStringAsync(
+                            record,
+                            {
+                              encoding: 'base64',
+                            },
+                          )
+                          const base64Vid = `data:video/mp4;base64,${fsRead}`
+                          const formData = new FormData()
+
+                          formData.append('file', base64Vid)
+                          formData.append('upload_preset', 'tomato')
+                          const data = await fetch(
+                            'https://api.cloudinary.com/v1_1/dupvhcwji/upload',
+                            {
+                              method: 'POST',
+                              body: formData,
+                            },
+                          )
+                            .then((r) => r.json())
+                            .catch((err) => console.log(err))
+                          console.log(data.secure_url)
+                          const docSnap = await getDoc(docRef)
+                          if (docSnap.exists()) {
+                            setDoc(
+                              docRef,
+                              { video: data.secure_url },
+                              { merge: true },
+                            )
+                          } else {
+                            // otherwise, the pin does not exist
+                            console.log('No such document!')
+                          }
+                        }
                         // clear description from textbox
                         setDescription('')
                         // remove the image from state so it clears out
                         setImage(null)
                         // close the modal once the transaction is finished
+                        setRecord(null)
                         toggleModal()
                       } catch (err) {
                         console.log(err)
