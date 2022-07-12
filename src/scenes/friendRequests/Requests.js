@@ -29,7 +29,7 @@ export default function Requests() {
         const q = query(requestsRef, where('id', '==', `${uid}`))
         const requestSnapshot = await getDocs(q)
         let requestData = []
-        const requestsArr = requestSnapshot.forEach((document) => {
+        requestSnapshot.forEach((document) => {
           requestData = document.get('pendingRequests')
         })
         setPendingRequests(requestData)
@@ -45,11 +45,18 @@ export default function Requests() {
   const onPressDeleteRequest = async (friendId) => {
     try {
       const requestRef = doc(firestore, 'friendships', uid)
-      const update = await updateDoc(requestRef, {
+      await updateDoc(requestRef, {
         pendingRequests: pendingRequests.filter((friend) => friend.id !== friendId),
       })
-      setPendingRequests(update)
-      // need to auto-refresh after changes
+
+      const updatedRef = collection(firestore, 'friendships')
+      const q = query(updatedRef, where('id', '==', `${uid}`))
+      const requestSnapshot = await getDocs(q)
+      let requestData = []
+      requestSnapshot.forEach((document) => {
+        requestData = document.get('pendingRequests')
+      })
+      setPendingRequests(requestData)
     } catch (error) {
       alert(error)
     }
