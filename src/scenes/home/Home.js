@@ -1,10 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react'
 import {
+  Alert,
   View,
   StyleSheet,
   TextInput,
   Image,
   KeyboardAvoidingView,
+  Modal,
+  Text,
+  Pressable,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
@@ -21,7 +25,7 @@ import {
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
-import Modal from 'react-native-modal'
+// import Modal from 'react-native-modal'
 import FontIcon from 'react-native-vector-icons/FontAwesome5'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import ActionButton from 'react-native-circular-action-menu'
@@ -163,583 +167,679 @@ export default function Home() {
             toggleModal()
           }}
         />
-        <View>
+        <View style={styles.centeredView}>
           <Modal
-            isVisible={isModalVisible}
-            onBackdropPress={() => setModalVisible(false)}
+            animationType="slide"
+            transparent={true}
+            visible={isModalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.')
+              setModalVisible(!isModalVisible)
+            }}
           >
-            {image ? <View style={{ backgroundColor: 'white', flex: 0.6 }}> : <View style={{ backgroundColor: 'white', flex: 0.3 }}>}
-              <TextInput
-                style={styles.textBox}
-                placeholder="What's going on here?"
-                onChangeText={(newDescription) =>
-                  setDescription(newDescription)
-                }
-                defaultValue={description}
-              />
-              <View style={styles.iconHorizontal}>
-                <IconButton
-                  icon="image-plus"
-                  color={Colors.grey500}
-                  size={30}
-                  onPress={() =>
-                    navigation.navigate('Camera', {
-                      setImage,
-                      setModalVisible,
-                    })
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TextInput
+                  style={styles.textBox}
+                  placeholder="What's going on here?"
+                  onChangeText={(newDescription) =>
+                    setDescription(newDescription)
                   }
-                  onPressIn={() => {
-                    toggleModal()
-                  }}
+                  defaultValue={description}
                 />
-                <IconButton
-                  icon="video-plus"
-                  color={Colors.grey500}
-                  size={30}
-                  // add in a filter option later, not necessary rn tho
-                  onPress={() =>
-                    navigation.navigate('VidCamera', {
-                      setRecord,
-                      setModalVisible,
-                    })
-                  }
-                  onPressIn={() => {
-                    toggleModal()
-                  }}
-                />
-                <IconButton
-                  icon="close-circle"
-                  color="#f07167"
-                  size={30}
-                  // add in a filter option later, not necessary rn tho
-                  onPress={() => {
-                    setImage(null)
-                    setRecord(null)
-                  }}
-                />
-              </View>
-              <View style={styles.imageContainer}>{showPhotoVideo()}</View>
-              <View style={{ flex: 1, backgroundColor: '#f3f3f3' }}>
-                {/* Rest of App come ABOVE the action button component! */}
-                <ActionButton buttonColor="#f07167">
-                  <ActionButton.Item
-                    buttonColor="#8EECF5"
-                    title="Mood"
-                    onPress={async () => {
-                      try {
-                        const docRef = await addDoc(
-                          collection(firestore, 'pins'),
-                          {
-                            category: 'Mood',
-                            coordinates: [
-                              Number(currLatitude),
-                              Number(currLongitude),
-                            ],
-                            date: new Date(),
-                            description,
-                            subcategory: '',
-                            user: userData.id,
-                            video,
-                            visibleToOthers: true,
-                          },
-                        )
-
-                        // If there's an image on state, send the image into the DB
-                        if (image) {
-                          const actions = []
-                          actions.push({ resize: { width: 300 } })
-                          const manipulatorResult = await ImageManipulator.manipulateAsync(
-                            String(image),
-                            actions,
+                <View style={styles.iconHorizontal}>
+                  <IconButton
+                    icon="image-plus"
+                    color={Colors.grey500}
+                    size={30}
+                    onPress={() =>
+                      navigation.navigate('Camera', {
+                        setImage,
+                        setModalVisible,
+                      })
+                    }
+                    onPressIn={() => {
+                      toggleModal()
+                    }}
+                  />
+                  <IconButton
+                    icon="video-plus"
+                    color={Colors.grey500}
+                    size={30}
+                    onPress={() =>
+                      navigation.navigate('VidCamera', {
+                        setRecord,
+                        setModalVisible,
+                      })
+                    }
+                    onPressIn={() => {
+                      toggleModal()
+                    }}
+                  />
+                  <IconButton
+                    icon="close-circle"
+                    color="#f07167"
+                    size={30}
+                    onPress={() => {
+                      setImage(null)
+                      setRecord(null)
+                    }}
+                  />
+                </View>
+                <View style={styles.imageContainer}>{showPhotoVideo()}</View>
+                <View style={{ marginTop: 50, marginRight: 20 }}>
+                  {/* Rest of App come ABOVE the action button component! */}
+                  <ActionButton buttonColor="#f07167">
+                    <ActionButton.Item
+                      buttonColor="#8EECF5"
+                      title="Mood"
+                      onPress={async () => {
+                        try {
+                          const docRef = await addDoc(
+                            collection(firestore, 'pins'),
                             {
-                              compress: 0.4,
+                              category: 'Mood',
+                              coordinates: [
+                                Number(currLatitude),
+                                Number(currLongitude),
+                              ],
+                              date: new Date(),
+                              description,
+                              subcategory: '',
+                              user: userData.id,
+                              video,
+                              visibleToOthers: true,
                             },
                           )
 
-                          const localUri = await fetch(manipulatorResult.uri)
-                          const localBlob = await localUri.blob()
-                          const filename = docRef.id + new Date().getTime()
-                          const storageRef = ref(
-                            storage,
-                            `images/${docRef.id}/${filename}`,
-                          )
-                          const uploadTask = uploadBytesResumable(
-                            storageRef,
-                            localBlob,
-                          )
-                          uploadTask.on(
-                            'state_changed',
-                            (snapshot) => {
-                              const progress =
-                                (snapshot.bytesTransferred /
-                                  snapshot.totalBytes) *
-                                100
-                              console.log(`Upload is ${progress}% done`)
-                            },
-                            (error) => {
-                              // Handle unsuccessful uploads
-                              console.log(error)
-                            },
-                            () => {
-                              // Handle successful uploads on complete
-                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                              getDownloadURL(uploadTask.snapshot.ref).then(
-                                async (downloadURL) => {
-                                  console.log('File available at', downloadURL)
-                                  // get the document we just made so that we can set the image in there as well
-                                  const docSnap = await getDoc(docRef)
+                          // If there's an image on state, send the image into the DB
+                          if (image) {
+                            const actions = []
+                            actions.push({ resize: { width: 300 } })
+                            const manipulatorResult = await ImageManipulator.manipulateAsync(
+                              String(image),
+                              actions,
+                              {
+                                compress: 0.4,
+                              },
+                            )
 
-                                  // if the pin document that we just made, add the picture to that specific pin file
-                                  if (docSnap.exists()) {
-                                    setDoc(
-                                      docRef,
-                                      { picture: downloadURL },
-                                      { merge: true },
+                            const localUri = await fetch(manipulatorResult.uri)
+                            const localBlob = await localUri.blob()
+                            const filename = docRef.id + new Date().getTime()
+                            const storageRef = ref(
+                              storage,
+                              `images/${docRef.id}/${filename}`,
+                            )
+                            const uploadTask = uploadBytesResumable(
+                              storageRef,
+                              localBlob,
+                            )
+                            uploadTask.on(
+                              'state_changed',
+                              (snapshot) => {
+                                const progress =
+                                  (snapshot.bytesTransferred /
+                                    snapshot.totalBytes) *
+                                  100
+                                console.log(`Upload is ${progress}% done`)
+                              },
+                              (error) => {
+                                // Handle unsuccessful uploads
+                                console.log(error)
+                              },
+                              () => {
+                                // Handle successful uploads on complete
+                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                                getDownloadURL(uploadTask.snapshot.ref).then(
+                                  async (downloadURL) => {
+                                    console.log(
+                                      'File available at',
+                                      downloadURL,
                                     )
-                                  } else {
-                                    // otherwise, the pin does not exist
-                                    console.log('No such document!')
-                                  }
-                                },
-                              )
-                            },
-                          )
+                                    // get the document we just made so that we can set the image in there as well
+                                    const docSnap = await getDoc(docRef)
+
+                                    // if the pin document that we just made, add the picture to that specific pin file
+                                    if (docSnap.exists()) {
+                                      setDoc(
+                                        docRef,
+                                        { picture: downloadURL },
+                                        { merge: true },
+                                      )
+                                    } else {
+                                      // otherwise, the pin does not exist
+                                      console.log('No such document!')
+                                    }
+                                  },
+                                )
+                              },
+                            )
+                          }
+                          // clear description from textbox
+                          setDescription('')
+                          // remove the image from state so it clears out
+                          setImage(null)
+                          // close the modal once the transaction is finished
+                          toggleModal()
+                        } catch (err) {
+                          console.log(err)
                         }
-                        // clear description from textbox
-                        setDescription('')
-                        // remove the image from state so it clears out
-                        setImage(null)
-                        // close the modal once the transaction is finished
-                        toggleModal()
-                      } catch (err) {
-                        console.log(err)
-                      }
-                    }}
-                  >
-                    <AntDesign
-                      name="smile-circle"
-                      style={styles.actionButtonIconDark}
-                    />
-                  </ActionButton.Item>
-                  <ActionButton.Item
-                    buttonColor="#FFCFD2"
-                    title="Recommendations"
-                    onPress={async () => {
-                      try {
-                        const docRef = await addDoc(
-                          collection(firestore, 'pins'),
-                          {
-                            category: 'Recommendations',
-                            coordinates: [
-                              Number(currLatitude),
-                              Number(currLongitude),
-                            ],
-                            date: new Date(),
-                            description,
-                            subcategory: '',
-                            user: userData.id,
-                            video,
-                            visibleToOthers: true,
-                          },
-                        )
-                        if (image) {
-                          const actions = []
-                          actions.push({ resize: { width: 300 } })
-                          const manipulatorResult = await ImageManipulator.manipulateAsync(
-                            String(image),
-                            actions,
+                      }}
+                    >
+                      <AntDesign
+                        name="smile-circle"
+                        style={styles.actionButtonIconDark}
+                      />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#FFCFD2"
+                      title="Recommendations"
+                      onPress={async () => {
+                        try {
+                          const docRef = await addDoc(
+                            collection(firestore, 'pins'),
                             {
-                              compress: 0.4,
+                              category: 'Recommendations',
+                              coordinates: [
+                                Number(currLatitude),
+                                Number(currLongitude),
+                              ],
+                              date: new Date(),
+                              description,
+                              subcategory: '',
+                              user: userData.id,
+                              video,
+                              visibleToOthers: true,
                             },
                           )
+                          if (image) {
+                            const actions = []
+                            actions.push({ resize: { width: 300 } })
+                            const manipulatorResult = await ImageManipulator.manipulateAsync(
+                              String(image),
+                              actions,
+                              {
+                                compress: 0.4,
+                              },
+                            )
 
-                          const localUri = await fetch(manipulatorResult.uri)
-                          const localBlob = await localUri.blob()
-                          const filename = docRef.id + new Date().getTime()
-                          const storageRef = ref(
-                            storage,
-                            `images/${docRef.id}/${filename}`,
-                          )
-                          const uploadTask = uploadBytesResumable(
-                            storageRef,
-                            localBlob,
-                          )
-                          uploadTask.on(
-                            'state_changed',
-                            (snapshot) => {
-                              const progress =
-                                (snapshot.bytesTransferred /
-                                  snapshot.totalBytes) *
-                                100
-                              console.log(`Upload is ${progress}% done`)
-                            },
-                            (error) => {
-                              // Handle unsuccessful uploads
-                              console.log(error)
-                            },
-                            () => {
-                              // Handle successful uploads on complete
-                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                              getDownloadURL(uploadTask.snapshot.ref).then(
-                                async (downloadURL) => {
-                                  console.log('File available at', downloadURL)
-                                  // get the document we just made so that we can set the image in there as well
-                                  const docSnap = await getDoc(docRef)
-
-                                  // if the pin document that we just made, add the picture to that specific pin file
-                                  if (docSnap.exists()) {
-                                    setDoc(
-                                      docRef,
-                                      { picture: downloadURL },
-                                      { merge: true },
+                            const localUri = await fetch(manipulatorResult.uri)
+                            const localBlob = await localUri.blob()
+                            const filename = docRef.id + new Date().getTime()
+                            const storageRef = ref(
+                              storage,
+                              `images/${docRef.id}/${filename}`,
+                            )
+                            const uploadTask = uploadBytesResumable(
+                              storageRef,
+                              localBlob,
+                            )
+                            uploadTask.on(
+                              'state_changed',
+                              (snapshot) => {
+                                const progress =
+                                  (snapshot.bytesTransferred /
+                                    snapshot.totalBytes) *
+                                  100
+                                console.log(`Upload is ${progress}% done`)
+                              },
+                              (error) => {
+                                // Handle unsuccessful uploads
+                                console.log(error)
+                              },
+                              () => {
+                                // Handle successful uploads on complete
+                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                                getDownloadURL(uploadTask.snapshot.ref).then(
+                                  async (downloadURL) => {
+                                    console.log(
+                                      'File available at',
+                                      downloadURL,
                                     )
-                                  } else {
-                                    // otherwise, the pin does not exist
-                                    console.log('No such document!')
-                                  }
-                                },
-                              )
-                            },
-                          )
+                                    // get the document we just made so that we can set the image in there as well
+                                    const docSnap = await getDoc(docRef)
+
+                                    // if the pin document that we just made, add the picture to that specific pin file
+                                    if (docSnap.exists()) {
+                                      setDoc(
+                                        docRef,
+                                        { picture: downloadURL },
+                                        { merge: true },
+                                      )
+                                    } else {
+                                      // otherwise, the pin does not exist
+                                      console.log('No such document!')
+                                    }
+                                  },
+                                )
+                              },
+                            )
+                          }
+                          // clear description from textbox
+                          setDescription('')
+                          // remove the image from state so it clears out
+                          setImage(null)
+                          // close the modal once the transaction is finished
+                          toggleModal()
+                        } catch (err) {
+                          console.log(err)
                         }
-                        // clear description from textbox
-                        setDescription('')
-                        // remove the image from state so it clears out
-                        setImage(null)
-                        // close the modal once the transaction is finished
-                        toggleModal()
-                      } catch (err) {
-                        console.log(err)
-                      }
-                    }}
-                  >
-                    <AntDesign
-                      name="star"
-                      style={styles.actionButtonIconDark}
-                    />
-                  </ActionButton.Item>
-                  <ActionButton.Item
-                    buttonColor="#ffd6a5"
-                    title="Animal-Sightings"
-                    onPress={async () => {
-                      try {
-                        const docRef = await addDoc(
-                          collection(firestore, 'pins'),
-                          {
-                            category: 'Animal-Sightings',
-                            coordinates: [
-                              Number(currLatitude),
-                              Number(currLongitude),
-                            ],
-                            date: new Date(),
-                            description,
-                            subcategory: '',
-                            user: userData.id,
-                            video,
-                            visibleToOthers: true,
-                          },
-                        )
-                        if (image) {
-                          const actions = []
-                          actions.push({ resize: { width: 300 } })
-                          const manipulatorResult = await ImageManipulator.manipulateAsync(
-                            String(image),
-                            actions,
+                      }}
+                    >
+                      <AntDesign
+                        name="star"
+                        style={styles.actionButtonIconDark}
+                      />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#ffd6a5"
+                      title="Animal-Sightings"
+                      onPress={async () => {
+                        try {
+                          const docRef = await addDoc(
+                            collection(firestore, 'pins'),
                             {
-                              compress: 0.4,
+                              category: 'Animal-Sightings',
+                              coordinates: [
+                                Number(currLatitude),
+                                Number(currLongitude),
+                              ],
+                              date: new Date(),
+                              description,
+                              subcategory: '',
+                              user: userData.id,
+                              video,
+                              visibleToOthers: true,
                             },
                           )
+                          if (image) {
+                            const actions = []
+                            actions.push({ resize: { width: 300 } })
+                            const manipulatorResult = await ImageManipulator.manipulateAsync(
+                              String(image),
+                              actions,
+                              {
+                                compress: 0.4,
+                              },
+                            )
 
-                          const localUri = await fetch(manipulatorResult.uri)
-                          const localBlob = await localUri.blob()
-                          const filename = docRef.id + new Date().getTime()
-                          const storageRef = ref(
-                            storage,
-                            `images/${docRef.id}/${filename}`,
-                          )
-                          const uploadTask = uploadBytesResumable(
-                            storageRef,
-                            localBlob,
-                          )
-                          uploadTask.on(
-                            'state_changed',
-                            (snapshot) => {
-                              const progress =
-                                (snapshot.bytesTransferred /
-                                  snapshot.totalBytes) *
-                                100
-                              console.log(`Upload is ${progress}% done`)
-                            },
-                            (error) => {
-                              // Handle unsuccessful uploads
-                              console.log(error)
-                            },
-                            () => {
-                              // Handle successful uploads on complete
-                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                              getDownloadURL(uploadTask.snapshot.ref).then(
-                                async (downloadURL) => {
-                                  console.log('File available at', downloadURL)
-                                  // get the document we just made so that we can set the image in there as well
-                                  const docSnap = await getDoc(docRef)
-
-                                  // if the pin document that we just made, add the picture to that specific pin file
-                                  if (docSnap.exists()) {
-                                    setDoc(
-                                      docRef,
-                                      { picture: downloadURL },
-                                      { merge: true },
+                            const localUri = await fetch(manipulatorResult.uri)
+                            const localBlob = await localUri.blob()
+                            const filename = docRef.id + new Date().getTime()
+                            const storageRef = ref(
+                              storage,
+                              `images/${docRef.id}/${filename}`,
+                            )
+                            const uploadTask = uploadBytesResumable(
+                              storageRef,
+                              localBlob,
+                            )
+                            uploadTask.on(
+                              'state_changed',
+                              (snapshot) => {
+                                const progress =
+                                  (snapshot.bytesTransferred /
+                                    snapshot.totalBytes) *
+                                  100
+                                console.log(`Upload is ${progress}% done`)
+                              },
+                              (error) => {
+                                // Handle unsuccessful uploads
+                                console.log(error)
+                              },
+                              () => {
+                                // Handle successful uploads on complete
+                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                                getDownloadURL(uploadTask.snapshot.ref).then(
+                                  async (downloadURL) => {
+                                    console.log(
+                                      'File available at',
+                                      downloadURL,
                                     )
-                                  } else {
-                                    // otherwise, the pin does not exist
-                                    console.log('No such document!')
-                                  }
-                                },
-                              )
-                            },
-                          )
+                                    // get the document we just made so that we can set the image in there as well
+                                    const docSnap = await getDoc(docRef)
+
+                                    // if the pin document that we just made, add the picture to that specific pin file
+                                    if (docSnap.exists()) {
+                                      setDoc(
+                                        docRef,
+                                        { picture: downloadURL },
+                                        { merge: true },
+                                      )
+                                    } else {
+                                      // otherwise, the pin does not exist
+                                      console.log('No such document!')
+                                    }
+                                  },
+                                )
+                              },
+                            )
+                          }
+                          // clear description from textbox
+                          setDescription('')
+                          // remove the image from state so it clears out
+                          setImage(null)
+                          // close the modal once the transaction is finished
+                          toggleModal()
+                        } catch (err) {
+                          console.log(err)
                         }
-                        // clear description from textbox
-                        setDescription('')
-                        // remove the image from state so it clears out
-                        setImage(null)
-                        // close the modal once the transaction is finished
-                        toggleModal()
-                      } catch (err) {
-                        console.log(err)
-                      }
-                    }}
-                  >
-                    <FontIcon name="dog" style={styles.actionButtonIconDark} />
-                  </ActionButton.Item>
-                  <ActionButton.Item
-                    buttonColor="#fdffb6"
-                    title="Safety"
-                    onPress={async () => {
-                      try {
-                        const docRef = await addDoc(
-                          collection(firestore, 'pins'),
-                          {
-                            category: 'Safety',
-                            coordinates: [
-                              Number(currLatitude),
-                              Number(currLongitude),
-                            ],
-                            date: new Date(),
-                            description,
-                            photo: image,
-                            subcategory: '',
-                            user: userData.id,
-                            video,
-                            visibleToOthers: true,
-                          },
-                        )
-                        setDescription('')
-                      } catch (err) {
-                        console.log(err)
-                      }
-                    }}
-                  >
-                    <AntDesign
-                      name="warning"
-                      style={styles.actionButtonIconDark}
-                    />
-                  </ActionButton.Item>
-                  <ActionButton.Item
-                    buttonColor="#B9FBC0"
-                    title="Missed-Connections"
-                    onPress={async () => {
-                      try {
-                        const docRef = await addDoc(
-                          collection(firestore, 'pins'),
-                          {
-                            category: 'Missed-Connections',
-                            coordinates: [
-                              Number(currLatitude),
-                              Number(currLongitude),
-                            ],
-                            date: new Date(),
-                            description,
-                            subcategory: '',
-                            user: userData.id,
-                            video,
-                            visibleToOthers: true,
-                          },
-                        )
-                        if (image) {
-                          const actions = []
-                          actions.push({ resize: { width: 300 } })
-                          const manipulatorResult = await ImageManipulator.manipulateAsync(
-                            String(image),
-                            actions,
+                      }}
+                    >
+                      <FontIcon
+                        name="dog"
+                        style={styles.actionButtonIconDark}
+                      />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#fdffb6"
+                      title="Safety"
+                      onPress={async () => {
+                        try {
+                          const docRef = await addDoc(
+                            collection(firestore, 'pins'),
                             {
-                              compress: 0.4,
+                              category: 'Animal-Sightings',
+                              coordinates: [
+                                Number(currLatitude),
+                                Number(currLongitude),
+                              ],
+                              date: new Date(),
+                              description,
+                              subcategory: '',
+                              user: userData.id,
+                              video,
+                              visibleToOthers: true,
                             },
                           )
+                          if (image) {
+                            const actions = []
+                            actions.push({ resize: { width: 300 } })
+                            const manipulatorResult = await ImageManipulator.manipulateAsync(
+                              String(image),
+                              actions,
+                              {
+                                compress: 0.4,
+                              },
+                            )
 
-                          const localUri = await fetch(manipulatorResult.uri)
-                          const localBlob = await localUri.blob()
-                          const filename = docRef.id + new Date().getTime()
-                          const storageRef = ref(
-                            storage,
-                            `images/${docRef.id}/${filename}`,
-                          )
-                          const uploadTask = uploadBytesResumable(
-                            storageRef,
-                            localBlob,
-                          )
-                          uploadTask.on(
-                            'state_changed',
-                            (snapshot) => {
-                              const progress =
-                                (snapshot.bytesTransferred /
-                                  snapshot.totalBytes) *
-                                100
-                              console.log(`Upload is ${progress}% done`)
-                            },
-                            (error) => {
-                              // Handle unsuccessful uploads
-                              console.log(error)
-                            },
-                            () => {
-                              // Handle successful uploads on complete
-                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                              getDownloadURL(uploadTask.snapshot.ref).then(
-                                async (downloadURL) => {
-                                  console.log('File available at', downloadURL)
-                                  // get the document we just made so that we can set the image in there as well
-                                  const docSnap = await getDoc(docRef)
-
-                                  // if the pin document that we just made, add the picture to that specific pin file
-                                  if (docSnap.exists()) {
-                                    setDoc(
-                                      docRef,
-                                      { picture: downloadURL },
-                                      { merge: true },
+                            const localUri = await fetch(manipulatorResult.uri)
+                            const localBlob = await localUri.blob()
+                            const filename = docRef.id + new Date().getTime()
+                            const storageRef = ref(
+                              storage,
+                              `images/${docRef.id}/${filename}`,
+                            )
+                            const uploadTask = uploadBytesResumable(
+                              storageRef,
+                              localBlob,
+                            )
+                            uploadTask.on(
+                              'state_changed',
+                              (snapshot) => {
+                                const progress =
+                                  (snapshot.bytesTransferred /
+                                    snapshot.totalBytes) *
+                                  100
+                                console.log(`Upload is ${progress}% done`)
+                              },
+                              (error) => {
+                                // Handle unsuccessful uploads
+                                console.log(error)
+                              },
+                              () => {
+                                // Handle successful uploads on complete
+                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                                getDownloadURL(uploadTask.snapshot.ref).then(
+                                  async (downloadURL) => {
+                                    console.log(
+                                      'File available at',
+                                      downloadURL,
                                     )
-                                  } else {
-                                    // otherwise, the pin does not exist
-                                    console.log('No such document!')
-                                  }
-                                },
-                              )
-                            },
-                          )
+                                    // get the document we just made so that we can set the image in there as well
+                                    const docSnap = await getDoc(docRef)
+
+                                    // if the pin document that we just made, add the picture to that specific pin file
+                                    if (docSnap.exists()) {
+                                      setDoc(
+                                        docRef,
+                                        { picture: downloadURL },
+                                        { merge: true },
+                                      )
+                                    } else {
+                                      // otherwise, the pin does not exist
+                                      console.log('No such document!')
+                                    }
+                                  },
+                                )
+                              },
+                            )
+                          }
+                          // clear description from textbox
+                          setDescription('')
+                          // remove the image from state so it clears out
+                          setImage(null)
+                          // close the modal once the transaction is finished
+                          toggleModal()
+                        } catch (err) {
+                          console.log(err)
                         }
-                        // clear description from textbox
-                        setDescription('')
-                        // remove the image from state so it clears out
-                        setImage(null)
-                        // close the modal once the transaction is finished
-                        toggleModal()
-                      } catch (err) {
-                        console.log(err)
-                      }
-                    }}
-                  >
-                    <FontIcon
-                      name="people-arrows"
-                      style={styles.actionButtonIconDark}
-                    />
-                  </ActionButton.Item>
-                  <ActionButton.Item
-                    buttonColor="#CFBAF0"
-                    title="Meetups"
-                    onPress={async () => {
-                      try {
-                        const docRef = await addDoc(
-                          collection(firestore, 'pins'),
-                          {
-                            category: 'Meetups',
-                            coordinates: [
-                              Number(currLatitude),
-                              Number(currLongitude),
-                            ],
-                            date: new Date(),
-                            description,
-                            subcategory: '',
-                            user: userData.id,
-                            video,
-                            visibleToOthers: true,
-                          },
-                        )
-                        if (image) {
-                          const actions = []
-                          actions.push({ resize: { width: 300 } })
-                          const manipulatorResult = await ImageManipulator.manipulateAsync(
-                            String(image),
-                            actions,
+                      }}
+                    >
+                      <AntDesign
+                        name="warning"
+                        style={styles.actionButtonIconDark}
+                      />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#B9FBC0"
+                      title="Missed-Connections"
+                      onPress={async () => {
+                        try {
+                          const docRef = await addDoc(
+                            collection(firestore, 'pins'),
                             {
-                              compress: 0.4,
+                              category: 'Missed-Connections',
+                              coordinates: [
+                                Number(currLatitude),
+                                Number(currLongitude),
+                              ],
+                              date: new Date(),
+                              description,
+                              subcategory: '',
+                              user: userData.id,
+                              video,
+                              visibleToOthers: true,
                             },
                           )
+                          if (image) {
+                            const actions = []
+                            actions.push({ resize: { width: 300 } })
+                            const manipulatorResult = await ImageManipulator.manipulateAsync(
+                              String(image),
+                              actions,
+                              {
+                                compress: 0.4,
+                              },
+                            )
 
-                          const localUri = await fetch(manipulatorResult.uri)
-                          const localBlob = await localUri.blob()
-                          const filename = docRef.id + new Date().getTime()
-                          const storageRef = ref(
-                            storage,
-                            `images/${docRef.id}/${filename}`,
-                          )
-                          const uploadTask = uploadBytesResumable(
-                            storageRef,
-                            localBlob,
-                          )
-                          uploadTask.on(
-                            'state_changed',
-                            (snapshot) => {
-                              const progress =
-                                (snapshot.bytesTransferred /
-                                  snapshot.totalBytes) *
-                                100
-                              console.log(`Upload is ${progress}% done`)
-                            },
-                            (error) => {
-                              // Handle unsuccessful uploads
-                              console.log(error)
-                            },
-                            () => {
-                              // Handle successful uploads on complete
-                              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                              getDownloadURL(uploadTask.snapshot.ref).then(
-                                async (downloadURL) => {
-                                  console.log('File available at', downloadURL)
-                                  // get the document we just made so that we can set the image in there as well
-                                  const docSnap = await getDoc(docRef)
-
-                                  // if the pin document that we just made, add the picture to that specific pin file
-                                  if (docSnap.exists()) {
-                                    setDoc(
-                                      docRef,
-                                      { picture: downloadURL },
-                                      { merge: true },
+                            const localUri = await fetch(manipulatorResult.uri)
+                            const localBlob = await localUri.blob()
+                            const filename = docRef.id + new Date().getTime()
+                            const storageRef = ref(
+                              storage,
+                              `images/${docRef.id}/${filename}`,
+                            )
+                            const uploadTask = uploadBytesResumable(
+                              storageRef,
+                              localBlob,
+                            )
+                            uploadTask.on(
+                              'state_changed',
+                              (snapshot) => {
+                                const progress =
+                                  (snapshot.bytesTransferred /
+                                    snapshot.totalBytes) *
+                                  100
+                                console.log(`Upload is ${progress}% done`)
+                              },
+                              (error) => {
+                                // Handle unsuccessful uploads
+                                console.log(error)
+                              },
+                              () => {
+                                // Handle successful uploads on complete
+                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                                getDownloadURL(uploadTask.snapshot.ref).then(
+                                  async (downloadURL) => {
+                                    console.log(
+                                      'File available at',
+                                      downloadURL,
                                     )
-                                  } else {
-                                    // otherwise, the pin does not exist
-                                    console.log('No such document!')
-                                  }
-                                },
-                              )
+                                    // get the document we just made so that we can set the image in there as well
+                                    const docSnap = await getDoc(docRef)
+
+                                    // if the pin document that we just made, add the picture to that specific pin file
+                                    if (docSnap.exists()) {
+                                      setDoc(
+                                        docRef,
+                                        { picture: downloadURL },
+                                        { merge: true },
+                                      )
+                                    } else {
+                                      // otherwise, the pin does not exist
+                                      console.log('No such document!')
+                                    }
+                                  },
+                                )
+                              },
+                            )
+                          }
+                          // clear description from textbox
+                          setDescription('')
+                          // remove the image from state so it clears out
+                          setImage(null)
+                          // close the modal once the transaction is finished
+                          toggleModal()
+                        } catch (err) {
+                          console.log(err)
+                        }
+                      }}
+                    >
+                      <FontIcon
+                        name="people-arrows"
+                        style={styles.actionButtonIconDark}
+                      />
+                    </ActionButton.Item>
+                    <ActionButton.Item
+                      buttonColor="#CFBAF0"
+                      title="Meetups"
+                      onPress={async () => {
+                        try {
+                          const docRef = await addDoc(
+                            collection(firestore, 'pins'),
+                            {
+                              category: 'Meetups',
+                              coordinates: [
+                                Number(currLatitude),
+                                Number(currLongitude),
+                              ],
+                              date: new Date(),
+                              description,
+                              subcategory: '',
+                              user: userData.id,
+                              video,
+                              visibleToOthers: true,
                             },
                           )
+                          if (image) {
+                            const actions = []
+                            actions.push({ resize: { width: 300 } })
+                            const manipulatorResult = await ImageManipulator.manipulateAsync(
+                              String(image),
+                              actions,
+                              {
+                                compress: 0.4,
+                              },
+                            )
+
+                            const localUri = await fetch(manipulatorResult.uri)
+                            const localBlob = await localUri.blob()
+                            const filename = docRef.id + new Date().getTime()
+                            const storageRef = ref(
+                              storage,
+                              `images/${docRef.id}/${filename}`,
+                            )
+                            const uploadTask = uploadBytesResumable(
+                              storageRef,
+                              localBlob,
+                            )
+                            uploadTask.on(
+                              'state_changed',
+                              (snapshot) => {
+                                const progress =
+                                  (snapshot.bytesTransferred /
+                                    snapshot.totalBytes) *
+                                  100
+                                console.log(`Upload is ${progress}% done`)
+                              },
+                              (error) => {
+                                // Handle unsuccessful uploads
+                                console.log(error)
+                              },
+                              () => {
+                                // Handle successful uploads on complete
+                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                                getDownloadURL(uploadTask.snapshot.ref).then(
+                                  async (downloadURL) => {
+                                    console.log(
+                                      'File available at',
+                                      downloadURL,
+                                    )
+                                    // get the document we just made so that we can set the image in there as well
+                                    const docSnap = await getDoc(docRef)
+
+                                    // if the pin document that we just made, add the picture to that specific pin file
+                                    if (docSnap.exists()) {
+                                      setDoc(
+                                        docRef,
+                                        { picture: downloadURL },
+                                        { merge: true },
+                                      )
+                                    } else {
+                                      // otherwise, the pin does not exist
+                                      console.log('No such document!')
+                                    }
+                                  },
+                                )
+                              },
+                            )
+                          }
+                          // clear description from textbox
+                          setDescription('')
+                          // remove the image from state so it clears out
+                          setImage(null)
+                          // close the modal once the transaction is finished
+                          toggleModal()
+                        } catch (err) {
+                          console.log(err)
                         }
-                        // clear description from textbox
-                        setDescription('')
-                        // remove the image from state so it clears out
-                        setImage(null)
-                        // close the modal once the transaction is finished
-                        toggleModal()
-                      } catch (err) {
-                        console.log(err)
-                      }
-                    }}
-                  >
-                    <FontIcon
-                      name="hand-peace"
-                      style={styles.actionButtonIconDark}
-                    />
-                  </ActionButton.Item>
-                </ActionButton>
+                      }}
+                    >
+                      <FontIcon
+                        name="hand-peace"
+                        style={styles.actionButtonIconDark}
+                      />
+                    </ActionButton.Item>
+                  </ActionButton>
+                </View>
+                {/* <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!isModalVisible)}
+                >
+                  <Text style={styles.textStyle}>Hide Modal</Text>
+                </Pressable> */}
               </View>
             </View>
           </Modal>
@@ -802,9 +902,49 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   iconHorizontal: {
-    paddingHorizontal: 120,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 })

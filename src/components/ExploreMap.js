@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
-import Geocoder from 'react-native-geocoding'
 import {
   Alert,
   Modal,
@@ -19,6 +18,7 @@ import {
   setDoc,
   getDocs,
 } from 'firebase/firestore'
+import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
 import { firestore } from '../firebase/config'
