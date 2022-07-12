@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import * as Location from 'expo-location'
 import {
   collection,
   query,
@@ -26,7 +27,9 @@ export const MyPinsMap = () => {
     if (status !== 'granted') {
       setErrorMessage('Permission not granted')
     } else {
-      const userLocation = await Location.getCurrentPositionAsync({})
+      const userLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
       setLatitude(Number(userLocation.coords.latitude))
       setLongitude(Number(userLocation.coords.longitude))
       setLocation(userLocation)
@@ -62,6 +65,7 @@ export const MyPinsMap = () => {
   }
 
   useEffect(() => {
+    getLocation()
     loadAllPins()
   }, [])
 
@@ -69,11 +73,11 @@ export const MyPinsMap = () => {
     <MapView
       style={{ flex: 1 }}
       provider={PROVIDER_GOOGLE}
-      initialRegion={{
-        latitude: 40.77949,
-        longitude: -73.96634,
-        latitudeDelta: 0.3,
-        longitudeDelta: 0.3,
+      region={{
+        latitude: Number(currLatitude),
+        longitude: Number(currLongitude),
+        latitudeDelta: 0.06,
+        longitudeDelta: 0.06,
       }}
       customMapStyle={mapStyle}
     >
