@@ -3,10 +3,7 @@
     "name": "tomato",
     "slug": "tomato",
     "privacy": "public",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo-sm.png",
@@ -25,7 +22,8 @@
       "bundleIdentifier": "reactnative.expo.firebase.boilerplate",
       "buildNumber": "1.0.0",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "Use the photo library to change your avatar."
+        "NSPhotoLibraryUsageDescription": "Use the photo library to change your avatar.",
+        "NSAllowsArbitraryLoads": "true"
       },
       "userInterfaceStyle": "automatic"
     },
@@ -33,20 +31,11 @@
       "package": "reactnative.expo.firebase.boilerplate",
       "versionCode": 1,
       "userInterfaceStyle": "automatic",
-      "permissions": [
-        "VIBRATE",
-        "CAMERA"
-      ]
+      "permissions": ["VIBRATE", "CAMERA"]
     },
     "packagerOpts": {
       "config": "metro.config.js",
-      "sourceExts": [
-        "js",
-        "jsx",
-        "svg",
-        "ts",
-        "tsx"
-      ]
+      "sourceExts": ["js", "jsx", "svg", "ts", "tsx"]
     },
     "description": ""
   }

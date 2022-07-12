@@ -2,8 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
-import { getDocs, collection, query, where } from 'firebase/firestore'
-// import firebase from '@react-native-firebase/app'
+import { getDocs, collection, query, where, doc, updateDoc } from 'firebase/firestore'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
@@ -30,8 +29,8 @@ export default function Requests() {
         const q = query(requestsRef, where('id', '==', `${uid}`))
         const requestSnapshot = await getDocs(q)
         let requestData = []
-        const requestsArr = requestSnapshot.forEach((doc) => {
-          requestData = doc.get('pendingRequests')
+        requestSnapshot.forEach((document) => {
+          requestData = document.get('pendingRequests')
         })
         setPendingRequests(requestData)
         console.log('REQUESTS', pendingRequests)
@@ -43,6 +42,26 @@ export default function Requests() {
     fetchRequests()
   }, [])
 
+  const onPressDeleteRequest = async (friendId) => {
+    try {
+      const requestRef = doc(firestore, 'friendships', uid)
+      await updateDoc(requestRef, {
+        pendingRequests: pendingRequests.filter((friend) => friend.id !== friendId),
+      })
+
+      const updatedRef = collection(firestore, 'friendships')
+      const q = query(updatedRef, where('id', '==', `${uid}`))
+      const requestSnapshot = await getDocs(q)
+      let requestData = []
+      requestSnapshot.forEach((document) => {
+        requestData = document.get('pendingRequests')
+      })
+      setPendingRequests(requestData)
+    } catch (error) {
+      alert(error)
+    }
+  }
+
   return (
     <ScreenTemplate>
       <SafeAreaView style={[styles.container]}>
@@ -51,7 +70,7 @@ export default function Requests() {
           renderItem={({ item }) => (
             <>
               <Text style={[styles.item, { color: colorScheme.text }]}>{item.userName}</Text>
-              <Button label="Remove" color={colors.primary}>Remove</Button>
+              <Button label="Remove" color={colors.primary} onPress={() => onPressDeleteRequest(item.id)}>Remove</Button>
             </>
           )}
           keyExtractor={(item) => item.id}

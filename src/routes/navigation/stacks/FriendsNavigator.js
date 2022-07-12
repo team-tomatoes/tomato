@@ -8,7 +8,7 @@ import { UserDataContext } from '../../../context/UserDataContext'
 import { lightProps, darkProps } from './navigationProps/navigationProps'
 import HeaderStyle from './headerComponents/HeaderStyle'
 import { FollowFollowerNavigator } from '../toptabs/followfollowerNavigator'
-import { PinnedMap } from '../../../components/PinnedMap'
+import { PinnedMap } from '../../../components/ExploreMap'
 
 const Stack = createStackNavigator()
 const RootStack = createStackNavigator()
