@@ -91,12 +91,13 @@ export const PinnedMap = () => {
               >
                 <View style={styles.centeredView}>
                   <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Hello World!</Text>
+                    <Text style={styles.modalText}>{pin[2]}, {pin[3]}</Text>
+                    <Text style={styles.modalText}>{pin[3]}</Text>
                     <Pressable
                       style={[styles.button, styles.buttonClose]}
                       onPress={() => setModalVisible(!modalVisible)}
                     >
-                      <Text style={styles.textStyle}>Hide Modal</Text>
+                      <Text style={styles.textStyle}>Close</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F194FF',
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#F07167',
   },
   textStyle: {
     color: 'white',
