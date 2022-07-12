@@ -65,8 +65,6 @@ export const MyPinsMap = () => {
     loadAllPins()
   }, [])
 
-  console.log(pins)
-
   return (
     <MapView
       style={{ flex: 1 }}
