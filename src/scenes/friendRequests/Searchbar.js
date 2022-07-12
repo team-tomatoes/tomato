@@ -1,87 +1,105 @@
-import React from 'react'
-import { StyleSheet, TextInput, View, Keyboard, Button } from 'react-native'
-import { Feather, Entypo } from '@expo/vector-icons'
+/* eslint-disable quote-props */
+import React, { useState, useEffect, useContext } from 'react'
+import {
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  TextInput,
+  View,
+  Keyboard,
+  Button,
+  FlatList,
+} from 'react-native'
+// import { Feather, Entypo } from '@expo/vector-icons'
+import { Searchbar } from 'react-native-paper'
+import { useNavigation } from '@react-navigation/native'
+import { getDocs, collection, query, where } from 'firebase/firestore'
+import { colors, fontSize } from 'theme'
+import ScreenTemplate from '../../components/ScreenTemplate'
+import { UserDataContext } from '../../context/UserDataContext'
+import { ColorSchemeContext } from '../../context/ColorSchemeContext'
+import { firestore } from '../../firebase/config'
 
-const SearchBar = ({ clicked, searchPhrase, setSearchPhrase, setCLicked }) => (
-  <View style={styles.container}>
-    <View
-      style={clicked ? styles.searchBar__clicked : styles.searchBar__unclicked}
-    >
-      {/* search Icon */}
-      <Feather
-        name="search"
-        size={20}
-        color="black"
-        style={{ marginLeft: 1 }}
-      />
-      {/* Input field */}
-      <TextInput
-        style={styles.input}
-        placeholder="Search"
-        value={searchPhrase}
-        onChangeText={setSearchPhrase}
-        onFocus={() => {
-          setClicked(true)
-        }}
-      />
-      {/* cross Icon, depending on whether the search bar is clicked or not */}
-      {clicked && (
-        <Entypo
-          name="cross"
-          size={20}
-          color="black"
-          style={{ padding: 1 }}
-          onPress={() => {
-            setSearchPhrase('')
-          }}
+const SearchBar = () => {
+  const navigation = useNavigation()
+
+  const { scheme } = useContext(ColorSchemeContext)
+  const isDark = scheme === 'dark'
+  const colorScheme = {
+    text: isDark ? colors.white : colors.primaryText,
+  }
+  const { userData } = useContext(UserDataContext)
+  const uid = userData.id
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchFriend, setSearchFriend] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const onChangeSearch = (userQuery) => setSearchQuery(userQuery)
+  console.log('SEARCH QUERY', searchQuery)
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const userRef = collection(firestore, 'users')
+        const q = query(userRef)
+        const searchSnapshot = await getDocs(q)
+        const searchData = []
+        searchSnapshot.forEach((doc) => {
+          searchData.push({ username: doc.get('userName'), id: doc.get('id') })
+        })
+        setSearchFriend(searchData)
+        console.log('ALL USERS', searchFriend)
+        setLoading(false)
+      } catch (error) {
+        console.log('error fetching user!', error)
+      }
+    }
+    fetchUser()
+  }, [])
+
+  return (
+    <ScreenTemplate>
+      <SafeAreaView style={[styles.container]}>
+        <Searchbar
+          placeholder="Search"
+          onChangeText={onChangeSearch}
+          value={searchQuery}
+          autoCapitalize="none"
         />
-      )}
-    </View>
-    {/* cancel button, depending on whether the search bar is clicked or not */}
-    {clicked && (
-      <View>
-        <Button
-          title="Cancel"
-          onPress={() => {
-            Keyboard.dismiss()
-            setClicked(false)
-          }}
-        />
-      </View>
-    )}
-  </View>
-)
+        {/* <FlatList
+          data={searchFriend}
+          renderItem={({ item }) => (
+            <>
+              <Text style={[styles.item, { color: colorScheme.text }]}>
+                {item}
+              </Text>
+              <Button label="Add" color={colors.primary}>
+                Add
+              </Button>
+            </>
+          )}
+          keyExtractor={(item) => item.id}
+        /> */}
+      </SafeAreaView>
+    </ScreenTemplate>
+  )
+}
+
 export default SearchBar
 
-// styles
 const styles = StyleSheet.create({
   container: {
-    margin: 15,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '90%',
+    flex: 1,
+    padding: 50,
+    width: '100%',
   },
-  searchBar__unclicked: {
-    padding: 10,
-    flexDirection: 'row',
-    width: '95%',
-    backgroundColor: '#d9dbda',
-    borderRadius: 15,
-    alignItems: 'center',
+  item: {
+    padding: 20,
+    fontSize: 30,
+    marginTop: 5,
   },
-  searchBar__clicked: {
-    padding: 10,
-    flexDirection: 'row',
-    width: '80%',
-    backgroundColor: '#d9dbda',
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
-  input: {
-    fontSize: 20,
-    marginLeft: 10,
-    width: '90%',
+  button: {
+    fontSize: 30,
+    textAlign: 'center',
   },
 })
