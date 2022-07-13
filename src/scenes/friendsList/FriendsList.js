@@ -29,7 +29,7 @@ export default function Friends() {
         const q = query(friendsRef, where('id', '==', `${uid}`))
         const friendSnapshot = await getDocs(q)
         let friendData = []
-        const friendsArr = friendSnapshot.forEach((document) => {
+        friendSnapshot.forEach((document) => {
           friendData = document.get('friendsList')
         })
         setFriends(friendData)
