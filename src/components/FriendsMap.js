@@ -152,7 +152,7 @@ export const FriendsMap = () => {
           latitudeDelta: currLatDelta,
           longitudeDelta: currLongDelta,
         }}
-        onRegionChangeComplete={onRegionChange}
+        // onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
         {pins.map((pin, i) => {
