@@ -59,7 +59,10 @@ export const MyPinsMap = () => {
   const loadAllPins = async () => {
     try {
       const pinsArr = []
-      const q = query(collection(firestore, 'pins'))
+      const q = query(
+        collection(firestore, 'pins'),
+        where('user', '==', userData.id),
+      )
       onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((document) => {
           // doc.data() is never undefined for query doc snapshots
@@ -137,7 +140,7 @@ export const MyPinsMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
