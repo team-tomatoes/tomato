@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import * as Location from 'expo-location'
@@ -19,16 +19,20 @@ import {
   getDocs,
   onSnapshot,
   query,
+  where,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
+import { UserDataContext } from '../context/UserDataContext'
 import { firestore } from '../firebase/config'
 
 export const FriendsMap = () => {
   Geocoder.init(APIKey)
 
+  const { userData } = useContext(UserDataContext)
   const [pins, setPins] = useState([])
+  const [friends, setFriends] = useState([])
   const [users, setUsers] = useState([])
   const [userName, setUserName] = useState('')
   const [modalData, setModalData] = useState([])
@@ -37,8 +41,6 @@ export const FriendsMap = () => {
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
-  const [currLatDelta, setLatDelta] = useState(0.06)
-  const [currLongDelta, setLongDelta] = useState(0.06)
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
@@ -54,34 +56,44 @@ export const FriendsMap = () => {
     }
   }
 
-  const onRegionChange = (region) => {
-    setLatitude(region.latitude)
-    setLongitude(region.longitude)
-    setLatDelta(region.latitudeDelta)
-    setLongDelta(region.longitudeDelta)
-  }
-
   const loadAllPins = async () => {
     try {
-      const pinsArr = []
-      const q = query(collection(firestore, 'pins'))
-      onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((document) => {
-          // doc.data() is never undefined for query doc snapshots
-          pinsArr.push([
-            document.data().coordinates[0],
-            document.data().coordinates[1],
-            document.data().category,
-            document.data().description,
-            document.data().picture,
-            document.data().video,
-            document.data().user,
-            new Date(document.data().date.seconds * 1000).toLocaleString(
-              'en-US',
-            ),
-            document.id,
-          ])
-          setPins(pinsArr)
+      const friendsArr = []
+      const q1 = query(
+        collection(firestore, 'friendships'),
+        where('id', '==', userData.id),
+      )
+      onSnapshot(q1, (querySnapshot1) => {
+        querySnapshot1.forEach((document) => {
+          document.data().friendsList.forEach((friend) => {
+            friendsArr.push(friend.id)
+          })
+        })
+        const pinsArr = []
+
+        friendsArr.forEach((friend) => {
+          const q = query(
+            collection(firestore, 'pins'),
+            where('user', '==', friend),
+          )
+          onSnapshot(q, (querySnapshot) => {
+            querySnapshot.forEach((document) => {
+              pinsArr.push([
+                document.data().coordinates[0],
+                document.data().coordinates[1],
+                document.data().category,
+                document.data().description,
+                document.data().picture,
+                document.data().video,
+                document.data().user,
+                new Date(document.data().date.seconds * 1000).toLocaleString(
+                  'en-US',
+                ),
+                document.id,
+              ])
+              setPins(pinsArr)
+            })
+          })
         })
       })
     } catch (err) {
@@ -128,13 +140,12 @@ export const FriendsMap = () => {
         region={{
           latitude: Number(currLatitude),
           longitude: Number(currLongitude),
-          latitudeDelta: currLatDelta,
-          longitudeDelta: currLongDelta,
+          latitudeDelta: 0.06,
+          longitudeDelta: 0.06,
         }}
-        onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
-        {pins.map((pin) => {
+        {pins.map((pin, i) => {
           const icon = () => {
             if (pin[2] === 'Mood') {
               return require('../../assets/pinEmojis/blueSmileyPastel.png')
@@ -180,6 +191,7 @@ export const FriendsMap = () => {
                 longitude: pin[1],
               }}
               image={icon()}
+              zIndex={i}
               onPress={() => {
                 setModalData(pin)
                 getUserName()
