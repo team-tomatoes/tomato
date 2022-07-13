@@ -175,7 +175,7 @@ export const ExploreMap = () => {
 
           return (
             <MapView.Marker
-              key={Math.random()}
+              key={pin[8]}
               coordinate={{
                 latitude: pin[0],
                 longitude: pin[1],
