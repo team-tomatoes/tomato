@@ -53,7 +53,9 @@ export const FriendsMap = () => {
         accuracy: Location.Accuracy.Balanced,
       })
       setLatitude(Number(userLocation.coords.latitude))
+      console.log(currLatitude)
       setLongitude(Number(userLocation.coords.longitude))
+      console.log(currLongitude)
       setLocation(userLocation)
     }
   }
