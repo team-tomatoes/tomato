@@ -137,7 +137,7 @@ export const MyPinsMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
