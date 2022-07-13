@@ -38,11 +38,13 @@ export const FriendsMap = () => {
   const [modalData, setModalData] = useState([])
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
+  const [errorMessage, setErrorMessage] = useState(null)
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
   const [currLatDelta, setLatDelta] = useState(0.06)
   const [currLongDelta, setLongDelta] = useState(0.06)
+  const [regionSet, setRegion] = useState(false)
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
@@ -59,6 +61,8 @@ export const FriendsMap = () => {
   }
 
   const onRegionChange = (region) => {
+    if (!regionSet) return
+    console.log(region)
     setLatitude(region.latitude)
     setLongitude(region.longitude)
     setLatDelta(region.latitudeDelta)
@@ -152,7 +156,8 @@ export const FriendsMap = () => {
           latitudeDelta: currLatDelta,
           longitudeDelta: currLongDelta,
         }}
-        // onRegionChangeComplete={onRegionChange}
+        onMapReady={() => setRegion(true)}
+        onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
         {pins.map((pin, i) => {
