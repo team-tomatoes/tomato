@@ -208,7 +208,6 @@ export const PinnedMap = () => {
                 useNativeControls
                 isLooping
                 resizeMode="contain"
-                onPlaybackStatusUpdate={(status) => setStatus(() => status)}
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
