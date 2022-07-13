@@ -65,7 +65,6 @@ export const FriendsMap = () => {
       )
       onSnapshot(q1, (querySnapshot1) => {
         querySnapshot1.forEach((document) => {
-          // doc.data() is never undefined for query doc snapshots
           document.data().friendsList.forEach((friend) => {
             friendsArr.push(friend.id)
           })
@@ -79,7 +78,6 @@ export const FriendsMap = () => {
           )
           onSnapshot(q, (querySnapshot) => {
             querySnapshot.forEach((document) => {
-              // doc.data() is never undefined for query doc snapshots
               pinsArr.push([
                 document.data().coordinates[0],
                 document.data().coordinates[1],
