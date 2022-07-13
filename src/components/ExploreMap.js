@@ -37,6 +37,8 @@ export const ExploreMap = () => {
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
+  const [currLatDelta, setLatDelta] = useState(0.06)
+  const [currLongDelta, setLongDelta] = useState(0.06)
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
@@ -50,6 +52,14 @@ export const ExploreMap = () => {
       setLongitude(Number(userLocation.coords.longitude))
       setLocation(userLocation)
     }
+  }
+
+  const onRegionChange = (region) => {
+    console.log(region)
+    setLatitude(region.latitude)
+    setLongitude(region.longitude)
+    setLatDelta(region.latitudeDelta)
+    setLongDelta(region.longitudeDelta)
   }
 
   const loadAllPins = async () => {
@@ -66,15 +76,14 @@ export const ExploreMap = () => {
             document.data().category,
             document.data().description,
             document.data().picture,
-            document.data().video,
             document.data().user,
             new Date(document.data().date.seconds * 1000).toLocaleString(
               'en-US',
             ),
             document.id,
           ])
-          setPins(pinsArr)
         })
+        setPins(pinsArr)
       })
     } catch (err) {
       console.log(err)
@@ -120,9 +129,10 @@ export const ExploreMap = () => {
         region={{
           latitude: Number(currLatitude),
           longitude: Number(currLongitude),
-          latitudeDelta: 0.06,
-          longitudeDelta: 0.06,
+          latitudeDelta: currLatDelta,
+          longitudeDelta: currLongDelta,
         }}
+        onRegionChange={onRegionChange}
         customMapStyle={mapStyle}
       >
         {pins.map((pin) => {
@@ -149,7 +159,7 @@ export const ExploreMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[6]}`)
+              const docRef = doc(firestore, 'users', `${pin[5]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
@@ -165,7 +175,7 @@ export const ExploreMap = () => {
 
           return (
             <MapView.Marker
-              key={pin[8]}
+              key={pin[6]}
               coordinate={{
                 latitude: pin[0],
                 longitude: pin[1],
@@ -199,22 +209,24 @@ export const ExploreMap = () => {
                 style={{ height: 250, width: 150 }}
                 source={{ uri: modalData[4] }}
               />
-            ) : modalData[5] ? (
+            ) : null}
+            {modalData[5] ? (
               <Video
                 style={{
-                  width: 150,
+                  width: 325,
                   height: 250,
+                  alignSelf: 'center',
                 }}
                 source={{
                   uri: modalData[5],
                 }}
                 useNativeControls
                 isLooping
-                // resizeMode="contain"
+                resizeMode="contain"
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
-            <Text style={styles.modalDescriptionText}>{modalData[7]}</Text>
+            <Text style={styles.modalDescriptionText}>{modalData[6]}</Text>
             <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
