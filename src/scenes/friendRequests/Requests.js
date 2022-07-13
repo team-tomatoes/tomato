@@ -20,6 +20,7 @@ export default function Requests() {
   const uid = userData.id
   const [friends, setFriends] = useState([])
   const [pendingRequests, setPendingRequests] = useState([])
+  const [requesterFriends, setRequesterFriends] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -29,11 +30,15 @@ export default function Requests() {
         const q = query(requestsRef, where('id', '==', `${uid}`))
         const requestSnapshot = await getDocs(q)
         let requestData = []
+        let friendsListData = []
         requestSnapshot.forEach((document) => {
           requestData = document.get('pendingRequests')
+          friendsListData = document.get('friendsList')
         })
         setPendingRequests(requestData)
+        setFriends(friendsListData)
         console.log('REQUESTS', pendingRequests)
+        console.log('FRIENDS', friends)
         setLoading(false)
       } catch (error) {
         console.log('error fetching user requests!', error)
@@ -41,6 +46,32 @@ export default function Requests() {
     }
     fetchRequests()
   }, [])
+
+  const onPressAcceptRequest = async (friendObj) => {
+    try {
+      const userRequestRef = doc(firestore, 'friendships', uid)
+      await updateDoc(userRequestRef, {
+        friendsList: [...friends, friendObj],
+      })
+      await updateDoc(userRequestRef, {
+        pendingRequests: pendingRequests.filter((friend) => friend.id !== friendObj.id),
+      })
+
+      const updatedRef = collection(firestore, 'friendships')
+      const q = query(updatedRef, where('id', '==', `${uid}`))
+      const requestSnapshot = await getDocs(q)
+      let pendingRequestData = []
+      let friendsListData = []
+      requestSnapshot.forEach((document) => {
+        friendsListData = document.get('friendsList')
+        pendingRequestData = document.get('pendingRequests')
+      })
+      setFriends(friendsListData)
+      setPendingRequests(pendingRequestData)
+    } catch (error) {
+      alert(error)
+    }
+  }
 
   const onPressDeleteRequest = async (friendId) => {
     try {
@@ -70,6 +101,7 @@ export default function Requests() {
           renderItem={({ item }) => (
             <>
               <Text style={[styles.item, { color: colorScheme.text }]}>{item.userName}</Text>
+              <Button label="Accept" color={colors.primary} onPress={() => onPressAcceptRequest(item)}>Accept</Button>
               <Button label="Remove" color={colors.primary} onPress={() => onPressDeleteRequest(item.id)}>Remove</Button>
             </>
           )}
