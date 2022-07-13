@@ -14,7 +14,7 @@ const colors = {
   quarternary: '00afb9',
   white: '#ffffff',
   darkInput: '#303030',
-  primaryText: '#2e2e2d',
+  primaryText: '#ffffff',
   lightyellow: '#ffffe0',
   black: '#000000',
 }

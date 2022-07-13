@@ -5,7 +5,7 @@ import { screenOptions } from './navigationProps/navigationProps'
 
 import { FriendsNavigator } from '../stacks/topTabStacks/FriendsNavigator'
 import { RequestsNavigator } from '../stacks/topTabStacks/RequestsNavigator'
-import { PinnedMap } from '../../../components/ExploreMap'
+import { FriendsMap } from '../../../components/FriendsMap'
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -17,7 +17,7 @@ export const FollowFollowerNavigator = () => (
     <Tab.Screen
       name="FriendsMap"
       // need to filter by if friends show pins
-      component={PinnedMap}
+      component={FriendsMap}
       options={{ tabBarLabel: 'Map' }}
     />
     <Tab.Screen

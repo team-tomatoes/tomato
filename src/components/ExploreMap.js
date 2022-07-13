@@ -13,19 +13,19 @@ import {
 } from 'react-native'
 import {
   collection,
-  query,
-  where,
   doc,
   getDoc,
   setDoc,
   getDocs,
+  onSnapshot,
+  query,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
 import { firestore } from '../firebase/config'
 
-export const PinnedMap = () => {
+export const ExploreMap = () => {
   Geocoder.init(APIKey)
 
   const [pins, setPins] = useState([])
@@ -55,7 +55,7 @@ export const PinnedMap = () => {
   const loadAllPins = async () => {
     try {
       const pinsArr = []
-      const querySnapshot = await getDocs(collection(firestore, 'pins'))
+      const q = query(collection(firestore, 'pins'))
 
       querySnapshot.forEach((document) => {
         // doc.data() is never undefined for query doc snapshots
@@ -70,7 +70,6 @@ export const PinnedMap = () => {
           document.id,
         ])
       })
-      setPins(pinsArr)
     } catch (err) {
       console.log(err)
     }
@@ -211,6 +210,7 @@ export const PinnedMap = () => {
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
+            <Text style={styles.modalDescriptionText}>{modalData[6]}</Text>
             <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
