@@ -19,6 +19,7 @@ import {
   getDocs,
   onSnapshot,
   query,
+  where,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'

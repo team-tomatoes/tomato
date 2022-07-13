@@ -116,7 +116,7 @@ export const MyPinsMap = () => {
         }}
         customMapStyle={mapStyle}
       >
-        {pins.map((pin) => {
+        {pins.map((pin, i) => {
           const icon = () => {
             if (pin[2] === 'Mood') {
               return require('../../assets/pinEmojis/blueSmileyPastel.png')
@@ -162,6 +162,7 @@ export const MyPinsMap = () => {
                 longitude: pin[1],
               }}
               image={icon()}
+              zIndex={i}
               onPress={() => {
                 setModalData(pin)
                 getUserName()
