@@ -37,6 +37,7 @@ export const ExploreMap = () => {
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
+
   const [currLatDelta, setLatDelta] = useState(0.06)
   const [currLongDelta, setLongDelta] = useState(0.06)
 
@@ -54,12 +55,18 @@ export const ExploreMap = () => {
     }
   }
 
+  // const onRegionChange = (region) => {
+  //   setLatitude(region.latitude)
+  //   setLongitude(region.longitude)
+  //   setLatDelta(region.latitudeDelta)
+  //   setLongDelta(region.longitudeDelta)
+  // }
+
   const onRegionChange = (region) => {
     setLatitude(region.latitude)
     setLongitude(region.longitude)
     setLatDelta(region.latitudeDelta)
     setLongDelta(region.longitudeDelta)
-    
   }
 
   const loadAllPins = async () => {
