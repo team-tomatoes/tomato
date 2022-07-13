@@ -41,6 +41,8 @@ export const MyPinsMap = () => {
   const [modalData, setModalData] = useState([])
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
+  const [currLatDelta, setLatDelta] = useState(0.06)
+  const [currLongDelta, setLongDelta] = useState(0.06)
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
@@ -54,6 +56,13 @@ export const MyPinsMap = () => {
       setLongitude(Number(userLocation.coords.longitude))
       setLocation(userLocation)
     }
+  }
+
+  const onRegionChange = (region) => {
+    setLatitude(region.latitude)
+    setLongitude(region.longitude)
+    setLatDelta(region.latitudeDelta)
+    setLongDelta(region.longitudeDelta)
   }
 
   const loadAllPins = async () => {
@@ -108,12 +117,13 @@ export const MyPinsMap = () => {
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
-          latitudeDelta: 0.2,
-          longitudeDelta: 0.2,
+        region={{
+          latitude: Number(currLatitude),
+          longitude: Number(currLongitude),
+          latitudeDelta: currLatDelta,
+          longitudeDelta: currLongDelta,
         }}
+        onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
         {pins.map((pin, i) => {
