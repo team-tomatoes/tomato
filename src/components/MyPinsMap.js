@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import { Video, AVPlaybackStatus } from 'expo-av'
 import * as Location from 'expo-location'
 import {
   Alert,
@@ -58,10 +59,7 @@ export const MyPinsMap = () => {
   const loadAllPins = async () => {
     try {
       const pinsArr = []
-      const q = query(
-        collection(firestore, 'pins'),
-        where('user', '==', userData.id),
-      )
+      const q = query(collection(firestore, 'pins'))
       onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((document) => {
           // doc.data() is never undefined for query doc snapshots
@@ -71,14 +69,15 @@ export const MyPinsMap = () => {
             document.data().category,
             document.data().description,
             document.data().picture,
+            document.data().video,
             document.data().user,
             new Date(document.data().date.seconds * 1000).toLocaleString(
               'en-US',
             ),
             document.id,
           ])
+          setPins(pinsArr)
         })
-        setPins(pinsArr)
       })
     } catch (err) {
       console.log(err)
@@ -154,7 +153,7 @@ export const MyPinsMap = () => {
 
           return (
             <MapView.Marker
-              key={pin[6]}
+              key={pin[8]}
               coordinate={{
                 latitude: pin[0],
                 longitude: pin[1],
@@ -188,9 +187,22 @@ export const MyPinsMap = () => {
                 style={{ height: 250, width: 150 }}
                 source={{ uri: modalData[4] }}
               />
+            ) : modalData[5] ? (
+              <Video
+                style={{
+                  width: 150,
+                  height: 250,
+                }}
+                source={{
+                  uri: modalData[5],
+                }}
+                useNativeControls
+                isLooping
+                // resizeMode="contain"
+              />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
-            <Text style={styles.modalDescriptionText}>{modalData[6]}</Text>
+            <Text style={styles.modalDescriptionText}>{modalData[7]}</Text>
             <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}

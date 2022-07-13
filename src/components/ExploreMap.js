@@ -57,18 +57,23 @@ export const ExploreMap = () => {
       const pinsArr = []
       const q = query(collection(firestore, 'pins'))
       onSnapshot(q, (querySnapshot) => {
-      querySnapshot.forEach((document) => {
-        // doc.data() is never undefined for query doc snapshots
-        pinsArr.push([
-          document.data().coordinates[0],
-          document.data().coordinates[1],
-          document.data().category,
-          document.data().description,
-          document.data().picture,
-          document.data().video,
-          document.data().user,
-          document.id,
-        ])
+        querySnapshot.forEach((document) => {
+          // doc.data() is never undefined for query doc snapshots
+          pinsArr.push([
+            document.data().coordinates[0],
+            document.data().coordinates[1],
+            document.data().category,
+            document.data().description,
+            document.data().picture,
+            document.data().video,
+            document.data().user,
+            new Date(document.data().date.seconds * 1000).toLocaleString(
+              'en-US',
+            ),
+            document.id,
+          ])
+          setPins(pinsArr)
+        })
       })
     } catch (err) {
       console.log(err)
@@ -143,7 +148,7 @@ export const ExploreMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
@@ -159,7 +164,7 @@ export const ExploreMap = () => {
 
           return (
             <MapView.Marker
-              key={pin[6]}
+              key={pin[8]}
               coordinate={{
                 latitude: pin[0],
                 longitude: pin[1],
@@ -193,24 +198,22 @@ export const ExploreMap = () => {
                 style={{ height: 250, width: 150 }}
                 source={{ uri: modalData[4] }}
               />
-            ) : null}
-            {modalData[5] ? (
+            ) : modalData[5] ? (
               <Video
                 style={{
-                  width: 325,
+                  width: 150,
                   height: 250,
-                  alignSelf: 'center',
                 }}
                 source={{
                   uri: modalData[5],
                 }}
                 useNativeControls
                 isLooping
-                resizeMode="contain"
+                // resizeMode="contain"
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
-            <Text style={styles.modalDescriptionText}>{modalData[6]}</Text>
+            <Text style={styles.modalDescriptionText}>{modalData[7]}</Text>
             <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
