@@ -8,7 +8,7 @@ import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import { PinnedMap } from '../../components/PinnedMap'
+import { PinnedMap } from '../../components/ExploreMap'
 import { MyPinsMap } from '../../components/MyPinsMap'
 
 export default function MyPins() {

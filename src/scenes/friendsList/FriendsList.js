@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
-import { getDocs, collection, query, where } from 'firebase/firestore'
+import { getDocs, collection, query, where, doc, updateDoc } from 'firebase/firestore'
 import { firestore } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
@@ -29,8 +29,8 @@ export default function Friends() {
         const q = query(friendsRef, where('id', '==', `${uid}`))
         const friendSnapshot = await getDocs(q)
         let friendData = []
-        const friendsArr = friendSnapshot.forEach((doc) => {
-          friendData = doc.get('friendsList')
+        friendSnapshot.forEach((document) => {
+          friendData = document.get('friendsList')
         })
         setFriends(friendData)
         console.log('FRIENDS', friends)
@@ -42,6 +42,26 @@ export default function Friends() {
     fetchFriends()
   }, [])
 
+  const onPressDeleteFriend = async (friendId) => {
+    try {
+      const friendsListRef = doc(firestore, 'friendships', uid)
+      await updateDoc(friendsListRef, {
+        friendsList: friends.filter((friend) => friend.id !== friendId),
+      })
+
+      const updatedRef = collection(firestore, 'friendships')
+      const q = query(updatedRef, where('id', '==', `${uid}`))
+      const friendSnapshot = await getDocs(q)
+      let friendData = []
+      friendSnapshot.forEach((document) => {
+        friendData = document.get('friendsList')
+      })
+      setFriends(friendData)
+    } catch (error) {
+      alert(error)
+    }
+  }
+
   return (
     <ScreenTemplate>
       <SafeAreaView style={[styles.container]}>
@@ -50,7 +70,8 @@ export default function Friends() {
           renderItem={({ item }) => (
             <>
               <Text style={[styles.item, { color: colorScheme.text }]}>{item.userName}</Text>
-              <Button label="View Profile" color={colors.primary}>View Profile</Button>
+              <Button label="View" color={colors.primary}>View</Button>
+              <Button label="Delete" color={colors.primary} onPress={() => onPressDeleteFriend(item.id)}>Delete</Button>
             </>
           )}
           keyExtractor={(item) => item.id}

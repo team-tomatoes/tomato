@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext, useLayoutEffect } from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Text, View, Modal, Pressable, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu'
 import { IconButton, Colors } from 'react-native-paper'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
@@ -8,11 +9,14 @@ import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import { PinnedMap } from '../../components/PinnedMap'
+import { ExploreMap } from '../../components/ExploreMap'
 
 export default function Explore() {
   const navigation = useNavigation()
   const [token, setToken] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
+  const [visible, setVisible] = useState(false)
+
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
@@ -36,7 +40,6 @@ export default function Explore() {
           icon="map-search"
           color={Colors.white}
           size={24}
-          // add in a filter option later, not necessary rn tho
           onPress={() => headerRightPress()}
         />
       ),
@@ -66,7 +69,7 @@ export default function Explore() {
 
   return (
     <ScreenTemplate>
-      <PinnedMap />
+      <ExploreMap />
     </ScreenTemplate>
   )
 }

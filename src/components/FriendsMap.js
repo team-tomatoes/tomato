@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import * as Location from 'expo-location'
@@ -13,34 +13,30 @@ import {
 } from 'react-native'
 import {
   collection,
-  query,
-  where,
   doc,
   getDoc,
   setDoc,
   getDocs,
   onSnapshot,
+  query,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
-import { UserDataContext } from '../context/UserDataContext'
 import { firestore } from '../firebase/config'
 
-export const MyPinsMap = () => {
+export const FriendsMap = () => {
   Geocoder.init(APIKey)
 
-  const { userData } = useContext(UserDataContext)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [location, setLocation] = useState(null)
-  const [currLatitude, setLatitude] = useState(null)
-  const [currLongitude, setLongitude] = useState(null)
   const [pins, setPins] = useState([])
   const [users, setUsers] = useState([])
   const [userName, setUserName] = useState('')
   const [modalData, setModalData] = useState([])
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
@@ -84,6 +80,26 @@ export const MyPinsMap = () => {
     }
   }
 
+  const loadUsers = async () => {
+    try {
+      const userArr = []
+      const querySnapshot = await getDocs(collection(firestore, 'users'))
+
+      querySnapshot.forEach((user) => {
+        userArr.push([user.data().id, user.data().userName])
+      })
+      setUsers(userArr)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    loadAllPins()
+    loadUsers()
+    getLocation()
+  }, [])
+
   const loadNear = async (latLong) => {
     try {
       await Geocoder.from(latLong).then((json) => {
@@ -95,21 +111,16 @@ export const MyPinsMap = () => {
     }
   }
 
-  useEffect(() => {
-    getLocation()
-    loadAllPins()
-  }, [])
-
   return (
     <>
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
-          latitudeDelta: 0.2,
-          longitudeDelta: 0.2,
+        region={{
+          latitude: Number(currLatitude),
+          longitude: Number(currLongitude),
+          latitudeDelta: 0.06,
+          longitudeDelta: 0.06,
         }}
         customMapStyle={mapStyle}
       >
@@ -137,7 +148,7 @@ export const MyPinsMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
