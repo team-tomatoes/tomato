@@ -129,9 +129,10 @@ export const ExploreMap = () => {
         region={{
           latitude: Number(currLatitude),
           longitude: Number(currLongitude),
-          latitudeDelta: 0.06,
-          longitudeDelta: 0.06,
+          latitudeDelta: currLatDelta,
+          longitudeDelta: currLongDelta,
         }}
+        onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
         {pins.map((pin, i) => {
