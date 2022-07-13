@@ -197,14 +197,14 @@ export const ExploreMap = () => {
             <Text style={styles.modalNearText}>Near {near}</Text>
             {modalData[4] ? (
               <Image
-                style={{ height: 250, width: 150 }}
+                style={{ height: 249, width: 140 }}
                 source={{ uri: modalData[4] }}
               />
             ) : modalData[5] ? (
               <Video
                 style={{
-                  width: 150,
-                  height: 250,
+                  width: 140,
+                  height: 249,
                 }}
                 source={{
                   uri: modalData[5],
