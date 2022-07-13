@@ -63,35 +63,39 @@ export const FriendsMap = () => {
         collection(firestore, 'friendships'),
         where('id', '==', userData.id),
       )
-      onSnapshot(q1, (querySnapshot) => {
-        querySnapshot.forEach((document) => {
+      onSnapshot(q1, (querySnapshot1) => {
+        querySnapshot1.forEach((document) => {
           // doc.data() is never undefined for query doc snapshots
-          console.log(document.data().friendsList)
+          document.data().friendsList.forEach((friend) => {
+            friendsArr.push(friend.id)
+          })
         })
-      })
+        const pinsArr = []
 
-      const pinsArr = []
-      const q = query(
-        collection(firestore, 'pins'),
-        where('user', '==', userData.id),
-      )
-      onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((document) => {
-          // doc.data() is never undefined for query doc snapshots
-          pinsArr.push([
-            document.data().coordinates[0],
-            document.data().coordinates[1],
-            document.data().category,
-            document.data().description,
-            document.data().picture,
-            document.data().video,
-            document.data().user,
-            new Date(document.data().date.seconds * 1000).toLocaleString(
-              'en-US',
-            ),
-            document.id,
-          ])
-          setPins(pinsArr)
+        friendsArr.forEach((friend) => {
+          const q = query(
+            collection(firestore, 'pins'),
+            where('user', '==', friend),
+          )
+          onSnapshot(q, (querySnapshot) => {
+            querySnapshot.forEach((document) => {
+              // doc.data() is never undefined for query doc snapshots
+              pinsArr.push([
+                document.data().coordinates[0],
+                document.data().coordinates[1],
+                document.data().category,
+                document.data().description,
+                document.data().picture,
+                document.data().video,
+                document.data().user,
+                new Date(document.data().date.seconds * 1000).toLocaleString(
+                  'en-US',
+                ),
+                document.id,
+              ])
+              setPins(pinsArr)
+            })
+          })
         })
       })
     } catch (err) {
