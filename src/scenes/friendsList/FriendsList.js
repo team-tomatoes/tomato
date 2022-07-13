@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
-import { getDocs, collection, query, where, doc, updateDoc } from 'firebase/firestore'
+import { getDocs, collection, query, where, doc, updateDoc, onSnapshot } from 'firebase/firestore'
 import { firestore } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
@@ -27,13 +27,14 @@ export default function Friends() {
       try {
         const friendsRef = collection(firestore, 'friendships')
         const q = query(friendsRef, where('id', '==', `${uid}`))
-        const friendSnapshot = await getDocs(q)
+
         let friendData = []
-        friendSnapshot.forEach((document) => {
-          friendData = document.get('friendsList')
+        onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((document) => {
+            friendData = (document.data().friendsList)
+          })
+          setFriends(friendData)
         })
-        setFriends(friendData)
-        console.log('FRIENDS', friends)
         setLoading(false)
       } catch (error) {
         console.log('error fetching user friends!', error)
