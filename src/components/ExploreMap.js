@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import { Video, AVPlaybackStatus } from 'expo-av'
+import * as Location from 'expo-location'
 import {
   Alert,
   Modal,
@@ -32,6 +34,23 @@ export const PinnedMap = () => {
   const [modalData, setModalData] = useState([])
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
+
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      setErrorMessage('Permission not granted')
+    } else {
+      const userLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
+      setLatitude(Number(userLocation.coords.latitude))
+      setLongitude(Number(userLocation.coords.longitude))
+      setLocation(userLocation)
+    }
+  }
 
   const loadAllPins = async () => {
     try {
@@ -46,6 +65,7 @@ export const PinnedMap = () => {
           document.data().category,
           document.data().description,
           document.data().picture,
+          document.data().video,
           document.data().user,
           document.id,
         ])
@@ -73,6 +93,7 @@ export const PinnedMap = () => {
   useEffect(() => {
     loadAllPins()
     loadUsers()
+    getLocation()
   }, [])
 
   const loadNear = async (latLong) => {
@@ -91,11 +112,11 @@ export const PinnedMap = () => {
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
-          latitudeDelta: 0.2,
-          longitudeDelta: 0.2,
+        region={{
+          latitude: Number(currLatitude),
+          longitude: Number(currLongitude),
+          latitudeDelta: 0.06,
+          longitudeDelta: 0.06,
         }}
         customMapStyle={mapStyle}
       >
@@ -127,7 +148,7 @@ export const PinnedMap = () => {
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
-                pinUserName = (docSnap.data().userName)
+                pinUserName = docSnap.data().userName
                 setUserName(pinUserName)
               } else {
                 console.log('no such document~')
@@ -172,6 +193,22 @@ export const PinnedMap = () => {
               <Image
                 style={{ height: 250, width: 150 }}
                 source={{ uri: modalData[4] }}
+              />
+            ) : null}
+            {modalData[5] ? (
+              <Video
+                style={{
+                  width: 325,
+                  height: 250,
+                  alignSelf: 'center',
+                }}
+                source={{
+                  uri: modalData[5],
+                }}
+                useNativeControls
+                isLooping
+                resizeMode="contain"
+                onPlaybackStatusUpdate={(status) => setStatus(() => status)}
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
