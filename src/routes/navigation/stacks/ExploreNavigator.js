@@ -25,7 +25,7 @@ export const ExploreNavigator = () => {
           name="Explore"
           component={Explore}
           options={({ navigation }) => ({
-            headerBackground: scheme === 'dark' ? null : () => <HeaderStyle />,
+            headerBackground: scheme === '' ? null : () => <HeaderStyle />,
             headerRight: () => (
               <HeaderSearchButton from="Connect" userData={userData} />
             ),

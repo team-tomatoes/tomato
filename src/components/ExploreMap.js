@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import * as Location from 'expo-location'
@@ -13,34 +13,30 @@ import {
 } from 'react-native'
 import {
   collection,
-  query,
-  where,
   doc,
   getDoc,
   setDoc,
   getDocs,
   onSnapshot,
+  query,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
-import { UserDataContext } from '../context/UserDataContext'
 import { firestore } from '../firebase/config'
 
-export const MyPinsMap = () => {
+export const ExploreMap = () => {
   Geocoder.init(APIKey)
 
-  const { userData } = useContext(UserDataContext)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [location, setLocation] = useState(null)
-  const [currLatitude, setLatitude] = useState(null)
-  const [currLongitude, setLongitude] = useState(null)
   const [pins, setPins] = useState([])
   const [users, setUsers] = useState([])
   const [userName, setUserName] = useState('')
   const [modalData, setModalData] = useState([])
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
   const [currLatDelta, setLatDelta] = useState(0.06)
   const [currLongDelta, setLongDelta] = useState(0.06)
 
@@ -68,10 +64,8 @@ export const MyPinsMap = () => {
   const loadAllPins = async () => {
     try {
       const pinsArr = []
-      const q = query(
-        collection(firestore, 'pins'),
-        where('user', '==', userData.id),
-      )
+      const q = query(collection(firestore, 'pins'))
+
       onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((document) => {
           // doc.data() is never undefined for query doc snapshots
@@ -96,6 +90,26 @@ export const MyPinsMap = () => {
     }
   }
 
+  const loadUsers = async () => {
+    try {
+      const userArr = []
+      const querySnapshot = await getDocs(collection(firestore, 'users'))
+
+      querySnapshot.forEach((user) => {
+        userArr.push([user.data().id, user.data().userName])
+      })
+      setUsers(userArr)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    loadAllPins()
+    loadUsers()
+    getLocation()
+  }, [])
+
   const loadNear = async (latLong) => {
     try {
       await Geocoder.from(latLong).then((json) => {
@@ -106,11 +120,6 @@ export const MyPinsMap = () => {
       console.log(err)
     }
   }
-
-  useEffect(() => {
-    getLocation()
-    loadAllPins()
-  }, [])
 
   return (
     <>
@@ -198,14 +207,14 @@ export const MyPinsMap = () => {
             <Text style={styles.modalNearText}>Near {near}</Text>
             {modalData[4] ? (
               <Image
-                style={{ height: 250, width: 150 }}
+                style={{ height: 249, width: 140 }}
                 source={{ uri: modalData[4] }}
               />
             ) : modalData[5] ? (
               <Video
                 style={{
-                  width: 150,
-                  height: 250,
+                  width: 140,
+                  height: 249,
                 }}
                 source={{
                   uri: modalData[5],

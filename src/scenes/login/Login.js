@@ -25,7 +25,7 @@ export default function Login() {
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
   const colorScheme = {
-    text: isDark ? colors.white : colors.primaryText,
+    text: colors.primaryText,
   }
 
   const onFooterLinkPress = () => {
@@ -67,6 +67,7 @@ export default function Login() {
           autoCapitalize="none"
           value={email}
           keyboardType="email-address"
+          style={{ color: 'blue' }}
         />
         <TextInputBox
           secureTextEntry
@@ -118,5 +119,8 @@ const styles = StyleSheet.create({
     color: colors.redLight,
     fontWeight: 'bold',
     fontSize: fontSize.large,
+  },
+  textInput: {
+    color: 'black',
   },
 })

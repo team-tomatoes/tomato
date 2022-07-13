@@ -16,7 +16,7 @@ export default function TextInputBox(props) {
   const isDark = scheme === 'dark'
   const colorScheme = {
     input: isDark ? colors.darkInput : colors.white,
-    text: isDark ? colors.white : colors.primaryText,
+    text: colors.dark,
   }
 
   return (
