@@ -15,7 +15,6 @@ import {
   where,
   doc,
   getDoc,
-  setDoc,
   getDocs,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
@@ -24,7 +23,7 @@ import { mapStyle } from '../constants/mapStyle'
 import { firestore } from '../firebase/config'
 import { fontSize } from '../theme'
 
-export const ExploreMap = () => {
+export const FriendsMap = () => {
   Geocoder.init(APIKey)
 
   const [pins, setPins] = useState([])
