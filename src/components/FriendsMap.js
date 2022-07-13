@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import { Video, AVPlaybackStatus } from 'expo-av'
+import * as Location from 'expo-location'
 import {
   Alert,
   Modal,
@@ -32,12 +34,28 @@ export const FriendsMap = () => {
   const [modalData, setModalData] = useState([])
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
+
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      setErrorMessage('Permission not granted')
+    } else {
+      const userLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
+      setLatitude(Number(userLocation.coords.latitude))
+      setLongitude(Number(userLocation.coords.longitude))
+      setLocation(userLocation)
+    }
+  }
 
   const loadAllPins = async () => {
     try {
       const pinsArr = []
       const q = query(collection(firestore, 'pins'))
-
       onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((document) => {
           // doc.data() is never undefined for query doc snapshots
@@ -47,14 +65,15 @@ export const FriendsMap = () => {
             document.data().category,
             document.data().description,
             document.data().picture,
+            document.data().video,
             document.data().user,
             new Date(document.data().date.seconds * 1000).toLocaleString(
               'en-US',
             ),
             document.id,
           ])
+          setPins(pinsArr)
         })
-        setPins(pinsArr)
       })
     } catch (err) {
       console.log(err)
@@ -78,6 +97,7 @@ export const FriendsMap = () => {
   useEffect(() => {
     loadAllPins()
     loadUsers()
+    getLocation()
   }, [])
 
   const loadNear = async (latLong) => {
@@ -96,11 +116,11 @@ export const FriendsMap = () => {
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
-          latitudeDelta: 0.2,
-          longitudeDelta: 0.2,
+        region={{
+          latitude: Number(currLatitude),
+          longitude: Number(currLongitude),
+          latitudeDelta: 0.06,
+          longitudeDelta: 0.06,
         }}
         customMapStyle={mapStyle}
       >
@@ -128,7 +148,7 @@ export const FriendsMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
@@ -144,7 +164,7 @@ export const FriendsMap = () => {
 
           return (
             <MapView.Marker
-              key={pin[6]}
+              key={pin[8]}
               coordinate={{
                 latitude: pin[0],
                 longitude: pin[1],
@@ -178,9 +198,22 @@ export const FriendsMap = () => {
                 style={{ height: 250, width: 150 }}
                 source={{ uri: modalData[4] }}
               />
+            ) : modalData[5] ? (
+              <Video
+                style={{
+                  width: 150,
+                  height: 250,
+                }}
+                source={{
+                  uri: modalData[5],
+                }}
+                useNativeControls
+                isLooping
+                // resizeMode="contain"
+              />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
-            <Text style={styles.modalDescriptionText}>{modalData[6]}</Text>
+            <Text style={styles.modalDescriptionText}>{modalData[7]}</Text>
             <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}

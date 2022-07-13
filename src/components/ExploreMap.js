@@ -73,8 +73,8 @@ export const ExploreMap = () => {
             ),
             document.id,
           ])
+          setPins(pinsArr)
         })
-        setPins(pinsArr)
       })
     } catch (err) {
       console.log(err)
@@ -149,7 +149,7 @@ export const ExploreMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
@@ -165,7 +165,7 @@ export const ExploreMap = () => {
 
           return (
             <MapView.Marker
-              key={pin[6]}
+              key={pin[8]}
               coordinate={{
                 latitude: pin[0],
                 longitude: pin[1],
@@ -199,24 +199,22 @@ export const ExploreMap = () => {
                 style={{ height: 250, width: 150 }}
                 source={{ uri: modalData[4] }}
               />
-            ) : null}
-            {modalData[5] ? (
+            ) : modalData[5] ? (
               <Video
                 style={{
-                  width: 325,
+                  width: 150,
                   height: 250,
-                  alignSelf: 'center',
                 }}
                 source={{
                   uri: modalData[5],
                 }}
                 useNativeControls
                 isLooping
-                resizeMode="contain"
+                // resizeMode="contain"
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
-            <Text style={styles.modalDescriptionText}>{modalData[6]}</Text>
+            <Text style={styles.modalDescriptionText}>{modalData[7]}</Text>
             <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
