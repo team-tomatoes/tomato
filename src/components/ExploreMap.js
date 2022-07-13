@@ -22,6 +22,7 @@ import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
 import { firestore } from '../firebase/config'
+import { fontSize } from '../theme'
 
 export const PinnedMap = () => {
   Geocoder.init(APIKey)

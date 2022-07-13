@@ -5,7 +5,14 @@ import { Avatar } from 'react-native-elements'
 import Dialog from 'react-native-dialog'
 import Spinner from 'react-native-loading-spinner-overlay'
 import { signOut, deleteUser } from 'firebase/auth'
-import { doc, deleteDoc } from 'firebase/firestore'
+import {
+  doc,
+  deleteDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Button from '../../components/Button'
@@ -20,13 +27,37 @@ export default function Profile() {
   const navigation = useNavigation()
   const [visible, setVisible] = useState(false)
   const [spinner, setSpinner] = useState(false)
+  const [pinNumber, setPinNumber] = useState(null)
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
   const colorScheme = {
     text: isDark ? colors.white : colors.primaryText,
   }
 
+  const loadAllPins = async () => {
+    try {
+      const myPinsArr = []
+      const q = query(
+        collection(firestore, 'pins'),
+        where('user', '==', userData.id),
+      )
+
+      const querySnapshot = await getDocs(q)
+
+      querySnapshot.forEach((document) => {
+        // doc.data() is never undefined for query doc snapshots
+        myPinsArr.push([
+          document.id,
+        ])
+      })
+      setPinNumber(myPinsArr.length)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   useEffect(() => {
+    loadAllPins()
     console.log('Profile screen')
     console.log(userData)
   }, [])
@@ -86,17 +117,15 @@ export default function Profile() {
     <ScreenTemplate>
       <ScrollView style={styles.main}>
         <View style={styles.avatar}>
-          <Avatar
-            size="xlarge"
-            rounded
-            source={{ uri: userData.avatar }}
-          />
+          <Avatar size="xlarge" rounded source={{ uri: userData.avatar }} />
         </View>
-        <Text style={[styles.field, { color: colorScheme.text }]}>Pin Count:</Text>
-        <Text style={[styles.title, { color: colorScheme.text }]}>
-          # here
+        <Text style={[styles.field, { color: colorScheme.text }]}>
+          Pin Count:
         </Text>
-        <Text style={[styles.field, { color: colorScheme.text }]}>Username:</Text>
+        <Text style={[styles.title, { color: colorScheme.text }]}>{pinNumber} pins</Text>
+        <Text style={[styles.field, { color: colorScheme.text }]}>
+          Username:
+        </Text>
         <Text style={[styles.title, { color: colorScheme.text }]}>
           {userData.userName}
         </Text>
