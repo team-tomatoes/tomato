@@ -1,14 +1,12 @@
 import React, { useContext } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { View, Platform, Text, Button } from 'react-native'
 import { IconButton, Colors } from 'react-native-paper'
 import { ColorSchemeContext } from '../../../context/ColorSchemeContext'
 import { UserDataContext } from '../../../context/UserDataContext'
 import { lightProps, darkProps } from './navigationProps/navigationProps'
 import HeaderStyle from './headerComponents/HeaderStyle'
 import { FollowFollowerNavigator } from '../toptabs/followfollowerNavigator'
-import { PinnedMap } from '../../../components/ExploreMap'
 
 const Stack = createStackNavigator()
 const RootStack = createStackNavigator()

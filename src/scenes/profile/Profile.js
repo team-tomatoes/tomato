@@ -46,9 +46,7 @@ export default function Profile() {
 
       querySnapshot.forEach((document) => {
         // doc.data() is never undefined for query doc snapshots
-        myPinsArr.push([
-          document.id,
-        ])
+        myPinsArr.push([document.id])
       })
       setPinNumber(myPinsArr.length)
     } catch (err) {
@@ -122,7 +120,9 @@ export default function Profile() {
         <Text style={[styles.field, { color: colorScheme.text }]}>
           Pin Count:
         </Text>
-        <Text style={[styles.title, { color: colorScheme.text }]}>{pinNumber} pins</Text>
+        <Text style={[styles.title, { color: colorScheme.text }]}>
+          {pinNumber} pins
+        </Text>
         <Text style={[styles.field, { color: colorScheme.text }]}>
           Username:
         </Text>
