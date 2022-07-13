@@ -18,6 +18,7 @@ import {
   getDoc,
   setDoc,
   getDocs,
+  onSnapshot,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
@@ -61,23 +62,24 @@ export const MyPinsMap = () => {
         collection(firestore, 'pins'),
         where('user', '==', userData.id),
       )
-
-      const querySnapshot = await getDocs(q)
-
-      querySnapshot.forEach((document) => {
-        // doc.data() is never undefined for query doc snapshots
-        pinsArr.push([
-          document.data().coordinates[0],
-          document.data().coordinates[1],
-          document.data().category,
-          document.data().description,
-          document.data().picture,
-          document.data().user,
-          new Date(document.data().date.seconds * 1000).toLocaleString('en-US'),
-          document.id,
-        ])
+      onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((document) => {
+          // doc.data() is never undefined for query doc snapshots
+          pinsArr.push([
+            document.data().coordinates[0],
+            document.data().coordinates[1],
+            document.data().category,
+            document.data().description,
+            document.data().picture,
+            document.data().user,
+            new Date(document.data().date.seconds * 1000).toLocaleString(
+              'en-US',
+            ),
+            document.id,
+          ])
+        })
+        setPins(pinsArr)
       })
-      setPins(pinsArr)
     } catch (err) {
       console.log(err)
     }

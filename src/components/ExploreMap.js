@@ -11,18 +11,17 @@ import {
 } from 'react-native'
 import {
   collection,
-  query,
-  where,
   doc,
   getDoc,
   setDoc,
   getDocs,
+  onSnapshot,
+  query,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
 import { firestore } from '../firebase/config'
-import { fontSize } from '../theme'
 
 export const ExploreMap = () => {
   Geocoder.init(APIKey)
@@ -37,22 +36,26 @@ export const ExploreMap = () => {
   const loadAllPins = async () => {
     try {
       const pinsArr = []
-      const querySnapshot = await getDocs(collection(firestore, 'pins'))
+      const q = query(collection(firestore, 'pins'))
 
-      querySnapshot.forEach((document) => {
-        // doc.data() is never undefined for query doc snapshots
-        pinsArr.push([
-          document.data().coordinates[0],
-          document.data().coordinates[1],
-          document.data().category,
-          document.data().description,
-          document.data().picture,
-          document.data().user,
-          new Date(document.data().date.seconds * 1000).toLocaleString('en-US'),
-          document.id,
-        ])
+      onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((document) => {
+          // doc.data() is never undefined for query doc snapshots
+          pinsArr.push([
+            document.data().coordinates[0],
+            document.data().coordinates[1],
+            document.data().category,
+            document.data().description,
+            document.data().picture,
+            document.data().user,
+            new Date(document.data().date.seconds * 1000).toLocaleString(
+              'en-US',
+            ),
+            document.id,
+          ])
+        })
+        setPins(pinsArr)
       })
-      setPins(pinsArr)
     } catch (err) {
       console.log(err)
     }
