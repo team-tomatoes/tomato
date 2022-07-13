@@ -47,6 +47,7 @@ export const PinnedMap = () => {
           document.data().description,
           document.data().picture,
           document.data().user,
+          new Date(document.data().date.seconds * 1000).toLocaleString('en-US'),
           document.id,
         ])
       })
@@ -127,7 +128,7 @@ export const PinnedMap = () => {
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
-                pinUserName = (docSnap.data().userName)
+                pinUserName = docSnap.data().userName
                 setUserName(pinUserName)
               } else {
                 console.log('no such document~')
@@ -175,6 +176,7 @@ export const PinnedMap = () => {
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
+            <Text style={styles.modalNearText}>{modalData[6]}</Text>
             <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
