@@ -23,7 +23,7 @@ import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
 import { firestore } from '../firebase/config'
 
-export const ExploreMap = () => {
+export const FriendsMap = () => {
   Geocoder.init(APIKey)
 
   const [pins, setPins] = useState([])
