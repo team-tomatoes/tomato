@@ -2,13 +2,12 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
-import { getDocs, collection, query, where, doc, updateDoc, onSnapshot } from 'firebase/firestore'
+import { getDocs, collection, query, where, doc, updateDoc, onSnapshot, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { firestore } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Button from '../../components/Button'
-import Requests from '../friendRequests/Requests'
 
 export default function Friends() {
   const navigation = useNavigation()
@@ -43,11 +42,11 @@ export default function Friends() {
     fetchFriends()
   }, [])
 
-  const onPressDeleteFriend = async (friendId) => {
+  const updateUserFriends = async (friendObj) => {
     try {
       const friendsListRef = doc(firestore, 'friendships', uid)
       await updateDoc(friendsListRef, {
-        friendsList: friends.filter((friend) => friend.id !== friendId),
+        friendsList: arrayRemove(friendObj),
       })
 
       const updatedRef = collection(firestore, 'friendships')
@@ -63,6 +62,18 @@ export default function Friends() {
     }
   }
 
+  const updateDeletedFriend = async (friendObj) => {
+    const deletedFriendRef = doc(firestore, 'friendships', friendObj.id)
+    await updateDoc(deletedFriendRef, {
+      friendsList: arrayRemove({ id: uid, userName: userData.userName }),
+    })
+  }
+
+  const onPressDeleteFriend = async (friendObj) => {
+    await updateUserFriends(friendObj)
+    await updateDeletedFriend(friendObj)
+  }
+
   return (
     <ScreenTemplate>
       <SafeAreaView style={[styles.container]}>
@@ -72,7 +83,7 @@ export default function Friends() {
             <>
               <Text style={[styles.item, { color: colorScheme.text }]}>{item.userName}</Text>
               <Button label="View" color={colors.primary}>View</Button>
-              <Button label="Delete" color={colors.primary} onPress={() => onPressDeleteFriend(item.id)}>Delete</Button>
+              <Button label="Delete" color={colors.primary} onPress={() => onPressDeleteFriend(item)}>Delete</Button>
             </>
           )}
           keyExtractor={(item) => item.id}
