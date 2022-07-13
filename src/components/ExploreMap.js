@@ -56,19 +56,25 @@ export const ExploreMap = () => {
     try {
       const pinsArr = []
       const q = query(collection(firestore, 'pins'))
+
       onSnapshot(q, (querySnapshot) => {
-      querySnapshot.forEach((document) => {
-        // doc.data() is never undefined for query doc snapshots
-        pinsArr.push([
-          document.data().coordinates[0],
-          document.data().coordinates[1],
-          document.data().category,
-          document.data().description,
-          document.data().picture,
-          document.data().video,
-          document.data().user,
-          document.id,
-        ])
+        querySnapshot.forEach((document) => {
+          // doc.data() is never undefined for query doc snapshots
+          pinsArr.push([
+            document.data().coordinates[0],
+            document.data().coordinates[1],
+            document.data().category,
+            document.data().description,
+            document.data().picture,
+            document.data().video,
+            document.data().user,
+            new Date(document.data().date.seconds * 1000).toLocaleString(
+              'en-US',
+            ),
+            document.id,
+          ])
+        })
+        setPins(pinsArr)
       })
     } catch (err) {
       console.log(err)
