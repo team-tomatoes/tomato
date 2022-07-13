@@ -59,7 +59,10 @@ export const MyPinsMap = () => {
   const loadAllPins = async () => {
     try {
       const pinsArr = []
-      const q = query(collection(firestore, 'pins'))
+      const q = query(
+        collection(firestore, 'pins'),
+        where('user', '==', userData.id),
+      )
       onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((document) => {
           // doc.data() is never undefined for query doc snapshots
@@ -113,7 +116,7 @@ export const MyPinsMap = () => {
         }}
         customMapStyle={mapStyle}
       >
-        {pins.map((pin) => {
+        {pins.map((pin, i) => {
           const icon = () => {
             if (pin[2] === 'Mood') {
               return require('../../assets/pinEmojis/blueSmileyPastel.png')
@@ -137,7 +140,7 @@ export const MyPinsMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
@@ -159,6 +162,7 @@ export const MyPinsMap = () => {
                 longitude: pin[1],
               }}
               image={icon()}
+              zIndex={i}
               onPress={() => {
                 setModalData(pin)
                 getUserName()
