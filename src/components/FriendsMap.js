@@ -195,7 +195,7 @@ export const FriendsMap = () => {
 
           return (
             <MapView.Marker
-              key={pin[8]}
+              key={Math.random()}
               coordinate={{
                 latitude: pin[0],
                 longitude: pin[1],
@@ -227,14 +227,14 @@ export const FriendsMap = () => {
             <Text style={styles.modalNearText}>Near {near}</Text>
             {modalData[4] ? (
               <Image
-                style={{ height: 249, width: 140 }}
+                style={{ height: 250, width: 150 }}
                 source={{ uri: modalData[4] }}
               />
             ) : modalData[5] ? (
               <Video
                 style={{
-                  width: 140,
-                  height: 249,
+                  width: 150,
+                  height: 250,
                 }}
                 source={{
                   uri: modalData[5],
