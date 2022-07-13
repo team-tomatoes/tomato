@@ -17,7 +17,7 @@ export const FriendsNavigator = () => {
   const navigation1 = useNavigation()
   const { scheme } = useContext(ColorSchemeContext)
   const { userData } = useContext(UserDataContext)
-  const navigationProps = scheme === 'dark' ? darkProps : lightProps
+  const navigationProps = lightProps
 
   const headerLeftPress = () => {
     navigation1.navigate('Home')

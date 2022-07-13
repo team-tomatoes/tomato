@@ -7,7 +7,7 @@ const headerMode = 'float'
 const lightProps = {
   headerTintColor,
   headerStyle: {
-    backgroundColor: colors.darkBlue,
+    backgroundColor: colors.secondary,
   },
   headerTitleStyle: { fontSize },
   headerMode,
@@ -16,7 +16,7 @@ const lightProps = {
 const darkProps = {
   headerTintColor,
   headerStyle: {
-    backgroundColor: colors.dark,
+    backgroundColor: colors.primary,
   },
   headerTitleStyle: { fontSize },
   headerMode,
