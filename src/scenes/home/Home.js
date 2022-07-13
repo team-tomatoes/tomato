@@ -1160,8 +1160,8 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 25,
-    paddingTop: 10,
+    padding: 30,
+    paddingTop: 5,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
