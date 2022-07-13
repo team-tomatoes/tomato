@@ -55,7 +55,6 @@ export const ExploreMap = () => {
   }
 
   const onRegionChange = (region) => {
-    console.log(region)
     setLatitude(region.latitude)
     setLongitude(region.longitude)
     setLatDelta(region.latitudeDelta)
@@ -132,7 +131,7 @@ export const ExploreMap = () => {
           latitudeDelta: currLatDelta,
           longitudeDelta: currLongDelta,
         }}
-        onRegionChange={onRegionChange}
+        onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
         {pins.map((pin) => {

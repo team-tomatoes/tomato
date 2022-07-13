@@ -37,6 +37,8 @@ export const FriendsMap = () => {
   const [location, setLocation] = useState(null)
   const [currLatitude, setLatitude] = useState(null)
   const [currLongitude, setLongitude] = useState(null)
+  const [currLatDelta, setLatDelta] = useState(0.06)
+  const [currLongDelta, setLongDelta] = useState(0.06)
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
@@ -50,6 +52,13 @@ export const FriendsMap = () => {
       setLongitude(Number(userLocation.coords.longitude))
       setLocation(userLocation)
     }
+  }
+
+  const onRegionChange = (region) => {
+    setLatitude(region.latitude)
+    setLongitude(region.longitude)
+    setLatDelta(region.latitudeDelta)
+    setLongDelta(region.longitudeDelta)
   }
 
   const loadAllPins = async () => {
@@ -119,9 +128,10 @@ export const FriendsMap = () => {
         region={{
           latitude: Number(currLatitude),
           longitude: Number(currLongitude),
-          latitudeDelta: 0.06,
-          longitudeDelta: 0.06,
+          latitudeDelta: currLatDelta,
+          longitudeDelta: currLongDelta,
         }}
+        onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
         {pins.map((pin) => {
