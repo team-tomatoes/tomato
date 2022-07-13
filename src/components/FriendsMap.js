@@ -53,7 +53,9 @@ export const FriendsMap = () => {
         accuracy: Location.Accuracy.Balanced,
       })
       setLatitude(Number(userLocation.coords.latitude))
+      console.log(currLatitude)
       setLongitude(Number(userLocation.coords.longitude))
+      console.log(currLongitude)
       setLocation(userLocation)
     }
   }
@@ -77,6 +79,7 @@ export const FriendsMap = () => {
           document.data().friendsList.forEach((friend) => {
             friendsArr.push(friend.id)
           })
+          console.log(friendsArr)
         })
         const pinsArr = []
 
