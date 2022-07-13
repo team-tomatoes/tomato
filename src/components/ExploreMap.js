@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import { Video, AVPlaybackStatus } from 'expo-av'
+import * as Location from 'expo-location'
 import {
   Alert,
   Modal,
@@ -32,29 +34,41 @@ export const ExploreMap = () => {
   const [modalData, setModalData] = useState([])
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
+
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      setErrorMessage('Permission not granted')
+    } else {
+      const userLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
+      setLatitude(Number(userLocation.coords.latitude))
+      setLongitude(Number(userLocation.coords.longitude))
+      setLocation(userLocation)
+    }
+  }
 
   const loadAllPins = async () => {
     try {
       const pinsArr = []
       const q = query(collection(firestore, 'pins'))
-
       onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((document) => {
-          // doc.data() is never undefined for query doc snapshots
-          pinsArr.push([
-            document.data().coordinates[0],
-            document.data().coordinates[1],
-            document.data().category,
-            document.data().description,
-            document.data().picture,
-            document.data().user,
-            new Date(document.data().date.seconds * 1000).toLocaleString(
-              'en-US',
-            ),
-            document.id,
-          ])
-        })
-        setPins(pinsArr)
+      querySnapshot.forEach((document) => {
+        // doc.data() is never undefined for query doc snapshots
+        pinsArr.push([
+          document.data().coordinates[0],
+          document.data().coordinates[1],
+          document.data().category,
+          document.data().description,
+          document.data().picture,
+          document.data().video,
+          document.data().user,
+          document.id,
+        ])
       })
     } catch (err) {
       console.log(err)
@@ -78,6 +92,7 @@ export const ExploreMap = () => {
   useEffect(() => {
     loadAllPins()
     loadUsers()
+    getLocation()
   }, [])
 
   const loadNear = async (latLong) => {
@@ -96,11 +111,11 @@ export const ExploreMap = () => {
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
-          latitudeDelta: 0.2,
-          longitudeDelta: 0.2,
+        region={{
+          latitude: Number(currLatitude),
+          longitude: Number(currLongitude),
+          latitudeDelta: 0.06,
+          longitudeDelta: 0.06,
         }}
         customMapStyle={mapStyle}
       >
@@ -177,6 +192,21 @@ export const ExploreMap = () => {
               <Image
                 style={{ height: 250, width: 150 }}
                 source={{ uri: modalData[4] }}
+              />
+            ) : null}
+            {modalData[5] ? (
+              <Video
+                style={{
+                  width: 325,
+                  height: 250,
+                  alignSelf: 'center',
+                }}
+                source={{
+                  uri: modalData[5],
+                }}
+                useNativeControls
+                isLooping
+                resizeMode="contain"
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>

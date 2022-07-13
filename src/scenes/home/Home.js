@@ -269,7 +269,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -409,7 +408,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -547,7 +545,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -685,7 +682,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -823,7 +819,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -961,7 +956,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
