@@ -20,7 +20,6 @@ export default function Requests() {
   const uid = userData.id
   const [friends, setFriends] = useState([])
   const [pendingRequests, setPendingRequests] = useState([])
-  const [requesterFriends, setRequesterFriends] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -37,8 +36,6 @@ export default function Requests() {
         })
         setPendingRequests(requestData)
         setFriends(friendsListData)
-        console.log('REQUESTS', pendingRequests)
-        console.log('FRIENDS', friends)
         setLoading(false)
       } catch (error) {
         console.log('error fetching user requests!', error)
@@ -79,7 +76,6 @@ export default function Requests() {
 
   const updateRequesterFriends = async (friendObj) => {
     const requesterRef = doc(firestore, 'friendships', friendObj.id)
-    // const userObj = { id: uid, userName: userData.userName }
     await updateDoc(requesterRef, {
       friendsList: arrayUnion({ id: uid, userName: userData.userName }),
     })
