@@ -49,8 +49,12 @@ export default function Friends() {
           data={friends}
           renderItem={({ item }) => (
             <>
-              <Text style={[styles.item, { color: colorScheme.text }]}>{item.userName}</Text>
-              <Button label="View Profile" color={colors.primary}>View Profile</Button>
+              <Text style={[styles.item, { color: colorScheme.text }]}>
+                {item.userName}
+              </Text>
+              <Button label="View Profile" color={colors.primary}>
+                View Profile
+              </Button>
             </>
           )}
           keyExtractor={(item) => item.id}

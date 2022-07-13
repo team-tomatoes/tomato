@@ -1,20 +1,17 @@
-/* eslint-disable quote-props */
 import React, { useState, useEffect, useContext } from 'react'
-import {
-  StyleSheet,
-  SafeAreaView,
-  Text,
-  TextInput,
-  View,
-  Keyboard,
-  Button,
-  FlatList,
-} from 'react-native'
-// import { Feather, Entypo } from '@expo/vector-icons'
+import { StyleSheet, SafeAreaView, Text, FlatList } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
-import { getDocs, collection, query, where } from 'firebase/firestore'
+import {
+  getDocs,
+  collection,
+  query,
+  where,
+  doc,
+  updateDoc,
+} from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
+import Button from '../../components/Button'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
@@ -35,27 +32,29 @@ const SearchBar = () => {
   const [loading, setLoading] = useState(true)
 
   const onChangeSearch = (userQuery) => setSearchQuery(userQuery)
-  console.log('SEARCH QUERY', searchQuery)
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const userRef = collection(firestore, 'users')
-        const q = query(userRef)
-        const searchSnapshot = await getDocs(q)
-        const searchData = []
-        searchSnapshot.forEach((doc) => {
-          searchData.push({ username: doc.get('userName'), id: doc.get('id') })
+  const handleSubmit = async () => {
+    try {
+      const userRef = collection(firestore, 'users')
+      const q = query(userRef)
+      const searchSnapshot = await getDocs(q)
+      const searchData = []
+      searchSnapshot.forEach((document) => {
+        searchData.push({
+          username: document.get('userName'),
+          id: document.get('id'),
         })
-        setSearchFriend(searchData)
-        console.log('ALL USERS', searchFriend)
-        setLoading(false)
-      } catch (error) {
-        console.log('error fetching user!', error)
-      }
+      })
+      const match = await searchData.filter(
+        (x) => x.username === `${searchQuery}`,
+      )
+      setSearchFriend(match)
+      console.log('MATCH', match)
+      setLoading(false)
+    } catch (error) {
+      console.log('error fetching user!', error)
     }
-    fetchUser()
-  }, [])
+  }
 
   return (
     <ScreenTemplate>
@@ -63,15 +62,16 @@ const SearchBar = () => {
         <Searchbar
           placeholder="Search"
           onChangeText={onChangeSearch}
+          onSubmitEditing={handleSubmit}
           value={searchQuery}
           autoCapitalize="none"
         />
-        {/* <FlatList
+        <FlatList
           data={searchFriend}
           renderItem={({ item }) => (
             <>
               <Text style={[styles.item, { color: colorScheme.text }]}>
-                {item}
+                {item.username}
               </Text>
               <Button label="Add" color={colors.primary}>
                 Add
@@ -79,7 +79,7 @@ const SearchBar = () => {
             </>
           )}
           keyExtractor={(item) => item.id}
-        /> */}
+        />
       </SafeAreaView>
     </ScreenTemplate>
   )
