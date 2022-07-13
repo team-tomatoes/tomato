@@ -235,7 +235,7 @@ export default function Home() {
                       toggleModal()
                     }}
                   />
-                  {(image || video) ? (
+                  {image || video ? (
                     <IconButton
                       icon="close-circle"
                       color="#f07167"
@@ -268,7 +268,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -406,7 +405,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -542,7 +540,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -678,7 +675,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -814,7 +810,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
@@ -950,7 +945,6 @@ export default function Home() {
                               description,
                               subcategory: '',
                               user: userData.id,
-                              video,
                               visibleToOthers: true,
                             },
                           )
