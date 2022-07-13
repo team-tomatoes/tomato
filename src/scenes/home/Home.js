@@ -235,7 +235,7 @@ export default function Home() {
                       toggleModal()
                     }}
                   />
-                  {(image || video) ? (
+                  {image || video ? (
                     <IconButton
                       icon="close-circle"
                       color="#f07167"
@@ -377,6 +377,8 @@ export default function Home() {
                           // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -513,6 +515,8 @@ export default function Home() {
                           // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -649,6 +653,8 @@ export default function Home() {
                           // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -785,6 +791,8 @@ export default function Home() {
                           // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -923,6 +931,8 @@ export default function Home() {
                           setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                         } catch (err) {
                           console.log(err)
                         }
@@ -1059,6 +1069,8 @@ export default function Home() {
                           setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                         } catch (err) {
                           console.log(err)
                         }
