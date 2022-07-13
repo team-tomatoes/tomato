@@ -77,6 +77,7 @@ export const FriendsMap = () => {
           document.data().friendsList.forEach((friend) => {
             friendsArr.push(friend.id)
           })
+          console.log(friendsArr)
         })
         const pinsArr = []
 
