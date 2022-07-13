@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { PROVIDER_GOOGLE, Heatmap } from 'react-native-maps'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import * as Location from 'expo-location'
 import {
@@ -120,7 +120,9 @@ export const ExploreMap = () => {
       console.log(err)
     }
   }
-
+  const points = [{
+    latitude: currLatitude, longitude: currLongitude,
+  }]
   return (
     <>
       <MapView
@@ -135,6 +137,17 @@ export const ExploreMap = () => {
         onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
+        <Heatmap
+          region={{
+            latitude: Number(currLatitude),
+            longitude: Number(currLongitude),
+            latitudeDelta: currLatDelta,
+            longitudeDelta: currLongDelta,
+          }}
+          points={points}
+          radius={40}
+          
+        />
         {pins.map((pin, i) => {
           const icon = () => {
             if (pin[2] === 'Mood') {
