@@ -224,7 +224,7 @@ export const ExploreMap = () => {
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
-            <Text style={styles.modalDescriptionText}>{modalData[6]}</Text>
+            <Text style={styles.modalDescriptionText}>{modalData[7]}</Text>
             <Text style={styles.modalDescriptionText}>@{userName}</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
