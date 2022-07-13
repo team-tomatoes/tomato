@@ -59,6 +59,7 @@ export const ExploreMap = () => {
     setLongitude(region.longitude)
     setLatDelta(region.latitudeDelta)
     setLongDelta(region.longitudeDelta)
+    
   }
 
   const loadAllPins = async () => {
