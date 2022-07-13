@@ -108,11 +108,11 @@ export const MyPinsMap = () => {
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: 40.77949,
-          longitude: -73.96634,
-          latitudeDelta: 0.2,
-          longitudeDelta: 0.2,
+        region={{
+          latitude: Number(currLatitude),
+          longitude: Number(currLongitude),
+          latitudeDelta: 0.06,
+          longitudeDelta: 0.06,
         }}
         customMapStyle={mapStyle}
       >
