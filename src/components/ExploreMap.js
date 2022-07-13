@@ -75,14 +75,15 @@ export const ExploreMap = () => {
             document.data().category,
             document.data().description,
             document.data().picture,
+            document.data().video,
             document.data().user,
             new Date(document.data().date.seconds * 1000).toLocaleString(
               'en-US',
             ),
             document.id,
           ])
+          setPins(pinsArr)
         })
-        setPins(pinsArr)
       })
     } catch (err) {
       console.log(err)
@@ -158,7 +159,7 @@ export const ExploreMap = () => {
           const getUserName = async () => {
             try {
               let pinUserName = ''
-              const docRef = doc(firestore, 'users', `${pin[5]}`)
+              const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
 
               if (docSnap.exists()) {
@@ -174,7 +175,7 @@ export const ExploreMap = () => {
 
           return (
             <MapView.Marker
-              key={pin[6]}
+              key={pin[8]}
               coordinate={{
                 latitude: pin[0],
                 longitude: pin[1],
@@ -205,23 +206,21 @@ export const ExploreMap = () => {
             <Text style={styles.modalNearText}>Near {near}</Text>
             {modalData[4] ? (
               <Image
-                style={{ height: 250, width: 150 }}
+                style={{ height: 249, width: 140 }}
                 source={{ uri: modalData[4] }}
               />
-            ) : null}
-            {modalData[5] ? (
+            ) : modalData[5] ? (
               <Video
                 style={{
-                  width: 325,
-                  height: 250,
-                  alignSelf: 'center',
+                  width: 140,
+                  height: 249,
                 }}
                 source={{
                   uri: modalData[5],
                 }}
                 useNativeControls
                 isLooping
-                resizeMode="contain"
+                // resizeMode="contain"
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>
