@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import * as Location from 'expo-location'
@@ -24,12 +24,15 @@ import {
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
 import { mapStyle } from '../constants/mapStyle'
+import { UserDataContext } from '../context/UserDataContext'
 import { firestore } from '../firebase/config'
 
 export const FriendsMap = () => {
   Geocoder.init(APIKey)
 
+  const { userData } = useContext(UserDataContext)
   const [pins, setPins] = useState([])
+  const [friends, setFriends] = useState([])
   const [users, setUsers] = useState([])
   const [userName, setUserName] = useState('')
   const [modalData, setModalData] = useState([])
@@ -55,8 +58,23 @@ export const FriendsMap = () => {
 
   const loadAllPins = async () => {
     try {
+      const friendsArr = []
+      const q1 = query(
+        collection(firestore, 'friendships'),
+        where('id', '==', userData.id),
+      )
+      onSnapshot(q1, (querySnapshot) => {
+        querySnapshot.forEach((document) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(document.data().friendsList)
+        })
+      })
+
       const pinsArr = []
-      const q = query(collection(firestore, 'pins'))
+      const q = query(
+        collection(firestore, 'pins'),
+        where('user', '==', userData.id),
+      )
       onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((document) => {
           // doc.data() is never undefined for query doc snapshots
