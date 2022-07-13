@@ -192,12 +192,13 @@ export default function Home() {
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
+                <IconButton
+                  icon="close"
+                  color={Colors.grey500}
+                  size={25}
+                  style={{ marginTop: 0 }}
                   onPress={() => setModalVisible(!isModalVisible)}
-                >
-                  <Text style={styles.textStyle}>x</Text>
-                </Pressable>
+                />
                 <TextInput
                   style={styles.textBox}
                   placeholder="What's going on here?"
@@ -235,9 +236,9 @@ export default function Home() {
                       toggleModal()
                     }}
                   />
-                  {(image || video) ? (
+                  {image || record ? (
                     <IconButton
-                      icon="close-circle"
+                      icon="backspace-outline"
                       color="#f07167"
                       size={30}
                       onPress={() => {
@@ -248,7 +249,7 @@ export default function Home() {
                   ) : null}
                 </View>
                 <View style={styles.imageContainer}>{showPhotoVideo()}</View>
-                <View style={{ marginTop: 50, marginRight: 20 }}>
+                <View style={{ marginTop: 60, marginRight: 20 }}>
                   {/* Rest of App come ABOVE the action button component! */}
                   <ActionButton buttonColor="#f07167">
                     <ActionButton.Item
@@ -377,6 +378,8 @@ export default function Home() {
                           // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -513,6 +516,8 @@ export default function Home() {
                           // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -649,6 +654,8 @@ export default function Home() {
                           // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -785,6 +792,8 @@ export default function Home() {
                           // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                           // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
@@ -923,6 +932,8 @@ export default function Home() {
                           setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                         } catch (err) {
                           console.log(err)
                         }
@@ -1059,6 +1070,8 @@ export default function Home() {
                           setRecord(null)
                           // close the modal once the transaction is finished
                           toggleModal()
+                          // redirects to explore component
+                          navigation.navigate('Explore')
                         } catch (err) {
                           console.log(err)
                         }
@@ -1147,7 +1160,8 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
+    padding: 30,
+    paddingTop: 5,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -1169,7 +1183,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   textStyle: {
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
     textAlign: 'center',
   },
