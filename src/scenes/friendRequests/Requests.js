@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
-import { getDocs, collection, query, where, doc, updateDoc } from 'firebase/firestore'
+import { getDocs, collection, query, where, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
@@ -47,14 +47,14 @@ export default function Requests() {
     fetchRequests()
   }, [])
 
-  const onPressAcceptRequest = async (friendObj) => {
+  const updateUserFriends = async (friendObj) => {
     try {
       const userRequestRef = doc(firestore, 'friendships', uid)
       await updateDoc(userRequestRef, {
-        friendsList: [...friends, friendObj],
+        friendsList: arrayUnion({ id: friendObj.id, userName: friendObj.userName }),
       })
       await updateDoc(userRequestRef, {
-        pendingRequests: pendingRequests.filter((friend) => friend.id !== friendObj.id),
+        pendingRequests: arrayRemove(friendObj),
       })
 
       const updatedRef = collection(firestore, 'friendships')
@@ -62,15 +62,34 @@ export default function Requests() {
       const requestSnapshot = await getDocs(q)
       let pendingRequestData = []
       let friendsListData = []
+
       requestSnapshot.forEach((document) => {
-        friendsListData = document.get('friendsList')
         pendingRequestData = document.get('pendingRequests')
       })
-      setFriends(friendsListData)
       setPendingRequests(pendingRequestData)
+
+      requestSnapshot.forEach((document) => {
+        friendsListData = document.get('friendsList')
+      })
+      setFriends(friendsListData)
     } catch (error) {
       alert(error)
     }
+  }
+
+  const updateRequesterFriends = async (friendObj) => {
+    const requesterRef = doc(firestore, 'friendships', friendObj.id)
+    // const userObj = { id: uid, userName: userData.userName }
+    await updateDoc(requesterRef, {
+      friendsList: arrayUnion({ id: uid, userName: userData.userName }),
+    })
+    // cancel sent requests component?
+  }
+
+  const onPressAcceptRequest = async (friendObj) => {
+    await updateRequesterFriends(friendObj)
+    await updateUserFriends(friendObj)
+    navigation.navigate('Friends List')
   }
 
   const onPressDeleteRequest = async (friendId) => {
@@ -92,6 +111,7 @@ export default function Requests() {
       alert(error)
     }
   }
+
 
   return (
     <ScreenTemplate>

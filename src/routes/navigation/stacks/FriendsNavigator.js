@@ -7,6 +7,7 @@ import { UserDataContext } from '../../../context/UserDataContext'
 import { lightProps, darkProps } from './navigationProps/navigationProps'
 import HeaderStyle from './headerComponents/HeaderStyle'
 import { FollowFollowerNavigator } from '../toptabs/followfollowerNavigator'
+import FriendsList from '../../../scenes/friendsList/FriendsList'
 
 const Stack = createStackNavigator()
 const RootStack = createStackNavigator()
@@ -51,6 +52,10 @@ export const FriendsNavigator = () => {
               />
             ),
           })}
+        />
+        <Stack.Screen
+          name="Friends List"
+          component={FriendsList}
         />
       </RootStack.Group>
     </Stack.Navigator>
