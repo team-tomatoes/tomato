@@ -56,7 +56,7 @@ export const ExploreMap = () => {
     try {
       const pinsArr = []
       const q = query(collection(firestore, 'pins'))
-
+      onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((document) => {
         // doc.data() is never undefined for query doc snapshots
         pinsArr.push([
