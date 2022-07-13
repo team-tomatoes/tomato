@@ -8,11 +8,8 @@ import { UserDataContext } from '../../../context/UserDataContext'
 import { lightProps, darkProps } from './navigationProps/navigationProps'
 import HeaderStyle from './headerComponents/HeaderStyle'
 import { FollowFollowerNavigator } from '../toptabs/followfollowerNavigator'
-<<<<<<< Updated upstream
 import { PinnedMap } from '../../../components/PinnedMap'
-=======
 import FriendsList from '../../../scenes/friendsList/FriendsList'
->>>>>>> Stashed changes
 
 const Stack = createStackNavigator()
 const RootStack = createStackNavigator()
