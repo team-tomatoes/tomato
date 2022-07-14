@@ -61,6 +61,7 @@ const SearchBar = () => {
         pendingRequests: arrayUnion({
           id: uid,
           userName: userData.userName,
+          avatar: userData.avatar,
         }),
       })
       Alert.alert(`You've sent a friend request to ${friendObj.username}`)

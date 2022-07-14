@@ -13,13 +13,13 @@ import {
 } from 'react-native'
 import {
   collection,
-  query,
-  where,
   doc,
   getDoc,
   setDoc,
   getDocs,
   onSnapshot,
+  query,
+  where,
 } from 'firebase/firestore'
 import Geocoder from '../../node_modules/react-native-geocoding'
 import APIKey from '../../googleAPIKey'
@@ -27,19 +27,18 @@ import { mapStyle } from '../constants/mapStyle'
 import { UserDataContext } from '../context/UserDataContext'
 import { firestore } from '../firebase/config'
 
-export const MyPinsMap = () => {
+export const FriendsMap = () => {
   Geocoder.init(APIKey)
 
   const { userData } = useContext(UserDataContext)
-  const [errorMessage, setErrorMessage] = useState(null)
   const [pins, setPins] = useState([])
+  const [friends, setFriends] = useState([])
   const [users, setUsers] = useState([])
   const [userName, setUserName] = useState('')
   const [modalData, setModalData] = useState([])
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
-  const [currLatDelta, setLatDelta] = useState(0.06)
-  const [currLongDelta, setLongDelta] = useState(0.06)
+  const [errorMessage, setErrorMessage] = useState(null)
   const [mapView, setMap] = useState()
   const [initialRegion, setInitialRegion] = useState()
 
@@ -51,6 +50,7 @@ export const MyPinsMap = () => {
       const userLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       })
+      console.log('friends', userLocation)
       const ir = {
         latitude: Number(userLocation.coords.latitude),
         longitude: Number(userLocation.coords.longitude),
@@ -63,34 +63,69 @@ export const MyPinsMap = () => {
 
   const loadAllPins = async () => {
     try {
-      const pinsArr = []
-      const q = query(
-        collection(firestore, 'pins'),
-        where('user', '==', userData.id),
+      const friendsArr = []
+      const q1 = query(
+        collection(firestore, 'friendships'),
+        where('id', '==', userData.id),
       )
-      onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((document) => {
-          // doc.data() is never undefined for query doc snapshots
-          pinsArr.push([
-            document.data().coordinates[0],
-            document.data().coordinates[1],
-            document.data().category,
-            document.data().description,
-            document.data().picture,
-            document.data().video,
-            document.data().user,
-            new Date(document.data().date.seconds * 1000).toLocaleString(
-              'en-US',
-            ),
-            document.id,
-          ])
-          setPins(pinsArr)
+      onSnapshot(q1, (querySnapshot1) => {
+        querySnapshot1.forEach((document) => {
+          document.data().friendsList.forEach((friend) => {
+            friendsArr.push(friend.id)
+          })
+          console.log(friendsArr)
+        })
+        const pinsArr = []
+
+        friendsArr.forEach((friend) => {
+          const q = query(
+            collection(firestore, 'pins'),
+            where('user', '==', friend),
+          )
+          onSnapshot(q, (querySnapshot) => {
+            querySnapshot.forEach((document) => {
+              pinsArr.push([
+                document.data().coordinates[0],
+                document.data().coordinates[1],
+                document.data().category,
+                document.data().description,
+                document.data().picture,
+                document.data().video,
+                document.data().user,
+                new Date(document.data().date.seconds * 1000).toLocaleString(
+                  'en-US',
+                ),
+                document.id,
+              ])
+              setPins(pinsArr)
+            })
+          })
         })
       })
     } catch (err) {
       console.log(err)
     }
   }
+
+  const loadUsers = async () => {
+    try {
+      const userArr = []
+      const querySnapshot = await getDocs(collection(firestore, 'users'))
+
+      querySnapshot.forEach((user) => {
+        userArr.push([user.data().id, user.data().userName])
+      })
+      setUsers(userArr)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    loadAllPins()
+    loadUsers()
+    getLocation()
+  }, [])
 
   const loadNear = async (latLong) => {
     try {
@@ -102,11 +137,6 @@ export const MyPinsMap = () => {
       console.log(err)
     }
   }
-
-  useEffect(() => {
-    getLocation()
-    loadAllPins()
-  }, [])
 
   return (
     <>

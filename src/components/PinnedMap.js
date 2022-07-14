@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import * as Location from 'expo-location'
 import {
   collection,
   query,
@@ -14,6 +15,24 @@ import { firestore } from '../firebase/config'
 
 export const PinnedMap = () => {
   const [pins, setPins] = useState([])
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [location, setLocation] = useState(null)
+  const [currLatitude, setLatitude] = useState(null)
+  const [currLongitude, setLongitude] = useState(null)
+
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      setErrorMessage('Permission not granted')
+    } else {
+      const userLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
+      setLatitude(Number(userLocation.coords.latitude))
+      setLongitude(Number(userLocation.coords.longitude))
+      setLocation(userLocation)
+    }
+  }
 
   const loadAllPins = async () => {
     try {
@@ -39,6 +58,7 @@ export const PinnedMap = () => {
   }
 
   useEffect(() => {
+    getLocation()
     loadAllPins()
   }, [])
 
@@ -48,11 +68,11 @@ export const PinnedMap = () => {
     <MapView
       style={{ flex: 1 }}
       provider={PROVIDER_GOOGLE}
-      initialRegion={{
-        latitude: 40.77949,
-        longitude: -73.96634,
-        latitudeDelta: 0.3,
-        longitudeDelta: 0.3,
+      region={{
+        latitude: Number(currLatitude),
+        longitude: Number(currLongitude),
+        latitudeDelta: 0.06,
+        longitudeDelta: 0.06,
       }}
       customMapStyle={mapStyle}
     >

@@ -1,14 +1,36 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
+import {
+  Text,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  Alert,
+  Modal,
+  Pressable,
+} from 'react-native'
+import { Avatar } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native'
+import { IconButton, Colors } from 'react-native-paper'
 import { colors, fontSize } from 'theme'
-import { getDocs, collection, query, where } from 'firebase/firestore'
-import { firestore } from '../../firebase/config'
+import {
+  getDocs,
+  collection,
+  query,
+  where,
+  doc,
+  updateDoc,
+  onSnapshot,
+  arrayUnion,
+  arrayRemove,
+  getDoc,
+} from 'firebase/firestore'
+import { ref, getDownloadURL } from 'firebase/storage'
+import { firestore, storage } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Button from '../../components/Button'
-import Requests from '../friendRequests/Requests'
 
 export default function Friends() {
   const navigation = useNavigation()
@@ -20,6 +42,10 @@ export default function Friends() {
   }
   const uid = userData.id
   const [friends, setFriends] = useState([])
+  const [modalVisible, setModalVisible] = useState(false)
+  const [friendModalData, setFriendModalData] = useState([])
+  const [pinNumber, setPinNumber] = useState(null)
+  const [friendsData, setFriendsData] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -27,13 +53,28 @@ export default function Friends() {
       try {
         const friendsRef = collection(firestore, 'friendships')
         const q = query(friendsRef, where('id', '==', `${uid}`))
-        const friendSnapshot = await getDocs(q)
+
         let friendData = []
-        const friendsArr = friendSnapshot.forEach((doc) => {
-          friendData = doc.get('friendsList')
+        const avatarData = []
+        onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((document) => {
+            friendData = document.data().friendsList
+          })
+          setFriends(friendData)
+          friendData.forEach(async (friend) => {
+            const q1 = query(
+              collection(firestore, 'users'),
+              where('id', '==', friend.id),
+            )
+            const querySnapshot1 = await getDocs(q1)
+            querySnapshot1.forEach((user) => {
+              avatarData.push(user.data())
+            })
+            setFriendsData(avatarData)
+            console.log(friendsData)
+          })
         })
-        setFriends(friendData)
-        console.log('FRIENDS', friends)
+
         setLoading(false)
       } catch (error) {
         console.log('error fetching user friends!', error)
@@ -42,29 +83,166 @@ export default function Friends() {
     fetchFriends()
   }, [])
 
+  const updateUserFriends = async (friendObj) => {
+    try {
+      const friendsListRef = doc(firestore, 'friendships', uid)
+      await updateDoc(friendsListRef, {
+        friendsList: arrayRemove(friendObj),
+      })
+
+      const updatedRef = collection(firestore, 'friendships')
+      const q = query(updatedRef, where('id', '==', `${uid}`))
+      const friendSnapshot = await getDocs(q)
+      let friendData = []
+      friendSnapshot.forEach((document) => {
+        friendData = document.get('friendsList')
+      })
+      setFriends(friendData)
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  const updateDeletedFriend = async (friendObj) => {
+    const deletedFriendRef = doc(firestore, 'friendships', friendObj.id)
+    await updateDoc(deletedFriendRef, {
+      friendsList: arrayRemove({ id: uid, userName: userData.userName }),
+    })
+  }
+
+  const onPressDeleteFriend = async (friendObj) => {
+    await updateUserFriends(friendObj)
+    await updateDeletedFriend(friendObj)
+  }
+
+  // const getDefaultIcon = async () => {
+  //   const iconRef = ref(storage, 'avatar/icon.png')
+  //   getDownloadURL(iconRef)
+  //     .then((url) => {
+  //       console.log(url)
+  //     })
+  //     .catch((error) => {
+  //       // Handle any errors
+  //       console.log(error)
+  //     })
+  // }
+
   return (
     <ScreenTemplate>
       <SafeAreaView style={[styles.container]}>
         <FlatList
           data={friends}
           renderItem={({ item }) => (
-            <>
-              <Text style={[styles.item, { color: colorScheme.text }]}>
-                {item.userName}
-              </Text>
-              <Button label="View Profile" color={colors.primary}>
-                View Profile
-              </Button>
-            </>
+            <View style={styles.userContainer}>
+              <View style={styles.listAvatar}>
+                <Avatar
+                  size="xlarge"
+                  rounded
+                  source={{
+                    uri:
+                      'https://pbs.twimg.com/media/D5f_bs_UIAANqHk?format=jpg&name=small',
+                  }}
+                />
+              </View>
+              <View style={{ marginLeft: 0 }}>
+                <Text style={[styles.item, { color: colorScheme.text }]}>
+                  {item.userName}
+                </Text>
+                <View style={styles.buttonContainer}>
+                  <Button
+                    label="View"
+                    color={colors.primary}
+                    onPress={async () => {
+                      const pinsArr = []
+                      const q = query(
+                        collection(firestore, 'pins'),
+                        where('user', '==', item.id),
+                      )
+
+                      const querySnapshot = await getDocs(q)
+
+                      querySnapshot.forEach((document) => {
+                        pinsArr.push([document.id])
+                      })
+                      setPinNumber(pinsArr.length)
+
+                      const docRef = doc(firestore, 'users', `${item.id}`)
+                      const docSnap = await getDoc(docRef)
+                      if (docSnap.exists()) {
+                        setFriendModalData(docSnap.data())
+                        console.log(friendModalData)
+                      } else {
+                        console.log('No such document!')
+                      }
+                      setModalVisible(true)
+                    }}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    label="Delete"
+                    color={colors.primary}
+                    onPress={() => onPressDeleteFriend(item)}
+                  >
+                    Delete
+                  </Button>
+                </View>
+              </View>
+            </View>
           )}
           keyExtractor={(item) => item.id}
         />
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.')
+              setModalVisible(!modalVisible)
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.title}>{friendModalData.fullName}</Text>
+                <View style={styles.avatar}>
+                  <Avatar
+                    size="xlarge"
+                    rounded
+                    source={{ uri: friendModalData.avatar }}
+                  />
+                </View>
+                <Text style={styles.modalText}>Pin Count: {pinNumber}</Text>
+                <Text style={styles.modalText}>
+                  @{friendModalData.userName}
+                </Text>
+                <IconButton
+                  icon="arrow-left"
+                  color={Colors.grey500}
+                  size={25}
+                  style={{ marginTop: 0 }}
+                  onPress={() => setModalVisible(!modalVisible)}
+                />
+              </View>
+            </View>
+          </Modal>
+        </View>
       </SafeAreaView>
     </ScreenTemplate>
   )
 }
 
 const styles = StyleSheet.create({
+  avatar: {
+    margin: 30,
+    alignSelf: 'center',
+    shadowRadius: 4,
+  },
+  listAvatar: {
+    margin: 20,
+    alignSelf: 'center',
+    shadowRadius: 4,
+  },
   container: {
     flex: 1,
     padding: 50,
@@ -78,5 +256,58 @@ const styles = StyleSheet.create({
   button: {
     fontSize: 30,
     textAlign: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  // button: {
+  //   borderRadius: 20,
+  //   padding: 10,
+  //   elevation: 2,
+  // },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: fontSize.xxxLarge,
+    textAlign: 'center',
+  },
+  userContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 })
