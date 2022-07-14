@@ -120,6 +120,13 @@ export default function Friends() {
           data={friends}
           renderItem={({ item }) => (
             <View style={styles.userContainer}>
+              <View style={styles.listAvatar}>
+                <Avatar
+                  size="large"
+                  rounded
+                  source={{ uri: friendModalData.avatar }}
+                />
+              </View>
               <Text style={[styles.item, { color: colorScheme.text }]}>
                 {item.userName}
               </Text>
@@ -213,6 +220,12 @@ const styles = StyleSheet.create({
   avatar: {
     margin: 30,
     alignSelf: 'center',
+    shadowRadius: 4,
+  },
+  listAvatar: {
+    // margin: 30,
+    alignSelf: 'center',
+    shadowRadius: 4,
   },
   container: {
     flex: 1,
