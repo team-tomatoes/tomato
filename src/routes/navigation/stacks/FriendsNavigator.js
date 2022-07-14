@@ -7,6 +7,7 @@ import { UserDataContext } from '../../../context/UserDataContext'
 import { lightProps, darkProps } from './navigationProps/navigationProps'
 import HeaderStyle from './headerComponents/HeaderStyle'
 import { FollowFollowerNavigator } from '../toptabs/followfollowerNavigator'
+import FriendsList from '../../../scenes/friendsList/FriendsList'
 
 import Searchbar from '../../../scenes/friendRequests/Searchbar'
 
@@ -55,9 +56,8 @@ export const FriendsNavigator = () => {
           })}
         />
         <Stack.Screen
-          name="Find Friends"
-          // filtered for friends
-          component={Searchbar}
+          name="Friends List"
+          component={FriendsList}
         />
       </RootStack.Group>
     </Stack.Navigator>

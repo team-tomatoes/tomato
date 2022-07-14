@@ -134,7 +134,7 @@ export const ExploreMap = () => {
           latitudeDelta: currLatDelta,
           longitudeDelta: currLongDelta,
         }}
-        onRegionChangeComplete={onRegionChange}
+        // onRegionChangeComplete={onRegionChange}
         customMapStyle={mapStyle}
       >
         <Heatmap

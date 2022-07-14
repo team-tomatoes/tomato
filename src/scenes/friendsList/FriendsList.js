@@ -2,13 +2,12 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
-import { getDocs, collection, query, where, doc, updateDoc } from 'firebase/firestore'
+import { getDocs, collection, query, where, doc, updateDoc, onSnapshot, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { firestore } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Button from '../../components/Button'
-import Requests from '../friendRequests/Requests'
 
 export default function Friends() {
   const navigation = useNavigation()
@@ -27,13 +26,14 @@ export default function Friends() {
       try {
         const friendsRef = collection(firestore, 'friendships')
         const q = query(friendsRef, where('id', '==', `${uid}`))
-        const friendSnapshot = await getDocs(q)
+
         let friendData = []
-        friendSnapshot.forEach((document) => {
-          friendData = document.get('friendsList')
+        onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((document) => {
+            friendData = (document.data().friendsList)
+          })
+          setFriends(friendData)
         })
-        setFriends(friendData)
-        console.log('FRIENDS', friends)
         setLoading(false)
       } catch (error) {
         console.log('error fetching user friends!', error)
@@ -42,11 +42,11 @@ export default function Friends() {
     fetchFriends()
   }, [])
 
-  const onPressDeleteFriend = async (friendId) => {
+  const updateUserFriends = async (friendObj) => {
     try {
       const friendsListRef = doc(firestore, 'friendships', uid)
       await updateDoc(friendsListRef, {
-        friendsList: friends.filter((friend) => friend.id !== friendId),
+        friendsList: arrayRemove(friendObj),
       })
 
       const updatedRef = collection(firestore, 'friendships')
@@ -62,6 +62,18 @@ export default function Friends() {
     }
   }
 
+  const updateDeletedFriend = async (friendObj) => {
+    const deletedFriendRef = doc(firestore, 'friendships', friendObj.id)
+    await updateDoc(deletedFriendRef, {
+      friendsList: arrayRemove({ id: uid, userName: userData.userName }),
+    })
+  }
+
+  const onPressDeleteFriend = async (friendObj) => {
+    await updateUserFriends(friendObj)
+    await updateDeletedFriend(friendObj)
+  }
+
   return (
     <ScreenTemplate>
       <SafeAreaView style={[styles.container]}>
@@ -71,7 +83,7 @@ export default function Friends() {
             <>
               <Text style={[styles.item, { color: colorScheme.text }]}>{item.userName}</Text>
               <Button label="View" color={colors.primary}>View</Button>
-              <Button label="Delete" color={colors.primary} onPress={() => onPressDeleteFriend(item.id)}>Delete</Button>
+              <Button label="Delete" color={colors.primary} onPress={() => onPressDeleteFriend(item)}>Delete</Button>
             </>
           )}
           keyExtractor={(item) => item.id}
