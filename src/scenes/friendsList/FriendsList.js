@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native'
+import { IconButton, Colors } from 'react-native-paper'
 import { colors, fontSize } from 'theme'
 import {
   getDocs,
@@ -190,12 +191,13 @@ export default function Friends() {
                 <Text style={styles.modalText}>
                   @{friendModalData.userName}
                 </Text>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
+                <IconButton
+                  icon="arrow-left"
+                  color={Colors.grey500}
+                  size={25}
+                  style={{ marginTop: 0 }}
                   onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>Hide Modal</Text>
-                </Pressable>
+                />
               </View>
             </View>
           </Modal>
