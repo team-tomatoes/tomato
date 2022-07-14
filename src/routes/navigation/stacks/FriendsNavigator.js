@@ -9,21 +9,23 @@ import HeaderStyle from './headerComponents/HeaderStyle'
 import { FollowFollowerNavigator } from '../toptabs/followfollowerNavigator'
 import FriendsList from '../../../scenes/friendsList/FriendsList'
 
+import Searchbar from '../../../scenes/friendRequests/Searchbar'
+
 const Stack = createStackNavigator()
 const RootStack = createStackNavigator()
 
 export const FriendsNavigator = () => {
-  const navigation1 = useNavigation()
+  const navigation = useNavigation()
   const { scheme } = useContext(ColorSchemeContext)
   const { userData } = useContext(UserDataContext)
   const navigationProps = lightProps
 
   const headerLeftPress = () => {
-    navigation1.navigate('Home')
+    navigation.navigate('Home')
   }
 
   const headerRightPress = () => {
-    alert('search for a friend by username')
+    navigation.navigate('Find Friends')
   }
 
   return (
@@ -54,9 +56,11 @@ export const FriendsNavigator = () => {
           })}
         />
         <Stack.Screen
-          name="Friends List"
-          component={FriendsList}
+          name="Find Friends"
+          // filtered for friends
+          component={Searchbar}
         />
+        <Stack.Screen name="Friends List" component={FriendsList} />
       </RootStack.Group>
     </Stack.Navigator>
   )
