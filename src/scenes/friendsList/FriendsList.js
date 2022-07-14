@@ -51,7 +51,7 @@ export default function Friends() {
   useEffect(() => {
     async function fetchFriends() {
       try {
-        const friendsRef = collection(firestore, 'friendships')
+        const friendsRef = collection(firestore, 'users')
         const q = query(friendsRef, where('id', '==', `${uid}`))
 
         let friendData = []
@@ -85,12 +85,12 @@ export default function Friends() {
 
   const updateUserFriends = async (friendObj) => {
     try {
-      const friendsListRef = doc(firestore, 'friendships', uid)
+      const friendsListRef = doc(firestore, 'users', uid)
       await updateDoc(friendsListRef, {
         friendsList: arrayRemove(friendObj),
       })
 
-      const updatedRef = collection(firestore, 'friendships')
+      const updatedRef = collection(firestore, 'users')
       const q = query(updatedRef, where('id', '==', `${uid}`))
       const friendSnapshot = await getDocs(q)
       let friendData = []
@@ -104,9 +104,9 @@ export default function Friends() {
   }
 
   const updateDeletedFriend = async (friendObj) => {
-    const deletedFriendRef = doc(firestore, 'friendships', friendObj.id)
+    const deletedFriendRef = doc(firestore, 'users', friendObj.id)
     await updateDoc(deletedFriendRef, {
-      friendsList: arrayRemove({ id: uid, userName: userData.userName }),
+      friendsList: arrayRemove({ id: uid, userName: userData.userName, avatar: userData.avatar }),
     })
   }
 
@@ -140,7 +140,7 @@ export default function Friends() {
                   rounded
                   source={{
                     uri:
-                      'https://pbs.twimg.com/media/D5f_bs_UIAANqHk?format=jpg&name=small',
+                      item.avatar,
                   }}
                 />
               </View>

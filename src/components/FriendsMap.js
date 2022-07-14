@@ -65,7 +65,7 @@ export const FriendsMap = () => {
     try {
       const friendsArr = []
       const q1 = query(
-        collection(firestore, 'friendships'),
+        collection(firestore, 'users'),
         where('id', '==', userData.id),
       )
       onSnapshot(q1, (querySnapshot1) => {
@@ -97,8 +97,8 @@ export const FriendsMap = () => {
                 ),
                 document.id,
               ])
-              setPins(pinsArr)
             })
+            setPins(pinsArr)
           })
         })
       })
