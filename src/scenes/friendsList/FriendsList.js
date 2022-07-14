@@ -45,6 +45,7 @@ export default function Friends() {
   const [modalVisible, setModalVisible] = useState(false)
   const [friendModalData, setFriendModalData] = useState([])
   const [pinNumber, setPinNumber] = useState(null)
+  const [friendsData, setFriendsData] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -54,19 +55,32 @@ export default function Friends() {
         const q = query(friendsRef, where('id', '==', `${uid}`))
 
         let friendData = []
+        const avatarData = []
         onSnapshot(q, (querySnapshot) => {
           querySnapshot.forEach((document) => {
             friendData = document.data().friendsList
           })
           setFriends(friendData)
+          friendData.forEach(async (friend) => {
+            const q1 = query(
+              collection(firestore, 'users'),
+              where('id', '==', friend.id),
+            )
+            const querySnapshot1 = await getDocs(q1)
+            querySnapshot1.forEach((user) => {
+              avatarData.push(user.data())
+            })
+            setFriendsData(avatarData)
+            console.log(friendsData)
+          })
         })
+
         setLoading(false)
       } catch (error) {
         console.log('error fetching user friends!', error)
       }
     }
     fetchFriends()
-    getDefaultIcon()
   }, [])
 
   const updateUserFriends = async (friendObj) => {
@@ -101,17 +115,17 @@ export default function Friends() {
     await updateDeletedFriend(friendObj)
   }
 
-  const getDefaultIcon = async () => {
-    const iconRef = ref(storage, 'avatar/icon.png')
-    getDownloadURL(iconRef)
-      .then((url) => {
-        console.log(url)
-      })
-      .catch((error) => {
-        // Handle any errors
-        console.log(error)
-      })
-  }
+  // const getDefaultIcon = async () => {
+  //   const iconRef = ref(storage, 'avatar/icon.png')
+  //   getDownloadURL(iconRef)
+  //     .then((url) => {
+  //       console.log(url)
+  //     })
+  //     .catch((error) => {
+  //       // Handle any errors
+  //       console.log(error)
+  //     })
+  // }
 
   return (
     <ScreenTemplate>
@@ -122,55 +136,57 @@ export default function Friends() {
             <View style={styles.userContainer}>
               <View style={styles.listAvatar}>
                 <Avatar
-                  size="large"
+                  size="xlarge"
                   rounded
-                  source={{ uri: friendModalData.avatar }}
+                  source={{
+                    uri:
+                      'https://pbs.twimg.com/media/D5f_bs_UIAANqHk?format=jpg&name=small',
+                  }}
                 />
               </View>
-              <Text style={[styles.item, { color: colorScheme.text }]}>
-                {item.userName}
-              </Text>
-              <View style={styles.buttonContainer}>
-                <Button
-                  label="View"
-                  color={colors.primary}
-                  onPress={async () => {
-                    const pinsArr = []
-                    const q = query(
-                      collection(firestore, 'pins'),
-                      where('user', '==', item.id),
-                    )
+              <View style={{ marginLeft: 0 }}>
+                <Text style={[styles.item, { color: colorScheme.text }]}>
+                  {item.userName}
+                </Text>
+                <View style={styles.buttonContainer}>
+                  <Button
+                    label="View"
+                    color={colors.primary}
+                    onPress={async () => {
+                      const pinsArr = []
+                      const q = query(
+                        collection(firestore, 'pins'),
+                        where('user', '==', item.id),
+                      )
 
-                    const querySnapshot = await getDocs(q)
+                      const querySnapshot = await getDocs(q)
 
-                    querySnapshot.forEach((document) => {
-                      // doc.data() is never undefined for query doc snapshots
-                      pinsArr.push([document.id])
-                    })
-                    setPinNumber(pinsArr.length)
-                    console.log(pinsArr.length)
+                      querySnapshot.forEach((document) => {
+                        pinsArr.push([document.id])
+                      })
+                      setPinNumber(pinsArr.length)
 
-                    const docRef = doc(firestore, 'users', `${item.id}`)
-                    const docSnap = await getDoc(docRef)
-                    if (docSnap.exists()) {
-                      console.log('Document data:', docSnap.data())
-                      setFriendModalData(docSnap.data())
-                      console.log(friendModalData)
-                    } else {
-                      console.log('No such document!')
-                    }
-                    setModalVisible(true)
-                  }}
-                >
-                  View
-                </Button>
-                <Button
-                  label="Delete"
-                  color={colors.primary}
-                  onPress={() => onPressDeleteFriend(item)}
-                >
-                  Delete
-                </Button>
+                      const docRef = doc(firestore, 'users', `${item.id}`)
+                      const docSnap = await getDoc(docRef)
+                      if (docSnap.exists()) {
+                        setFriendModalData(docSnap.data())
+                        console.log(friendModalData)
+                      } else {
+                        console.log('No such document!')
+                      }
+                      setModalVisible(true)
+                    }}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    label="Delete"
+                    color={colors.primary}
+                    onPress={() => onPressDeleteFriend(item)}
+                  >
+                    Delete
+                  </Button>
+                </View>
               </View>
             </View>
           )}
@@ -223,7 +239,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   listAvatar: {
-    // margin: 30,
+    margin: 20,
     alignSelf: 'center',
     shadowRadius: 4,
   },
