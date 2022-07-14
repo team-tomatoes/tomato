@@ -93,7 +93,7 @@ export default function Requests() {
   const updateRequesterFriends = async (friendObj) => {
     const requesterRef = doc(firestore, 'users', friendObj.id)
     await updateDoc(requesterRef, {
-      friendsList: arrayUnion({ id: uid, userName: userData.userName }),
+      friendsList: arrayUnion({ id: uid, userName: userData.userName, avatar: userData.avatar }),
     })
   }
 
