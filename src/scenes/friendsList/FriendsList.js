@@ -119,51 +119,53 @@ export default function Friends() {
         <FlatList
           data={friends}
           renderItem={({ item }) => (
-            <>
+            <View style={styles.userContainer}>
               <Text style={[styles.item, { color: colorScheme.text }]}>
                 {item.userName}
               </Text>
-              <Button
-                label="View"
-                color={colors.primary}
-                onPress={async () => {
-                  const pinsArr = []
-                  const q = query(
-                    collection(firestore, 'pins'),
-                    where('user', '==', item.id),
-                  )
+              <View style={styles.buttonContainer}>
+                <Button
+                  label="View"
+                  color={colors.primary}
+                  onPress={async () => {
+                    const pinsArr = []
+                    const q = query(
+                      collection(firestore, 'pins'),
+                      where('user', '==', item.id),
+                    )
 
-                  const querySnapshot = await getDocs(q)
+                    const querySnapshot = await getDocs(q)
 
-                  querySnapshot.forEach((document) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    pinsArr.push([document.id])
-                  })
-                  setPinNumber(pinsArr.length)
-                  console.log(pinsArr.length)
+                    querySnapshot.forEach((document) => {
+                      // doc.data() is never undefined for query doc snapshots
+                      pinsArr.push([document.id])
+                    })
+                    setPinNumber(pinsArr.length)
+                    console.log(pinsArr.length)
 
-                  const docRef = doc(firestore, 'users', `${item.id}`)
-                  const docSnap = await getDoc(docRef)
-                  if (docSnap.exists()) {
-                    console.log('Document data:', docSnap.data())
-                    setFriendModalData(docSnap.data())
-                    console.log(friendModalData)
-                  } else {
-                    console.log('No such document!')
-                  }
-                  setModalVisible(true)
-                }}
-              >
-                View
-              </Button>
-              <Button
-                label="Delete"
-                color={colors.primary}
-                onPress={() => onPressDeleteFriend(item)}
-              >
-                Delete
-              </Button>
-            </>
+                    const docRef = doc(firestore, 'users', `${item.id}`)
+                    const docSnap = await getDoc(docRef)
+                    if (docSnap.exists()) {
+                      console.log('Document data:', docSnap.data())
+                      setFriendModalData(docSnap.data())
+                      console.log(friendModalData)
+                    } else {
+                      console.log('No such document!')
+                    }
+                    setModalVisible(true)
+                  }}
+                >
+                  View
+                </Button>
+                <Button
+                  label="Delete"
+                  color={colors.primary}
+                  onPress={() => onPressDeleteFriend(item)}
+                >
+                  Delete
+                </Button>
+              </View>
+            </View>
           )}
           keyExtractor={(item) => item.id}
         />
@@ -270,5 +272,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.xxxLarge,
     textAlign: 'center',
+  },
+  userContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 })
