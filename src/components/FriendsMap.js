@@ -39,12 +39,8 @@ export const FriendsMap = () => {
   const [near, setNear] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [location, setLocation] = useState(null)
-  const [currLatitude, setLatitude] = useState(null)
-  const [currLongitude, setLongitude] = useState(null)
-  const [currLatDelta, setLatDelta] = useState(0.06)
-  const [currLongDelta, setLongDelta] = useState(0.06)
-  const [regionSet, setRegion] = useState(false)
+  const [mapView, setMap] = useState()
+  const [initialRegion, setInitialRegion] = useState()
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
@@ -54,21 +50,15 @@ export const FriendsMap = () => {
       const userLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       })
-      setLatitude(Number(userLocation.coords.latitude))
-      console.log(currLatitude)
-      setLongitude(Number(userLocation.coords.longitude))
-      console.log(currLongitude)
-      setLocation(userLocation)
+      console.log('friends', userLocation)
+      const ir = {
+        latitude: Number(userLocation.coords.latitude),
+        longitude: Number(userLocation.coords.longitude),
+        latitudeDelta: 0.06,
+        longitudeDelta: 0.06,
+      }
+      setInitialRegion(ir)
     }
-  }
-
-  const onRegionChange = (region) => {
-    if (!regionSet) return
-    console.log(region)
-    setLatitude(region.latitude)
-    setLongitude(region.longitude)
-    setLatDelta(region.latitudeDelta)
-    setLongDelta(region.longitudeDelta)
   }
 
   const loadAllPins = async () => {
@@ -151,16 +141,13 @@ export const FriendsMap = () => {
   return (
     <>
       <MapView
+        showsUserLocation
+        ref={(map) => {
+          setMap(map)
+        }}
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        region={{
-          latitude: Number(currLatitude),
-          longitude: Number(currLongitude),
-          latitudeDelta: currLatDelta,
-          longitudeDelta: currLongDelta,
-        }}
-        onMapReady={() => setRegion(true)}
-        onRegionChangeComplete={onRegionChange}
+        initialRegion={initialRegion}
         customMapStyle={mapStyle}
       >
         {pins.map((pin, i) => {
