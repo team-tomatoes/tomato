@@ -116,6 +116,15 @@ export const ExploreMap = () => {
       console.log(err)
     }
   }
+
+  const points = pins.map((pin) =>
+    (
+      {
+        latitude: pin[0],
+        longitude: pin[1],
+      }
+    ))
+
   return (
     <>
       <MapView
@@ -128,6 +137,11 @@ export const ExploreMap = () => {
         initialRegion={initialRegion}
         customMapStyle={mapStyle}
       >
+        <Heatmap
+          initialRegion={initialRegion}
+          points={points}
+          radius={40}
+        />
         {pins.map((pin, i) => {
           const icon = () => {
             if (pin[2] === 'Mood') {
@@ -165,7 +179,6 @@ export const ExploreMap = () => {
               console.log(err)
             }
           }
-
           return (
             <MapView.Marker
               key={pin[8]}
