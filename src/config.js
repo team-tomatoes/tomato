@@ -17,7 +17,7 @@ const firebaseConfig = {
 }
 
 const defaultAvatar =
-  'https://firebasestorage.googleapis.com/v0/u/tomato-d9ece.appspot.com/tomatoicon.png'
+  'https://firebasestorage.googleapis.com/v0/b/tomato-d083a.appspot.com/o/avatar%2Ficon.png?alt=media&token=d4edc180-5cbf-4f30-a312-caf689c41846'
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
