@@ -116,9 +116,6 @@ export const ExploreMap = () => {
       console.log(err)
     }
   }
-  const points = [{
-    latitude: currLatitude, longitude: currLongitude,
-  }]
   return (
     <>
       <MapView
@@ -131,17 +128,6 @@ export const ExploreMap = () => {
         initialRegion={initialRegion}
         customMapStyle={mapStyle}
       >
-        <Heatmap
-          region={{
-            latitude: Number(currLatitude),
-            longitude: Number(currLongitude),
-            latitudeDelta: currLatDelta,
-            longitudeDelta: currLongDelta,
-          }}
-          points={points}
-          radius={40}
-          
-        />
         {pins.map((pin, i) => {
           const icon = () => {
             if (pin[2] === 'Mood') {
