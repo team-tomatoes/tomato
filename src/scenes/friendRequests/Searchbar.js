@@ -44,10 +44,19 @@ const SearchBar = () => {
       const userRef = collection(firestore, 'users')
       const q = query(userRef)
       const searchSnapshot = await getDocs(q)
-      const match = searchSnapshot.filter(
-        (document) => document.username === `${searchQuery}`,
+      const searchData = []
+      searchSnapshot.forEach((document) => {
+        searchData.push({
+          userName: document.get('userName'),
+          id: document.get('id'),
+          avatar: document.get('avatar'),
+        })
+      })
+      const match = await searchData.filter(
+        (x) => x.userName === `${searchQuery}`,
       )
       setSearchFriend(match)
+      console.log('MATCH', match)
       setLoading(false)
     } catch (error) {
       console.log('error fetching user!', error)
@@ -64,7 +73,7 @@ const SearchBar = () => {
           avatar: userData.avatar,
         }),
       })
-      Alert.alert(`You've sent a friend request to ${friendObj.username}`)
+      Alert.alert(`You've sent a friend request to ${friendObj.userName}`)
     } catch (error) {
       console.log(error)
     }
@@ -84,7 +93,7 @@ const SearchBar = () => {
           data={searchFriend}
           renderItem={({ item }) => (
             <View style={styles.userContainer}>
-              <View style={styles.listAvatar}>
+              <View>
                 <Avatar
                   size="xlarge"
                   rounded
@@ -93,8 +102,8 @@ const SearchBar = () => {
                   }}
                 />
                 <View style={{ marginLeft: 0 }}>
-                  <Text style={[styles.item, { color: colorScheme.text }]}>
-                    {item.username}
+                  <Text style={[styles.item, { color: 'white' }]}>
+                    {item.userName}
                   </Text>
                   <View style={styles.buttonContainer}>
                     <Button
