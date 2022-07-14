@@ -63,7 +63,7 @@ export default function Requests() {
         friendsList: arrayUnion({
           id: friendObj.id,
           userName: friendObj.userName,
-          // avatar: friendObj.avatar,
+          avatar: friendObj.avatar,
         }),
       })
       await updateDoc(userRequestRef, {
@@ -118,6 +118,7 @@ export default function Requests() {
         requestData = document.get('pendingRequests')
       })
       setPendingRequests(requestData)
+      console.log('PENDING HERE', pendingRequests)
     } catch (error) {
       alert(error)
     }
@@ -135,7 +136,7 @@ export default function Requests() {
                   size="xlarge"
                   rounded
                   source={{
-                    uri: 'https://firebasestorage.googleapis.com/v0/b/tomato-d083a.appspot.com/o/avatar%2Ficon.png?alt=media&token=d4edc180-5cbf-4f30-a312-caf689c41846',
+                    uri: item.avatar,
                   }}
                 />
               </View>
