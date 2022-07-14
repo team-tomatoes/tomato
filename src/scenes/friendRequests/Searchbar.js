@@ -1,14 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { StyleSheet, SafeAreaView, Text, FlatList } from 'react-native'
+import React, { useState, useContext } from 'react'
+import {
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  FlatList,
+  View,
+  Alert,
+} from 'react-native'
 import { Searchbar } from 'react-native-paper'
+import { Avatar } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native'
 import {
   getDocs,
   collection,
   query,
-  where,
   doc,
   updateDoc,
+  arrayUnion,
 } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
 import Button from '../../components/Button'
@@ -18,8 +26,6 @@ import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { firestore } from '../../firebase/config'
 
 const SearchBar = () => {
-  const navigation = useNavigation()
-
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
   const colorScheme = {
@@ -38,21 +44,28 @@ const SearchBar = () => {
       const userRef = collection(firestore, 'users')
       const q = query(userRef)
       const searchSnapshot = await getDocs(q)
-      const searchData = []
-      searchSnapshot.forEach((document) => {
-        searchData.push({
-          username: document.get('userName'),
-          id: document.get('id'),
-        })
-      })
-      const match = await searchData.filter(
-        (x) => x.username === `${searchQuery}`,
+      const match = searchSnapshot.filter(
+        (document) => document.username === `${searchQuery}`,
       )
       setSearchFriend(match)
-      console.log('MATCH', match)
       setLoading(false)
     } catch (error) {
       console.log('error fetching user!', error)
+    }
+  }
+
+  const onPressAddRequest = async (friendObj) => {
+    try {
+      const friendRequestRef = doc(firestore, 'users', friendObj.id)
+      await updateDoc(friendRequestRef, {
+        pendingRequests: arrayUnion({
+          id: uid,
+          userName: userData.userName,
+        }),
+      })
+      Alert.alert(`You've sent a friend request to ${friendObj.username}`)
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -69,14 +82,31 @@ const SearchBar = () => {
         <FlatList
           data={searchFriend}
           renderItem={({ item }) => (
-            <>
-              <Text style={[styles.item, { color: colorScheme.text }]}>
-                {item.username}
-              </Text>
-              <Button label="Add" color={colors.primary}>
-                Add
-              </Button>
-            </>
+            <View style={styles.userContainer}>
+              <View style={styles.listAvatar}>
+                <Avatar
+                  size="xlarge"
+                  rounded
+                  source={{
+                    uri: item.avatar,
+                  }}
+                />
+                <View style={{ marginLeft: 0 }}>
+                  <Text style={[styles.item, { color: colorScheme.text }]}>
+                    {item.username}
+                  </Text>
+                  <View style={styles.buttonContainer}>
+                    <Button
+                      label="Add"
+                      color={colors.primary}
+                      onPress={() => onPressAddRequest(item)}
+                    >
+                      Add
+                    </Button>
+                  </View>
+                </View>
+              </View>
+            </View>
           )}
           keyExtractor={(item) => item.id}
         />
@@ -88,6 +118,16 @@ const SearchBar = () => {
 export default SearchBar
 
 const styles = StyleSheet.create({
+  avatar: {
+    margin: 30,
+    alignSelf: 'center',
+    shadowRadius: 4,
+  },
+  listAvatar: {
+    margin: 20,
+    alignSelf: 'center',
+    shadowRadius: 4,
+  },
   container: {
     flex: 1,
     padding: 50,
@@ -101,5 +141,34 @@ const styles = StyleSheet.create({
   button: {
     fontSize: 30,
     textAlign: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: fontSize.xxxLarge,
+    textAlign: 'center',
+  },
+  userContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 })
