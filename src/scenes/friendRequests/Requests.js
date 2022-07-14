@@ -12,6 +12,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from 'firebase/firestore'
+import { Avatar } from 'react-native-elements'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
@@ -29,12 +30,13 @@ export default function Requests() {
   const uid = userData.id
   const [friends, setFriends] = useState([])
   const [pendingRequests, setPendingRequests] = useState([])
+  const [avatar, setAvatar] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchRequests() {
       try {
-        const requestsRef = collection(firestore, 'friendships')
+        const requestsRef = collection(firestore, 'users')
         const q = query(requestsRef, where('id', '==', `${uid}`))
         const requestSnapshot = await getDocs(q)
         let requestData = []
@@ -45,6 +47,7 @@ export default function Requests() {
         })
         setPendingRequests(requestData)
         setFriends(friendsListData)
+
         setLoading(false)
       } catch (error) {
         console.log('error fetching user requests!', error)
@@ -55,18 +58,19 @@ export default function Requests() {
 
   const updateUserFriends = async (friendObj) => {
     try {
-      const userRequestRef = doc(firestore, 'friendships', uid)
+      const userRequestRef = doc(firestore, 'users', uid)
       await updateDoc(userRequestRef, {
         friendsList: arrayUnion({
           id: friendObj.id,
           userName: friendObj.userName,
+          // avatar: friendObj.avatar,
         }),
       })
       await updateDoc(userRequestRef, {
         pendingRequests: arrayRemove(friendObj),
       })
 
-      const updatedRef = collection(firestore, 'friendships')
+      const updatedRef = collection(firestore, 'users')
       const q = query(updatedRef, where('id', '==', `${uid}`))
       const requestSnapshot = await getDocs(q)
       let pendingRequestData = []
@@ -87,11 +91,10 @@ export default function Requests() {
   }
 
   const updateRequesterFriends = async (friendObj) => {
-    const requesterRef = doc(firestore, 'friendships', friendObj.id)
+    const requesterRef = doc(firestore, 'users', friendObj.id)
     await updateDoc(requesterRef, {
       friendsList: arrayUnion({ id: uid, userName: userData.userName }),
     })
-    // cancel sent requests component?
   }
 
   const onPressAcceptRequest = async (friendObj) => {
@@ -100,16 +103,14 @@ export default function Requests() {
     navigation.navigate('Friends List')
   }
 
-  const onPressDeleteRequest = async (friendId) => {
+  const onPressDeleteRequest = async (friendObj) => {
     try {
-      const requestRef = doc(firestore, 'friendships', uid)
+      const requestRef = doc(firestore, 'users', uid)
       await updateDoc(requestRef, {
-        pendingRequests: pendingRequests.filter(
-          (friend) => friend.id !== friendId,
-        ),
+        pendingRequests: arrayRemove(friendObj),
       })
 
-      const updatedRef = collection(firestore, 'friendships')
+      const updatedRef = collection(firestore, 'users')
       const q = query(updatedRef, where('id', '==', `${uid}`))
       const requestSnapshot = await getDocs(q)
       let requestData = []
@@ -129,24 +130,35 @@ export default function Requests() {
           data={pendingRequests}
           renderItem={({ item }) => (
             <View style={styles.userContainer}>
-              <Text style={[styles.item, { color: colorScheme.text }]}>
-                {item.userName}
-              </Text>
-              <View style={styles.buttonContainer}>
-                <Button
-                  label="Accept"
-                  color={colors.primary}
-                  onPress={() => onPressAcceptRequest(item)}
-                >
-                  Accept
-                </Button>
-                <Button
-                  label="Remove"
-                  color={colors.primary}
-                  onPress={() => onPressDeleteRequest(item.id)}
-                >
-                  Remove
-                </Button>
+              <View style={styles.listAvatar}>
+                <Avatar
+                  size="xlarge"
+                  rounded
+                  source={{
+                    uri: 'https://firebasestorage.googleapis.com/v0/b/tomato-d083a.appspot.com/o/avatar%2Ficon.png?alt=media&token=d4edc180-5cbf-4f30-a312-caf689c41846',
+                  }}
+                />
+              </View>
+              <View style={{ marginLeft: 0 }}>
+                <Text style={[styles.item, { color: colorScheme.text }]}>
+                  {item.userName}
+                </Text>
+                <View style={styles.buttonContainer}>
+                  <Button
+                    label="Accept"
+                    color={colors.primary}
+                    onPress={() => onPressAcceptRequest(item)}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    label="Remove"
+                    color={colors.primary}
+                    onPress={() => onPressDeleteRequest(item)}
+                  >
+                    Remove
+                  </Button>
+                </View>
               </View>
             </View>
           )}
