@@ -2,7 +2,16 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
-import { getDocs, collection, query, where, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
+import {
+  getDocs,
+  collection,
+  query,
+  where,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from 'firebase/firestore'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
@@ -48,7 +57,10 @@ export default function Requests() {
     try {
       const userRequestRef = doc(firestore, 'friendships', uid)
       await updateDoc(userRequestRef, {
-        friendsList: arrayUnion({ id: friendObj.id, userName: friendObj.userName }),
+        friendsList: arrayUnion({
+          id: friendObj.id,
+          userName: friendObj.userName,
+        }),
       })
       await updateDoc(userRequestRef, {
         pendingRequests: arrayRemove(friendObj),
@@ -92,7 +104,9 @@ export default function Requests() {
     try {
       const requestRef = doc(firestore, 'friendships', uid)
       await updateDoc(requestRef, {
-        pendingRequests: pendingRequests.filter((friend) => friend.id !== friendId),
+        pendingRequests: pendingRequests.filter(
+          (friend) => friend.id !== friendId,
+        ),
       })
 
       const updatedRef = collection(firestore, 'friendships')
@@ -108,18 +122,33 @@ export default function Requests() {
     }
   }
 
-
   return (
     <ScreenTemplate>
       <SafeAreaView style={[styles.container]}>
         <FlatList
           data={pendingRequests}
           renderItem={({ item }) => (
-            <>
-              <Text style={[styles.item, { color: colorScheme.text }]}>{item.userName}</Text>
-              <Button label="Accept" color={colors.primary} onPress={() => onPressAcceptRequest(item)}>Accept</Button>
-              <Button label="Remove" color={colors.primary} onPress={() => onPressDeleteRequest(item.id)}>Remove</Button>
-            </>
+            <View style={styles.userContainer}>
+              <Text style={[styles.item, { color: colorScheme.text }]}>
+                {item.userName}
+              </Text>
+              <View style={styles.buttonContainer}>
+                <Button
+                  label="Accept"
+                  color={colors.primary}
+                  onPress={() => onPressAcceptRequest(item)}
+                >
+                  Accept
+                </Button>
+                <Button
+                  label="Remove"
+                  color={colors.primary}
+                  onPress={() => onPressDeleteRequest(item.id)}
+                >
+                  Remove
+                </Button>
+              </View>
+            </View>
           )}
           keyExtractor={(item) => item.id}
         />
@@ -142,5 +171,13 @@ const styles = StyleSheet.create({
   button: {
     fontSize: 30,
     textAlign: 'center',
+  },
+  userContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 })

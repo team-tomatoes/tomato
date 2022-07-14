@@ -28,7 +28,6 @@ import * as FileSystem from 'expo-file-system'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { colors, fontSize } from 'theme'
 import { Video, AVPlaybackStatus } from 'expo-av'
-// import Modal from 'react-native-modal'
 import FontIcon from 'react-native-vector-icons/FontAwesome5'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import ActionButton from 'react-native-circular-action-menu'
@@ -41,12 +40,10 @@ import ScreenTemplate from '../../components/ScreenTemplate'
 import { mapStyle } from '../../constants/mapStyle'
 
 export default function Home() {
-  const [location, setLocation] = useState(null)
-  const [currLatitude, setLatitude] = useState(null)
-  const [currLongitude, setLongitude] = useState(null)
   const [description, setDescription] = useState('')
   const [image, setImage] = useState(null)
-
+  const [initialRegion, setInitialRegion] = useState()
+  const [mapView, setMap] = useState()
   // used for firebase image storage
   const [photo, setPhoto] = useState('')
 
@@ -71,6 +68,7 @@ export default function Home() {
     },
   })
   const urlConfig = new URLConfig({ secure: true })
+
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
     if (status !== 'granted') {
@@ -79,9 +77,14 @@ export default function Home() {
       const userLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       })
-      setLatitude(Number(userLocation.coords.latitude))
-      setLongitude(Number(userLocation.coords.longitude))
-      setLocation(userLocation)
+      console.log('friends', userLocation)
+      const ir = {
+        latitude: Number(userLocation.coords.latitude),
+        longitude: Number(userLocation.coords.longitude),
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      }
+      setInitialRegion(ir)
     }
   }
 
@@ -143,33 +146,15 @@ export default function Home() {
   return (
     <ScreenTemplate>
       <MapView
+        showsUserLocation
+        ref={(map) => {
+          setMap(map)
+        }}
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
-        region={{
-          latitude: Number(currLatitude),
-          longitude: Number(currLongitude),
-          latitudeDelta: 0.0085,
-          longitudeDelta: 0.0085,
-        }}
+        initialRegion={initialRegion}
         customMapStyle={mapStyle}
-      >
-        <MapView.Marker
-          coordinate={{
-            latitude: Number(currLatitude),
-            longitude: Number(currLongitude),
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: '#007FFF',
-              padding: 10,
-              borderRadius: 20,
-              borderWidth: 4,
-              borderColor: 'white',
-            }}
-          />
-        </MapView.Marker>
-      </MapView>
+      />
 
       <View style={styles.main}>
         <Button

@@ -1,10 +1,8 @@
 import React from 'react'
-import {
-  StyleSheet, TouchableOpacity, Text, View,
-} from 'react-native'
+import { StyleSheet, TouchableOpacity, Text, View } from 'react-native'
 import { fontSize, colors } from '../theme'
 
-export default function Button(props) {
+export default function (props) {
   const { label, onPress, color, disable } = props
 
   if (disable) {
@@ -27,13 +25,15 @@ export default function Button(props) {
 
 const styles = StyleSheet.create({
   button: {
-    marginLeft: 30,
-    marginRight: 30,
+    marginLeft: 10,
+    marginRight: 10,
     marginTop: 20,
     height: 48,
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 10,
+    borderWidth: 0.5,
   },
   buttonText: {
     color: colors.white,
