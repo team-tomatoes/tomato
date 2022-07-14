@@ -106,7 +106,7 @@ export default function Friends() {
   const updateDeletedFriend = async (friendObj) => {
     const deletedFriendRef = doc(firestore, 'users', friendObj.id)
     await updateDoc(deletedFriendRef, {
-      friendsList: arrayRemove({ id: uid, userName: userData.userName }),
+      friendsList: arrayRemove({ id: uid, userName: userData.userName, avatar: userData.avatar }),
     })
   }
 
@@ -140,7 +140,7 @@ export default function Friends() {
                   rounded
                   source={{
                     uri:
-                      'https://pbs.twimg.com/media/D5f_bs_UIAANqHk?format=jpg&name=small',
+                      item.avatar,
                   }}
                 />
               </View>

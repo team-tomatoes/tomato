@@ -118,7 +118,7 @@ export default function Requests() {
         requestData = document.get('pendingRequests')
       })
       setPendingRequests(requestData)
-      console.log('PENDING HERE', pendingRequests)
+      console.log('REQUESTDATA HERE', requestData)
     } catch (error) {
       alert(error)
     }
