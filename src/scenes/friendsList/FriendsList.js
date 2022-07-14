@@ -24,7 +24,8 @@ import {
   arrayRemove,
   getDoc,
 } from 'firebase/firestore'
-import { firestore } from '../../firebase/config'
+import { ref, getDownloadURL } from 'firebase/storage'
+import { firestore, storage } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
@@ -64,6 +65,7 @@ export default function Friends() {
       }
     }
     fetchFriends()
+    getDefaultIcon()
   }, [])
 
   const updateUserFriends = async (friendObj) => {
@@ -96,6 +98,18 @@ export default function Friends() {
   const onPressDeleteFriend = async (friendObj) => {
     await updateUserFriends(friendObj)
     await updateDeletedFriend(friendObj)
+  }
+
+  const getDefaultIcon = async () => {
+    const iconRef = ref(storage, 'avatar/icon.png')
+    getDownloadURL(iconRef)
+      .then((url) => {
+        console.log(url)
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.log(error)
+      })
   }
 
   return (
