@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, FlatList } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, FlatList, TouchableHighlight } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { colors, fontSize } from 'theme'
 import {
@@ -13,6 +13,7 @@ import {
   arrayRemove,
 } from 'firebase/firestore'
 import { Avatar } from 'react-native-elements'
+import { Ionicons, Feather } from 'react-native-vector-icons'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
@@ -93,7 +94,7 @@ export default function Requests() {
   const updateRequesterFriends = async (friendObj) => {
     const requesterRef = doc(firestore, 'users', friendObj.id)
     await updateDoc(requesterRef, {
-      friendsList: arrayUnion({ id: uid, userName: userData.userName }),
+      friendsList: arrayUnion({ id: uid, userName: userData.userName, avatar: userData.avatar }),
     })
   }
 
@@ -145,20 +146,31 @@ export default function Requests() {
                   {item.userName}
                 </Text>
                 <View style={styles.buttonContainer}>
-                  <Button
+                  <TouchableHighlight onPress={() => onPressAcceptRequest(item)}>
+                    <View>
+                      <Feather name="check" size={40} color="#74B63E" />
+                    </View>
+                  </TouchableHighlight>
+                  {/* <Button
                     label="Accept"
                     color={colors.primary}
                     onPress={() => onPressAcceptRequest(item)}
                   >
                     Accept
-                  </Button>
-                  <Button
+                  </Button> */}
+                  <View style={styles.space} />
+                  <TouchableHighlight onPress={() => onPressDeleteRequest(item)}>
+                    <View>
+                      <Ionicons name="remove-circle-outline" size={35} color="#FE7A71" />
+                    </View>
+                  </TouchableHighlight>
+                  {/* <Button
                     label="Remove"
                     color={colors.primary}
                     onPress={() => onPressDeleteRequest(item)}
                   >
-                    Remove
-                  </Button>
+                    <MaterialIcons name="cancel" size={24} color="red" />
+                  </Button> */}
                 </View>
               </View>
             </View>
@@ -192,5 +204,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    marginRight: 20,
+  },
+  space: {
+    width: 20,
+    height: 20,
   },
 })

@@ -18,6 +18,7 @@ export default function Registration() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [userName, setUserName] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [spinner, setSpinner] = useState(false)
   const navigation = useNavigation()
@@ -52,7 +53,10 @@ export default function Registration() {
         id: uid,
         email,
         fullName,
+        userName,
         avatar: defaultAvatar,
+        friendsList: [],
+        pendingRequests: [],
       }
       const usersRef = doc(firestore, 'users', uid)
       await setDoc(usersRef, data)
@@ -83,6 +87,12 @@ export default function Registration() {
           keyboardType="email-address"
         />
         <TextInputBox
+          placeholder="Username"
+          onChangeText={(text) => setUserName(text)}
+          value={userName}
+          autoCapitalize="none"
+        />
+        <TextInputBox
           secureTextEntry={true}
           placeholder="Password"
           onChangeText={(text) => setPassword(text)}
@@ -103,7 +113,7 @@ export default function Registration() {
         />
         <View style={styles.footerView}>
           <Text style={[styles.footerText, { color: colorScheme.text }]}>
-            Already got an account?{' '}
+            Already have an account?{' '}
             <Text onPress={onFooterLinkPress} style={styles.footerLink}>
               Log in
             </Text>
