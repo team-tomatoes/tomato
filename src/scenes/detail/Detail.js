@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import { Text, View, ScrollView, StyleSheet } from 'react-native'
 import {
   useNavigation,
@@ -26,10 +26,6 @@ export default function Detail() {
   useFocusEffect(() => {
     setTitle(title)
   })
-
-  useEffect(() => {
-    console.log('Detail screen')
-  }, [])
 
   return (
     <ScreenTemplate>

@@ -7,7 +7,6 @@ import {
   FlatList,
   Alert,
   Modal,
-  Pressable,
   TouchableHighlight,
 } from 'react-native'
 import { Avatar } from 'react-native-elements'
@@ -23,19 +22,15 @@ import {
   doc,
   updateDoc,
   onSnapshot,
-  arrayUnion,
   arrayRemove,
   getDoc,
 } from 'firebase/firestore'
-import { ref, getDownloadURL } from 'firebase/storage'
 import { firestore, storage } from '../../firebase/config'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import Button from '../../components/Button'
 
 export default function Friends() {
-  const navigation = useNavigation()
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
   const isDark = scheme === 'dark'
@@ -173,13 +168,6 @@ export default function Friends() {
                       <AntDesign name="deleteuser" size={30} color="#F07167" />
                     </View>
                   </TouchableHighlight>
-                  {/* <Button
-                    label="Delete"
-                    color={colors.primary}
-                    onPress={() => onPressDeleteFriend(item)}
-                  >
-                    Delete
-                  </Button> */}
                 </View>
               </View>
             </View>
@@ -274,11 +262,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  // button: {
-  //   borderRadius: 20,
-  //   padding: 10,
-  //   elevation: 2,
-  // },
   buttonOpen: {
     backgroundColor: '#F194FF',
   },

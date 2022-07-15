@@ -8,7 +8,6 @@ import appReducer from 'slices/app.slice'
 
 const rootReducer = combineReducers({
   app: appReducer,
-  // add more reducers
 })
 
 const defaultMiddleware = getDefaultMiddleware({

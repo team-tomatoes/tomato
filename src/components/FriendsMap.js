@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
-import { Video, AVPlaybackStatus } from 'expo-av'
+import { Video } from 'expo-av'
 import * as Location from 'expo-location'
 import {
   Alert,
@@ -15,7 +15,6 @@ import {
   collection,
   doc,
   getDoc,
-  setDoc,
   getDocs,
   onSnapshot,
   query,
@@ -32,7 +31,6 @@ export const FriendsMap = () => {
 
   const { userData } = useContext(UserDataContext)
   const [pins, setPins] = useState([])
-  const [friends, setFriends] = useState([])
   const [users, setUsers] = useState([])
   const [userName, setUserName] = useState('')
   const [modalData, setModalData] = useState([])
@@ -174,7 +172,6 @@ export const FriendsMap = () => {
               let pinUserName = ''
               const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
-
               if (docSnap.exists()) {
                 pinUserName = docSnap.data().userName
                 setUserName(pinUserName)
@@ -234,7 +231,6 @@ export const FriendsMap = () => {
                 }}
                 useNativeControls
                 isLooping
-                // resizeMode="contain"
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>

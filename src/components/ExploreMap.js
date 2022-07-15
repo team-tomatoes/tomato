@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
-import { Video, AVPlaybackStatus } from 'expo-av'
+import { Video } from 'expo-av'
 import * as Location from 'expo-location'
 import {
   Alert,
@@ -15,7 +15,6 @@ import {
   collection,
   doc,
   getDoc,
-  setDoc,
   getDocs,
   onSnapshot,
   query,
@@ -63,7 +62,6 @@ export const ExploreMap = () => {
 
       onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((document) => {
-          // doc.data() is never undefined for query doc snapshots
           pinsArr.push([
             document.data().coordinates[0],
             document.data().coordinates[1],
@@ -214,7 +212,6 @@ export const ExploreMap = () => {
                 }}
                 useNativeControls
                 isLooping
-                // resizeMode="contain"
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>

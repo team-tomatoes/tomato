@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, View, StyleSheet, Platform, Alert } from 'react-native'
 import { doc, updateDoc } from 'firebase/firestore'
 import {
@@ -112,7 +112,6 @@ export default function Edit() {
   const onChangePasswordPress = () => {
     const auth = getAuth()
     const user = auth.currentUser
-    // prompt user to re-provide credentials to fix error:auth/requires-recent-login
     const credential = EmailAuthProvider.credential(user.email, currentPassword)
     reauthenticateWithCredential(user, credential)
       .then(() => {
@@ -138,7 +137,6 @@ export default function Edit() {
     reauthenticateWithCredential(user, credential)
       .then(() => {
         updateEmail(user, newEmail).then(async () => {
-          // Alert.alert('Email has changed')
           const data = { email: newEmail }
           const usersRef = doc(firestore, 'users', userData.id)
           await updateDoc(usersRef, data)
@@ -193,7 +191,6 @@ export default function Edit() {
           onPress={profileUpdate}
           disable={!fullName}
         />
-        {/* Password change field */}
         <Text style={[styles.underButtonField, { color: colorScheme.text }]}>
           Password:
         </Text>
@@ -216,7 +213,6 @@ export default function Edit() {
           color={colors.primary}
           onPress={onChangePasswordPress}
         />
-        {/* Email change field */}
         <Text style={[styles.underButtonField, { color: colorScheme.text }]}>
           Email:
         </Text>

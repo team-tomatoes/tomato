@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, View, StyleSheet, LogBox } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { doc, getDoc } from 'firebase/firestore'
@@ -13,8 +13,6 @@ import { firestore, auth } from '../../firebase/config'
 import { colors, fontSize } from '../../theme'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 
-// To ignore a useless warning in terminal.
-// https://stackoverflow.com/questions/44603362/setting-a-timer-for-a-long-period-of-time-i-e-multiple-minutes
 LogBox.ignoreLogs(['Setting a timer'])
 
 export default function Login() {

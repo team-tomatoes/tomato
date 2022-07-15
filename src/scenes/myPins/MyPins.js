@@ -1,29 +1,19 @@
 import React, { useEffect, useState, useContext, useLayoutEffect } from 'react'
-import { Text, View, ScrollView, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
 import { doc, onSnapshot } from 'firebase/firestore'
-import { colors, fontSize } from 'theme'
 import { firestore } from '../../firebase/config'
 import { UserDataContext } from '../../context/UserDataContext'
-import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import { PinnedMap } from '../../components/ExploreMap'
 import { MyPinsMap } from '../../components/MyPinsMap'
 
 export default function MyPins() {
   const navigation = useNavigation()
   const [token, setToken] = useState('')
   const { userData } = useContext(UserDataContext)
-  const { scheme } = useContext(ColorSchemeContext)
-  const isDark = scheme === 'dark'
-  const colorScheme = {
-    content: isDark ? styles.darkContent : styles.lightContent,
-    text: isDark ? colors.white : colors.primaryText,
-  }
 
   const headerRightPress = () => {
-    alert('Oops we dont have this filter function yet (ಥ﹏ಥ)')
+    alert('Oops we dont have this filter function yet!')
   }
 
   const headerLeftPress = () => {
@@ -37,7 +27,6 @@ export default function MyPins() {
           icon="map-search"
           color={Colors.white}
           size={24}
-          // add in a filter option later, not necessary rn tho
           onPress={() => headerRightPress()}
         />
       ),
@@ -71,35 +60,3 @@ export default function MyPins() {
     </ScreenTemplate>
   )
 }
-
-const styles = StyleSheet.create({
-  lightContent: {
-    backgroundColor: colors.lightyellow,
-    padding: 20,
-    borderRadius: 5,
-    marginTop: 30,
-    marginLeft: 30,
-    marginRight: 30,
-  },
-  darkContent: {
-    backgroundColor: colors.gray,
-    padding: 20,
-    borderRadius: 5,
-    marginTop: 30,
-    marginLeft: 30,
-    marginRight: 30,
-  },
-  main: {
-    flex: 1,
-    width: '100%',
-  },
-  title: {
-    fontSize: fontSize.xxxLarge,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  field: {
-    fontSize: fontSize.middle,
-    textAlign: 'center',
-  },
-})

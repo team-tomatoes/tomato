@@ -1,10 +1,8 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
-import { ColorSchemeContext } from '../../../context/ColorSchemeContext'
-import { UserDataContext } from '../../../context/UserDataContext'
-import { lightProps, darkProps } from './navigationProps/navigationProps'
+import { darkProps } from './navigationProps/navigationProps'
 import HeaderStyle from './headerComponents/HeaderStyle'
 import { FollowFollowerNavigator } from '../toptabs/followfollowerNavigator'
 
@@ -15,8 +13,6 @@ const RootStack = createStackNavigator()
 
 export const FriendsNavigator = () => {
   const navigation = useNavigation()
-  const { scheme } = useContext(ColorSchemeContext)
-  const { userData } = useContext(UserDataContext)
   const navigationProps = darkProps
 
   const headerLeftPress = () => {
@@ -32,7 +28,6 @@ export const FriendsNavigator = () => {
       <RootStack.Group>
         <Stack.Screen
           name="Friends"
-          // filtered for friends
           component={FollowFollowerNavigator}
           options={({ navigation }) => ({
             headerBackground: () => <HeaderStyle />,
@@ -54,10 +49,7 @@ export const FriendsNavigator = () => {
             ),
           })}
         />
-        <Stack.Screen
-          name="Find Friends"
-          component={Searchbar}
-        />
+        <Stack.Screen name="Find Friends" component={Searchbar} />
       </RootStack.Group>
     </Stack.Navigator>
   )

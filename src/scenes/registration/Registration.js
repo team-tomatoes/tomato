@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react'
-import { Text, StyleSheet, View, Linking } from 'react-native'
+import React, { useState, useContext } from 'react'
+import { Text, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { setDoc, doc } from 'firebase/firestore'
 import Spinner from 'react-native-loading-spinner-overlay'
@@ -12,7 +12,7 @@ import Logo from '../../components/Logo'
 import { firestore, auth } from '../../firebase/config'
 import { colors, fontSize } from '../../theme'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
-import { defaultAvatar, eulaLink } from '../../config'
+import { defaultAvatar } from '../../config'
 
 export default function Registration() {
   const [fullName, setFullName] = useState('')
@@ -115,14 +115,6 @@ export default function Registration() {
             </Text>
           </Text>
         </View>
-        <Text
-          style={styles.link}
-          onPress={() => {
-            Linking.openURL(eulaLink)
-          }}
-        >
-          Require agree EULA
-        </Text>
       </KeyboardAwareScrollView>
       <Spinner
         visible={spinner}

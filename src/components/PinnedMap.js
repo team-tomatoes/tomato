@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
-import {
-  collection,
-  query,
-  where,
-  doc,
-  getDoc,
-  setDoc,
-  getDocs,
-} from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 import { mapStyle } from '../constants/mapStyle'
 import { firestore } from '../firebase/config'
 
@@ -39,7 +31,6 @@ export const PinnedMap = () => {
       const pinsArr = []
       const querySnapshot = await getDocs(collection(firestore, 'pins'))
       querySnapshot.forEach((document) => {
-        // doc.data() is never undefined for query doc snapshots
         pinsArr.push([
           document.data().coordinates[0],
           document.data().coordinates[1],
