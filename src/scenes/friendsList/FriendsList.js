@@ -8,8 +8,10 @@ import {
   Alert,
   Modal,
   Pressable,
+  TouchableHighlight,
 } from 'react-native'
 import { Avatar } from 'react-native-elements'
+import { AntDesign } from 'react-native-vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
 import { colors, fontSize } from 'theme'
@@ -119,17 +121,30 @@ export default function Friends() {
     await updateDeletedFriend(friendObj)
   }
 
-  // const getDefaultIcon = async () => {
-  //   const iconRef = ref(storage, 'avatar/icon.png')
-  //   getDownloadURL(iconRef)
-  //     .then((url) => {
-  //       console.log(url)
-  //     })
-  //     .catch((error) => {
-  //       // Handle any errors
-  //       console.log(error)
-  //     })
-  // }
+  const onPressViewProfile = async (item) => {
+    const pinsArr = []
+    const q = query(
+      collection(firestore, 'pins'),
+      where('user', '==', item.id),
+    )
+
+    const querySnapshot = await getDocs(q)
+
+    querySnapshot.forEach((document) => {
+      pinsArr.push([document.id])
+    })
+    setPinNumber(pinsArr.length)
+
+    const docRef = doc(firestore, 'users', `${item.id}`)
+    const docSnap = await getDoc(docRef)
+    if (docSnap.exists()) {
+      setFriendModalData(docSnap.data())
+      console.log(friendModalData)
+    } else {
+      console.log('No such document!')
+    }
+    setModalVisible(true)
+  }
 
   return (
     <ScreenTemplate>
@@ -152,43 +167,24 @@ export default function Friends() {
                   {item.userName}
                 </Text>
                 <View style={styles.buttonContainer}>
-                  <Button
-                    label="View"
-                    color={colors.primary}
-                    onPress={async () => {
-                      const pinsArr = []
-                      const q = query(
-                        collection(firestore, 'pins'),
-                        where('user', '==', item.id),
-                      )
-
-                      const querySnapshot = await getDocs(q)
-
-                      querySnapshot.forEach((document) => {
-                        pinsArr.push([document.id])
-                      })
-                      setPinNumber(pinsArr.length)
-
-                      const docRef = doc(firestore, 'users', `${item.id}`)
-                      const docSnap = await getDoc(docRef)
-                      if (docSnap.exists()) {
-                        setFriendModalData(docSnap.data())
-                        console.log(friendModalData)
-                      } else {
-                        console.log('No such document!')
-                      }
-                      setModalVisible(true)
-                    }}
-                  >
-                    View
-                  </Button>
-                  <Button
+                  <TouchableHighlight onPress={() => onPressViewProfile(item)}>
+                    <View>
+                      <AntDesign name="profile" size={30} color="#FFF199" />
+                    </View>
+                  </TouchableHighlight>
+                  <View style={styles.space} />
+                  <TouchableHighlight onPress={() => onPressDeleteFriend(item)}>
+                    <View>
+                      <AntDesign name="deleteuser" size={30} color="#F07167" />
+                    </View>
+                  </TouchableHighlight>
+                  {/* <Button
                     label="Delete"
                     color={colors.primary}
                     onPress={() => onPressDeleteFriend(item)}
                   >
                     Delete
-                  </Button>
+                  </Button> */}
                 </View>
               </View>
             </View>
@@ -255,6 +251,8 @@ const styles = StyleSheet.create({
     padding: 20,
     fontSize: 30,
     marginTop: 5,
+    marginRight: 5,
+    justifyContent: 'center',
   },
   button: {
     fontSize: 30,
@@ -312,5 +310,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    marginRight: 20,
+  },
+  space: {
+    width: 20,
+    height: 20,
   },
 })

@@ -67,7 +67,7 @@ export default function Login() {
           autoCapitalize="none"
           value={email}
           keyboardType="email-address"
-          style={{ color: 'blue' }}
+          style={{ color: 'white' }}
         />
         <TextInputBox
           secureTextEntry
@@ -84,9 +84,9 @@ export default function Login() {
         <View style={styles.footerView}>
           <Text style={[styles.footerText, { color: colorScheme.text }]}>
             Don't have an account?
-            <Text onPress={onFooterLinkPress} style={styles.footerLink}>
-              Sign up
-            </Text>
+          </Text>
+          <Text onPress={onFooterLinkPress} style={styles.footerLink}>
+            Sign up
           </Text>
         </View>
       </KeyboardAwareScrollView>
@@ -112,15 +112,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   footerText: {
+    marginTop: 30,
     fontSize: fontSize.large,
     justifyContent: 'space-between',
   },
   footerLink: {
+    marginTop: 20,
     color: colors.redLight,
     fontWeight: 'bold',
     fontSize: fontSize.large,
   },
   textInput: {
-    color: 'black',
+    color: 'white',
   },
 })

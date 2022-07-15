@@ -161,7 +161,7 @@ export default function Edit() {
             source={{ uri: avatar }}
           />
         </View>
-        {/* <Text style={colorScheme.progress}>{progress}</Text> */}
+        <Text style={colorScheme.progress}>{progress}</Text>
         <Text style={[styles.field, { color: colorScheme.text }]}>Name:</Text>
         <TextInputBox
           placeholder="Change name"

@@ -6,9 +6,11 @@ import {
   FlatList,
   View,
   Alert,
+  TouchableHighlight,
 } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 import { Avatar } from 'react-native-elements'
+import { AntDesign } from 'react-native-vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import {
   getDocs,
@@ -93,7 +95,7 @@ const SearchBar = () => {
           data={searchFriend}
           renderItem={({ item }) => (
             <View style={styles.userContainer}>
-              <View>
+              <View style={styles.listAvatar}>
                 <Avatar
                   size="xlarge"
                   rounded
@@ -102,17 +104,22 @@ const SearchBar = () => {
                   }}
                 />
                 <View style={{ marginLeft: 0 }}>
-                  <Text style={[styles.item, { color: 'white' }]}>
+                  <Text style={[styles.item, { color: colorScheme.text }]}>
                     {item.userName}
                   </Text>
                   <View style={styles.buttonContainer}>
-                    <Button
+                    <TouchableHighlight onPress={() => onPressAddRequest(item)}>
+                      <View>
+                        <AntDesign name="adduser" size={35} color="#FFF199" />
+                      </View>
+                    </TouchableHighlight>
+                    {/* <Button
                       label="Add"
                       color={colors.primary}
                       onPress={() => onPressAddRequest(item)}
                     >
                       Add
-                    </Button>
+                    </Button> */}
                   </View>
                 </View>
               </View>
@@ -137,6 +144,9 @@ const styles = StyleSheet.create({
     margin: 20,
     alignSelf: 'center',
     shadowRadius: 4,
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   container: {
     flex: 1,
@@ -144,9 +154,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   item: {
-    padding: 20,
+    padding: 10,
     fontSize: 30,
-    marginTop: 5,
+    marginTop: 15,
   },
   button: {
     fontSize: 30,
@@ -180,5 +190,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    marginTop: 10,
   },
 })
