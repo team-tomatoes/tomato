@@ -122,6 +122,7 @@ export const ExploreMap = () => {
       {
         latitude: pin[0],
         longitude: pin[1],
+        weight: 100,
       }
     ))
 
@@ -140,7 +141,12 @@ export const ExploreMap = () => {
         <Heatmap
           initialRegion={initialRegion}
           points={points}
-          radius={40}
+          radius={50}
+          gradient={{
+            colors: ['#F07167', '#FED9B7', '#00AFB9', '#0081A7'],
+            startPoints: [0.01, 0.04, 0.1, 0.45, 0.5],
+            colorMapSize: 256,
+          }}
         />
         {pins.map((pin, i) => {
           const icon = () => {
