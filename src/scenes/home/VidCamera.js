@@ -35,8 +35,6 @@ export default function VidCamera({ route }) {
       const video = await cameraRef.recordAsync({
         maxDuration: 10,
         videoQuality: ['480p'],
-        // maxFileSize: 1800000,
-        // videoBitrate: 1000,
       })
       route.params.setRecord(video.uri)
     }
