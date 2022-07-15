@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react'
-import {
-  Text, View, StyleSheet, Platform, Alert,
-} from 'react-native'
+import { Text, View, StyleSheet, Platform, Alert } from 'react-native'
 import { doc, updateDoc } from 'firebase/firestore'
-import { getAuth, EmailAuthProvider, updateEmail, updatePassword, reauthenticateWithCredential } from 'firebase/auth'
+import {
+  getAuth,
+  EmailAuthProvider,
+  updateEmail,
+  updatePassword,
+  reauthenticateWithCredential,
+} from 'firebase/auth'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { Avatar } from 'react-native-elements'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -35,14 +39,12 @@ export default function Edit() {
     progress: isDark ? styles.darkprogress : styles.progress,
   }
 
-  useEffect(() => {
-    console.log('Edit screen')
-  }, [])
-
   const ImageChoiceAndUpload = async () => {
     try {
       if (Platform.OS === 'ios') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        const {
+          status,
+        } = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if (status !== 'granted') {
           // eslint-disable-next-line no-alert
           alert('Permission is required for use.')
@@ -65,9 +67,11 @@ export default function Edit() {
         const filename = userData.id + new Date().getTime()
         const storageRef = ref(storage, `avatar/${userData.id}/${filename}`)
         const uploadTask = uploadBytesResumable(storageRef, localBlob)
-        uploadTask.on('state_changed',
+        uploadTask.on(
+          'state_changed',
           (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             setProgress(`${parseInt(progress)}%`)
           },
           (error) => {
@@ -79,7 +83,8 @@ export default function Edit() {
               setProgress('')
               setAvatar(downloadURL)
             })
-          })
+          },
+        )
       }
     } catch (e) {
       console.log('error', e.message)
@@ -108,43 +113,47 @@ export default function Edit() {
     const auth = getAuth()
     const user = auth.currentUser
     // prompt user to re-provide credentials to fix error:auth/requires-recent-login
-    const credential = EmailAuthProvider.credential(
-      user.email, currentPassword,
-    )
-    reauthenticateWithCredential(user, credential).then(() => {
-      updatePassword(user, newPassword).then(() => {
-        Alert.alert('Password has changed')
-        navigation.goBack()
-      }).catch((error) => {
-        Alert.alert('Please provide your current password before changing.')
+    const credential = EmailAuthProvider.credential(user.email, currentPassword)
+    reauthenticateWithCredential(user, credential)
+      .then(() => {
+        updatePassword(user, newPassword)
+          .then(() => {
+            Alert.alert('Password has changed')
+            navigation.goBack()
+          })
+          .catch((error) => {
+            Alert.alert('Please provide your current password before changing.')
+          })
       })
-    }).catch((error) => {
-      Alert.alert('Oops! Password is incorrect. Please try again.')
-    })
+      .catch((error) => {
+        Alert.alert('Oops! Password is incorrect. Please try again.')
+      })
   }
 
   const onChangeEmailPress = () => {
     const auth = getAuth()
     const user = auth.currentUser
 
-    const credential = EmailAuthProvider.credential(
-      user.email, currentPassword,
-    )
-    reauthenticateWithCredential(user, credential).then(() => {
-      updateEmail(user, newEmail).then(async () => {
-        // Alert.alert('Email has changed')
-        const data = { email: newEmail }
-        const usersRef = doc(firestore, 'users', userData.id)
-        await updateDoc(usersRef, data)
-        navigation.goBack()
+    const credential = EmailAuthProvider.credential(user.email, currentPassword)
+    reauthenticateWithCredential(user, credential)
+      .then(() => {
+        updateEmail(user, newEmail).then(async () => {
+          // Alert.alert('Email has changed')
+          const data = { email: newEmail }
+          const usersRef = doc(firestore, 'users', userData.id)
+          await updateDoc(usersRef, data)
+          navigation.goBack()
+        })
       })
-    }).catch((error) => {
-      if (currentPassword) {
-        Alert.alert('Oops! Password is incorrect. Please try again.')
-      } else {
-        Alert.alert('Please enter your current password to change your email.')
-      }
-    })
+      .catch((error) => {
+        if (currentPassword) {
+          Alert.alert('Oops! Password is incorrect. Please try again.')
+        } else {
+          Alert.alert(
+            'Please enter your current password to change your email.',
+          )
+        }
+      })
   }
 
   return (
@@ -169,7 +178,9 @@ export default function Edit() {
           value={fullName}
           autoCapitalize="words"
         />
-        <Text style={[styles.field, { color: colorScheme.text }]}>Username:</Text>
+        <Text style={[styles.field, { color: colorScheme.text }]}>
+          Username:
+        </Text>
         <TextInputBox
           placeholder={userData.userName}
           onChangeText={(text) => setUserName(text)}
@@ -183,7 +194,9 @@ export default function Edit() {
           disable={!fullName}
         />
         {/* Password change field */}
-        <Text style={[styles.underButtonField, { color: colorScheme.text }]}>Password:</Text>
+        <Text style={[styles.underButtonField, { color: colorScheme.text }]}>
+          Password:
+        </Text>
         <TextInputBox
           placeholder="Current Password"
           onChangeText={(text) => setCurrentPassword(text)}
@@ -204,7 +217,9 @@ export default function Edit() {
           onPress={onChangePasswordPress}
         />
         {/* Email change field */}
-        <Text style={[styles.underButtonField, { color: colorScheme.text }]}>Email:</Text>
+        <Text style={[styles.underButtonField, { color: colorScheme.text }]}>
+          Email:
+        </Text>
         <TextInputBox
           placeholder={userData.email}
           onChangeText={(text) => setNewEmail(text)}

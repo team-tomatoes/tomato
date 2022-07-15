@@ -77,7 +77,6 @@ export default function Home() {
       const userLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       })
-      console.log('friends', userLocation)
       const ir = {
         latitude: Number(userLocation.coords.latitude),
         longitude: Number(userLocation.coords.longitude),
@@ -481,7 +480,6 @@ export default function Home() {
                             )
                               .then((r) => r.json())
                               .catch((err) => console.log(err))
-                            console.log(data.secure_url)
                             const docSnap = await getDoc(docRef)
                             if (docSnap.exists()) {
                               setDoc(
@@ -755,7 +753,6 @@ export default function Home() {
                             )
                               .then((r) => r.json())
                               .catch((err) => console.log(err))
-                            console.log(data.secure_url)
                             const docSnap = await getDoc(docRef)
                             if (docSnap.exists()) {
                               setDoc(

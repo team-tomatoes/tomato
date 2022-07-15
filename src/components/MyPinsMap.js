@@ -151,7 +151,7 @@ export const MyPinsMap = () => {
                 pinUserName = docSnap.data().userName
                 setUserName(pinUserName)
               } else {
-                console.log('no such document~')
+                console.log('no such document')
               }
             } catch (err) {
               console.log(err)

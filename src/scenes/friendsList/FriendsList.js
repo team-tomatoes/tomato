@@ -73,7 +73,6 @@ export default function Friends() {
               avatarData.push(user.data())
             })
             setFriendsData(avatarData)
-            console.log(friendsData)
           })
         })
 
@@ -123,10 +122,7 @@ export default function Friends() {
 
   const onPressViewProfile = async (item) => {
     const pinsArr = []
-    const q = query(
-      collection(firestore, 'pins'),
-      where('user', '==', item.id),
-    )
+    const q = query(collection(firestore, 'pins'), where('user', '==', item.id))
 
     const querySnapshot = await getDocs(q)
 
@@ -139,7 +135,6 @@ export default function Friends() {
     const docSnap = await getDoc(docRef)
     if (docSnap.exists()) {
       setFriendModalData(docSnap.data())
-      console.log(friendModalData)
     } else {
       console.log('No such document!')
     }

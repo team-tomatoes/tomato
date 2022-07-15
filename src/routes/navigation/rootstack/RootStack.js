@@ -25,10 +25,9 @@ export default function RootStack() {
   const { userData } = useContext(UserDataContext)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const isDevice = Device.isDevice
       if (!isDevice) return
-      console.log('get push token')
       const {
         status: existingStatus,
       } = await Notifications.getPermissionsAsync()

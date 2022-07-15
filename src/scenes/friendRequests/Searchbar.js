@@ -58,7 +58,6 @@ const SearchBar = () => {
         (x) => x.userName === `${searchQuery}`,
       )
       setSearchFriend(match)
-      console.log('MATCH', match)
       setLoading(false)
     } catch (error) {
       console.log('error fetching user!', error)

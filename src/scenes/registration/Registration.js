@@ -28,10 +28,6 @@ export default function Registration() {
     text: isDark ? colors.white : colors.primaryText,
   }
 
-  useEffect(() => {
-    console.log('Registration screen')
-  }, [])
-
   const onFooterLinkPress = () => {
     navigation.navigate('Login')
   }

@@ -27,7 +27,6 @@ export default function Post() {
   }
 
   useEffect(() => {
-    console.log('Post screen')
     loadStorage()
   }, [])
 

@@ -46,7 +46,6 @@ export const ExploreMap = () => {
       const userLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       })
-      console.log(userLocation.coords)
       const ir = {
         latitude: Number(userLocation.coords.latitude),
         longitude: Number(userLocation.coords.longitude),
@@ -160,7 +159,7 @@ export const ExploreMap = () => {
                 pinUserName = docSnap.data().userName
                 setUserName(pinUserName)
               } else {
-                console.log('no such document~')
+                console.log('no such document')
               }
             } catch (err) {
               console.log(err)

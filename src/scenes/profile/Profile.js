@@ -56,8 +56,6 @@ export default function Profile() {
 
   useEffect(() => {
     loadAllPins()
-    console.log('Profile screen')
-    console.log(userData)
   }, [])
 
   const goDetail = () => {
@@ -94,13 +92,9 @@ export default function Profile() {
       deleteUser(user)
         .then(() => {
           setSpinner(false)
-          signOut(auth)
-            .then(() => {
-              console.log('user deleted')
-            })
-            .catch((error) => {
-              console.log(error.message)
-            })
+          signOut(auth).catch((error) => {
+            console.log(error.message)
+          })
         })
         .catch((error) => {
           setSpinner(false)

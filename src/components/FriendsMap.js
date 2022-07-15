@@ -72,7 +72,6 @@ export const FriendsMap = () => {
           document.data().friendsList.forEach((friend) => {
             friendsArr.push(friend.id)
           })
-          console.log('nhsdlkfdslkf', friendsArr)
           const pinsArr = []
           friendsArr.forEach((friend) => {
             const q = query(
@@ -81,7 +80,6 @@ export const FriendsMap = () => {
             )
             onSnapshot(q, (querySnapshot) => {
               querySnapshot.forEach((document1) => {
-                console.log('document1', document1)
                 pinsArr.push([
                   document1.data().coordinates[0],
                   document1.data().coordinates[1],
@@ -96,7 +94,6 @@ export const FriendsMap = () => {
                   document1.id,
                 ])
               })
-              console.log('PINS HERE', pins)
             })
             setPins(pinsArr)
           })
@@ -182,7 +179,7 @@ export const FriendsMap = () => {
                 pinUserName = docSnap.data().userName
                 setUserName(pinUserName)
               } else {
-                console.log('no such document~')
+                console.log('no such document')
               }
             } catch (err) {
               console.log(err)

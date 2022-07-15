@@ -32,10 +32,6 @@ export default function Login() {
     navigation.navigate('Registration')
   }
 
-  useEffect(() => {
-    console.log('Login screen, ٩(◕‿◕｡)۶')
-  }, [])
-
   const onLoginPress = async () => {
     try {
       setSpinner(true)

@@ -49,7 +49,6 @@ export default function CameraComp({ route }) {
             onPress={async () => {
               if (cameraRef) {
                 const photo = await cameraRef.takePictureAsync()
-                console.log(photo)
                 route.params.setImage(photo.uri)
                 navigation.navigate('Home')
                 route.params.setModalVisible(true)
