@@ -50,7 +50,6 @@ export const FriendsMap = () => {
       const userLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       })
-      console.log('friends', userLocation)
       const ir = {
         latitude: Number(userLocation.coords.latitude),
         longitude: Number(userLocation.coords.longitude),
@@ -61,7 +60,7 @@ export const FriendsMap = () => {
     }
   }
 
-  const loadAllPins = async () => {
+  const loadAllPins = () => {
     try {
       const friendsArr = []
       const q1 = query(
@@ -73,30 +72,31 @@ export const FriendsMap = () => {
           document.data().friendsList.forEach((friend) => {
             friendsArr.push(friend.id)
           })
-          console.log(friendsArr)
-        })
-        const pinsArr = []
-
-        friendsArr.forEach((friend) => {
-          const q = query(
-            collection(firestore, 'pins'),
-            where('user', '==', friend),
-          )
-          onSnapshot(q, (querySnapshot) => {
-            querySnapshot.forEach((document) => {
-              pinsArr.push([
-                document.data().coordinates[0],
-                document.data().coordinates[1],
-                document.data().category,
-                document.data().description,
-                document.data().picture,
-                document.data().video,
-                document.data().user,
-                new Date(document.data().date.seconds * 1000).toLocaleString(
-                  'en-US',
-                ),
-                document.id,
-              ])
+          console.log('nhsdlkfdslkf', friendsArr)
+          const pinsArr = []
+          friendsArr.forEach((friend) => {
+            const q = query(
+              collection(firestore, 'pins'),
+              where('user', '==', friend),
+            )
+            onSnapshot(q, (querySnapshot) => {
+              querySnapshot.forEach((document1) => {
+                console.log('document1', document1)
+                pinsArr.push([
+                  document1.data().coordinates[0],
+                  document1.data().coordinates[1],
+                  document1.data().category,
+                  document1.data().description,
+                  document1.data().picture,
+                  document1.data().video,
+                  document1.data().user,
+                  new Date(document1.data().date.seconds * 1000).toLocaleString(
+                    'en-US',
+                  ),
+                  document1.id,
+                ])
+              })
+              console.log('PINS HERE', pins)
             })
             setPins(pinsArr)
           })
@@ -109,6 +109,7 @@ export const FriendsMap = () => {
 
   const loadUsers = async () => {
     try {
+      loadAllPins()
       const userArr = []
       const querySnapshot = await getDocs(collection(firestore, 'users'))
 

@@ -247,8 +247,8 @@ export default function Home() {
                             {
                               category: 'Mood',
                               coordinates: [
-                                Number(currLatitude),
-                                Number(currLongitude),
+                                Number(initialRegion.latitude),
+                                Number(initialRegion.longitude),
                               ],
                               date: new Date(),
                               description,
@@ -386,8 +386,8 @@ export default function Home() {
                             {
                               category: 'Recommendations',
                               coordinates: [
-                                Number(currLatitude),
-                                Number(currLongitude),
+                                Number(initialRegion.latitude),
+                                Number(initialRegion.longitude),
                               ],
                               date: new Date(),
                               description,
@@ -523,8 +523,8 @@ export default function Home() {
                             {
                               category: 'Animal-Sightings',
                               coordinates: [
-                                Number(currLatitude),
-                                Number(currLongitude),
+                                Number(initialRegion.latitude),
+                                Number(initialRegion.longitude),
                               ],
                               date: new Date(),
                               description,
@@ -660,8 +660,8 @@ export default function Home() {
                             {
                               category: 'Safety',
                               coordinates: [
-                                Number(currLatitude),
-                                Number(currLongitude),
+                                Number(initialRegion.latitude),
+                                Number(initialRegion.longitude),
                               ],
                               date: new Date(),
                               description,
@@ -797,8 +797,8 @@ export default function Home() {
                             {
                               category: 'Missed-Connections',
                               coordinates: [
-                                Number(currLatitude),
-                                Number(currLongitude),
+                                Number(initialRegion.latitude),
+                                Number(initialRegion.longitude),
                               ],
                               date: new Date(),
                               description,
@@ -934,8 +934,8 @@ export default function Home() {
                             {
                               category: 'Meetups',
                               coordinates: [
-                                Number(currLatitude),
-                                Number(currLongitude),
+                                Number(initialRegion.latitude),
+                                Number(initialRegion.longitude),
                               ],
                               date: new Date(),
                               description,
