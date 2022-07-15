@@ -81,6 +81,7 @@ export const FriendsMap = () => {
             )
             onSnapshot(q, (querySnapshot) => {
               querySnapshot.forEach((document1) => {
+                console.log('document1', document1)
                 pinsArr.push([
                   document1.data().coordinates[0],
                   document1.data().coordinates[1],
@@ -95,9 +96,9 @@ export const FriendsMap = () => {
                   document1.id,
                 ])
               })
+              console.log('PINS HERE', pins)
             })
             setPins(pinsArr)
-            console.log('PINS HERE', pins)
           })
         })
       })
