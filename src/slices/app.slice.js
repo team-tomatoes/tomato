@@ -1,19 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit'
 
-// ------------------------------------
-// Constants
-// ------------------------------------
-
 const initialState = {
   checked: false,
   loggedIn: false,
   me: {},
 }
-
-// ------------------------------------
-// Slice
-// ------------------------------------
 
 const appSlice = createSlice({
   name: 'app',

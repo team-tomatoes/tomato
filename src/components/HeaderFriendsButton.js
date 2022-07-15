@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { TouchableOpacity, StyleSheet, View } from 'react-native'
-import { IconButton, Button, Menu, Divider, Provider } from 'react-native-paper'
+import { TouchableOpacity, StyleSheet } from 'react-native'
+import { IconButton, Button, Menu, Divider } from 'react-native-paper'
 import { colors } from '../theme'
 
 export default function HeaderFriendsButton(props) {

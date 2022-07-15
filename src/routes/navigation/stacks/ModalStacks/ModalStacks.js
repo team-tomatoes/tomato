@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { HomeTitleContext } from '../../../../context/HomeTitleContext'
 

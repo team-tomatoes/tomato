@@ -1,5 +1,5 @@
-import React, { useEffect, useContext, useState } from 'react'
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, ScrollView } from 'react-native'
 import axios from 'axios'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import Loading from '../../components/Loading'
@@ -31,9 +31,9 @@ export default function Print() {
     <ScreenTemplate>
       {!isLoading ? (
         <ScrollView style={styles.main}>
-          {data.map((item, i) => {
-            return <RenderItem item={item} key={i} />
-          })}
+          {data.map((item, i) => (
+            <RenderItem item={item} key={i} />
+          ))}
         </ScrollView>
       ) : (
         <View style={styles.container}>

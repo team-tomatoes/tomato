@@ -11,7 +11,6 @@ export const fonts = {
   },
 }
 
-// fonts preloading
 export const fontsAll = [
   {
     openSans_regular: require('../../assets/fonts/OpenSans-Regular.ttf'),

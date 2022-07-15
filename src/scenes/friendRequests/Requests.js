@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, FlatList, TouchableHighlight } from 'react-native'
+import {
+  Text,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  TouchableHighlight,
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { colors, fontSize } from 'theme'
+import { colors } from 'theme'
 import {
   getDocs,
   collection,
@@ -13,11 +20,10 @@ import {
   arrayRemove,
 } from 'firebase/firestore'
 import { Avatar } from 'react-native-elements'
-import { Entypo, Feather } from 'react-native-vector-icons'
+import { Entypo } from 'react-native-vector-icons'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
-import Button from '../../components/Button'
 import { firestore } from '../../firebase/config'
 
 export default function Requests() {
@@ -31,7 +37,6 @@ export default function Requests() {
   const uid = userData.id
   const [friends, setFriends] = useState([])
   const [pendingRequests, setPendingRequests] = useState([])
-  const [avatar, setAvatar] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -94,7 +99,11 @@ export default function Requests() {
   const updateRequesterFriends = async (friendObj) => {
     const requesterRef = doc(firestore, 'users', friendObj.id)
     await updateDoc(requesterRef, {
-      friendsList: arrayUnion({ id: uid, userName: userData.userName, avatar: userData.avatar }),
+      friendsList: arrayUnion({
+        id: uid,
+        userName: userData.userName,
+        avatar: userData.avatar,
+      }),
     })
   }
 
@@ -119,7 +128,6 @@ export default function Requests() {
         requestData = document.get('pendingRequests')
       })
       setPendingRequests(requestData)
-      console.log('REQUESTDATA HERE', requestData)
     } catch (error) {
       alert(error)
     }
@@ -146,31 +154,21 @@ export default function Requests() {
                   {item.userName}
                 </Text>
                 <View style={styles.buttonContainer}>
-                  <TouchableHighlight onPress={() => onPressAcceptRequest(item)}>
+                  <TouchableHighlight
+                    onPress={() => onPressAcceptRequest(item)}
+                  >
                     <View>
                       <Entypo name="check" size={37} color="#74B63E" />
                     </View>
                   </TouchableHighlight>
-                  {/* <Button
-                    label="Accept"
-                    color={colors.primary}
-                    onPress={() => onPressAcceptRequest(item)}
-                  >
-                    Accept
-                  </Button> */}
                   <View style={styles.space} />
-                  <TouchableHighlight onPress={() => onPressDeleteRequest(item)}>
+                  <TouchableHighlight
+                    onPress={() => onPressDeleteRequest(item)}
+                  >
                     <View>
                       <Entypo name="cross" size={42} color="#FE7A71" />
                     </View>
                   </TouchableHighlight>
-                  {/* <Button
-                    label="Remove"
-                    color={colors.primary}
-                    onPress={() => onPressDeleteRequest(item)}
-                  >
-                    <MaterialIcons name="cancel" size={24} color="red" />
-                  </Button> */}
                 </View>
               </View>
             </View>

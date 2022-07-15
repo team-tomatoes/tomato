@@ -38,7 +38,6 @@ export default function VidCamera({ route }) {
         maxFileSize: 1800000,
         videoBitrate: 1000,
       })
-      console.log(video)
       route.params.setRecord(video.uri)
     }
   }
@@ -108,7 +107,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
-    // backgroundColor: 'transparent',
     flexDirection: 'row',
     display: 'flex',
     margin: 20,
@@ -130,11 +128,5 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    // marginBottom: 16,
-    // marginTop: 16,
-  },
-  takePictureButton: {
-    // display: 'flex',
-    // alignItems: 'center',
   },
 })

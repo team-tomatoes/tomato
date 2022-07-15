@@ -10,13 +10,9 @@ import { FriendsMap } from '../../../components/FriendsMap'
 const Tab = createMaterialTopTabNavigator()
 
 export const FollowFollowerNavigator = () => (
-  <Tab.Navigator
-    initialRouteName="FollowTab"
-    screenOptions={screenOptions}
-  >
+  <Tab.Navigator initialRouteName="FollowTab" screenOptions={screenOptions}>
     <Tab.Screen
       name="FriendsMap"
-      // need to filter by if friends show pins
       component={FriendsMap}
       options={{ tabBarLabel: 'Map' }}
     />

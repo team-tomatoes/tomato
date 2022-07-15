@@ -45,7 +45,6 @@ export default function Profile() {
       const querySnapshot = await getDocs(q)
 
       querySnapshot.forEach((document) => {
-        // doc.data() is never undefined for query doc snapshots
         myPinsArr.push([document.id])
       })
       setPinNumber(myPinsArr.length)
@@ -56,8 +55,6 @@ export default function Profile() {
 
   useEffect(() => {
     loadAllPins()
-    console.log('Profile screen')
-    console.log(userData)
   }, [])
 
   const goDetail = () => {
@@ -94,13 +91,9 @@ export default function Profile() {
       deleteUser(user)
         .then(() => {
           setSpinner(false)
-          signOut(auth)
-            .then(() => {
-              console.log('user deleted')
-            })
-            .catch((error) => {
-              console.log(error.message)
-            })
+          signOut(auth).catch((error) => {
+            console.log(error.message)
+          })
         })
         .catch((error) => {
           setSpinner(false)
@@ -138,19 +131,6 @@ export default function Profile() {
           {userData.email}
         </Text>
         <Button label="Edit" color={colors.primary} onPress={goDetail} />
-        {/* <Button
-          label="Open Modal"
-          color={colors.darkBlue}
-          onPress={() => {
-            navigation.navigate('ModalStacks', {
-              screen: 'Post',
-              params: {
-                data: userData,
-                from: 'Profile screen',
-              },
-            })
-          }}
-        /> */}
         <Button
           label="Account delete"
           color={colors.tertiary}

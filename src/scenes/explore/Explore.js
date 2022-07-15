@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext, useLayoutEffect } from 'react'
-import { StyleSheet, Text, View, Modal, Pressable, Alert } from 'react-native'
+import { StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu'
 import { IconButton, Colors } from 'react-native-paper'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
@@ -14,8 +13,6 @@ import { ExploreMap } from '../../components/ExploreMap'
 export default function Explore() {
   const navigation = useNavigation()
   const [token, setToken] = useState('')
-  const [modalVisible, setModalVisible] = useState(false)
-  const [visible, setVisible] = useState(false)
 
   const { userData } = useContext(UserDataContext)
   const { scheme } = useContext(ColorSchemeContext)
@@ -26,7 +23,7 @@ export default function Explore() {
   }
 
   const headerRightPress = () => {
-    alert('Oops we dont have this filter function yet (ಥ﹏ಥ)')
+    alert('Oops we dont have this filter function yet!')
   }
 
   const headerLeftPress = () => {

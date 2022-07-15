@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
-import { Video, AVPlaybackStatus } from 'expo-av'
+import { Video } from 'expo-av'
 import * as Location from 'expo-location'
 import {
   Alert,
@@ -15,7 +15,6 @@ import {
   collection,
   doc,
   getDoc,
-  setDoc,
   getDocs,
   onSnapshot,
   query,
@@ -32,7 +31,6 @@ export const FriendsMap = () => {
 
   const { userData } = useContext(UserDataContext)
   const [pins, setPins] = useState([])
-  const [friends, setFriends] = useState([])
   const [users, setUsers] = useState([])
   const [userName, setUserName] = useState('')
   const [modalData, setModalData] = useState([])
@@ -72,7 +70,6 @@ export const FriendsMap = () => {
           document.data().friendsList.forEach((friend) => {
             friendsArr.push(friend.id)
           })
-          console.log('nhsdlkfdslkf', friendsArr)
           const pinsArr = []
           friendsArr.forEach((friend) => {
             const q = query(
@@ -81,7 +78,6 @@ export const FriendsMap = () => {
             )
             onSnapshot(q, (querySnapshot) => {
               querySnapshot.forEach((document1) => {
-                console.log('document1', document1)
                 pinsArr.push([
                   document1.data().coordinates[0],
                   document1.data().coordinates[1],
@@ -96,7 +92,6 @@ export const FriendsMap = () => {
                   document1.id,
                 ])
               })
-              console.log('PINS HERE', pins)
             })
             setPins(pinsArr)
           })
@@ -177,12 +172,11 @@ export const FriendsMap = () => {
               let pinUserName = ''
               const docRef = doc(firestore, 'users', `${pin[6]}`)
               const docSnap = await getDoc(docRef)
-
               if (docSnap.exists()) {
                 pinUserName = docSnap.data().userName
                 setUserName(pinUserName)
               } else {
-                console.log('no such document~')
+                console.log('no such document')
               }
             } catch (err) {
               console.log(err)
@@ -237,7 +231,6 @@ export const FriendsMap = () => {
                 }}
                 useNativeControls
                 isLooping
-                // resizeMode="contain"
               />
             ) : null}
             <Text style={styles.modalText}>{modalData[3]}</Text>

@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import FontIcon from 'react-native-vector-icons/FontAwesome5'
 import { colors } from 'theme'
 
-// stack navigators
 import {
   HomeNavigator,
   ProfileNavigator,
@@ -16,15 +15,6 @@ const Tab = createBottomTabNavigator()
 
 const TabNavigator = () => (
   <Tab.Navigator
-    options={{
-      tabBarStyle: {
-        // backgroundColor: 'black',
-        // borderTopColor: 'gray',
-        // borderTopWidth: 1,
-        // paddingBottom: 5,
-        // paddingTop: 5,
-      },
-    }}
     defaultScreenOptions={{
       headerShown: false,
       headerTransparent: true,

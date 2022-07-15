@@ -11,7 +11,6 @@ import {
 import { Searchbar } from 'react-native-paper'
 import { Avatar } from 'react-native-elements'
 import { AntDesign } from 'react-native-vector-icons'
-import { useNavigation } from '@react-navigation/native'
 import {
   getDocs,
   collection,
@@ -21,7 +20,6 @@ import {
   arrayUnion,
 } from 'firebase/firestore'
 import { colors, fontSize } from 'theme'
-import Button from '../../components/Button'
 import ScreenTemplate from '../../components/ScreenTemplate'
 import { UserDataContext } from '../../context/UserDataContext'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
@@ -58,7 +56,6 @@ const SearchBar = () => {
         (x) => x.userName === `${searchQuery}`,
       )
       setSearchFriend(match)
-      console.log('MATCH', match)
       setLoading(false)
     } catch (error) {
       console.log('error fetching user!', error)
@@ -113,13 +110,6 @@ const SearchBar = () => {
                         <AntDesign name="adduser" size={35} color="#FFF199" />
                       </View>
                     </TouchableHighlight>
-                    {/* <Button
-                      label="Add"
-                      color={colors.primary}
-                      onPress={() => onPressAddRequest(item)}
-                    >
-                      Add
-                    </Button> */}
                   </View>
                 </View>
               </View>

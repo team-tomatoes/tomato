@@ -1,18 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react'
-import {
-  Alert,
-  View,
-  StyleSheet,
-  TextInput,
-  Image,
-  KeyboardAvoidingView,
-  Modal,
-  Text,
-  Pressable,
-} from 'react-native'
+import { Alert, View, StyleSheet, TextInput, Image, Modal } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { IconButton, Colors } from 'react-native-paper'
-import { Cloudinary, URLConfig, CloudConfig } from '@cloudinary/url-gen'
+import { Cloudinary, URLConfig } from '@cloudinary/url-gen'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import * as Location from 'expo-location'
 import {
@@ -23,11 +13,10 @@ import {
   onSnapshot,
   collection,
 } from 'firebase/firestore'
-import { ImagePicker } from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { colors, fontSize } from 'theme'
-import { Video, AVPlaybackStatus } from 'expo-av'
+import { Video } from 'expo-av'
 import FontIcon from 'react-native-vector-icons/FontAwesome5'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import ActionButton from 'react-native-circular-action-menu'
@@ -44,8 +33,6 @@ export default function Home() {
   const [image, setImage] = useState(null)
   const [initialRegion, setInitialRegion] = useState()
   const [mapView, setMap] = useState()
-  // used for firebase image storage
-  const [photo, setPhoto] = useState('')
 
   const [record, setRecord] = useState(null)
   const video = React.useRef(null)
@@ -77,7 +64,6 @@ export default function Home() {
       const userLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       })
-      console.log('friends', userLocation)
       const ir = {
         latitude: Number(userLocation.coords.latitude),
         longitude: Number(userLocation.coords.longitude),
@@ -235,7 +221,6 @@ export default function Home() {
                 </View>
                 <View style={styles.imageContainer}>{showPhotoVideo()}</View>
                 <View style={{ marginTop: 60, marginRight: 20 }}>
-                  {/* Rest of App come ABOVE the action button component! */}
                   <ActionButton buttonColor="#f07167">
                     <ActionButton.Item
                       buttonColor="#8EECF5"
@@ -257,8 +242,6 @@ export default function Home() {
                               visibleToOthers: true,
                             },
                           )
-
-                          // If there's an image on state, send the image into the DB
                           if (image) {
                             const actions = []
                             actions.push({ resize: { width: 300 } })
@@ -291,22 +274,16 @@ export default function Home() {
                                 console.log(`Upload is ${progress}% done`)
                               },
                               (error) => {
-                                // Handle unsuccessful uploads
                                 console.log(error)
                               },
                               () => {
-                                // Handle successful uploads on complete
-                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                                 getDownloadURL(uploadTask.snapshot.ref).then(
                                   async (downloadURL) => {
                                     console.log(
                                       'File available at',
                                       downloadURL,
                                     )
-                                    // get the document we just made so that we can set the image in there as well
                                     const docSnap = await getDoc(docRef)
-
-                                    // if the pin document that we just made, add the picture to that specific pin file
                                     if (docSnap.exists()) {
                                       setDoc(
                                         docRef,
@@ -314,7 +291,6 @@ export default function Home() {
                                         { merge: true },
                                       )
                                     } else {
-                                      // otherwise, the pin does not exist
                                       console.log('No such document!')
                                     }
                                   },
@@ -353,18 +329,13 @@ export default function Home() {
                                 { merge: true },
                               )
                             } else {
-                              // otherwise, the pin does not exist
                               console.log('No such document!')
                             }
                           }
-                          // clear description from textbox
                           setDescription('')
-                          // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
-                          // redirects to explore component
                           navigation.navigate('Explore')
-                          // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
                           console.log(err)
@@ -428,22 +399,16 @@ export default function Home() {
                                 console.log(`Upload is ${progress}% done`)
                               },
                               (error) => {
-                                // Handle unsuccessful uploads
                                 console.log(error)
                               },
                               () => {
-                                // Handle successful uploads on complete
-                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                                 getDownloadURL(uploadTask.snapshot.ref).then(
                                   async (downloadURL) => {
                                     console.log(
                                       'File available at',
                                       downloadURL,
                                     )
-                                    // get the document we just made so that we can set the image in there as well
                                     const docSnap = await getDoc(docRef)
-
-                                    // if the pin document that we just made, add the picture to that specific pin file
                                     if (docSnap.exists()) {
                                       setDoc(
                                         docRef,
@@ -451,7 +416,6 @@ export default function Home() {
                                         { merge: true },
                                       )
                                     } else {
-                                      // otherwise, the pin does not exist
                                       console.log('No such document!')
                                     }
                                   },
@@ -481,7 +445,6 @@ export default function Home() {
                             )
                               .then((r) => r.json())
                               .catch((err) => console.log(err))
-                            console.log(data.secure_url)
                             const docSnap = await getDoc(docRef)
                             if (docSnap.exists()) {
                               setDoc(
@@ -490,18 +453,13 @@ export default function Home() {
                                 { merge: true },
                               )
                             } else {
-                              // otherwise, the pin does not exist
                               console.log('No such document!')
                             }
                           }
-                          // clear description from textbox
                           setDescription('')
-                          // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
-                          // redirects to explore component
                           navigation.navigate('Explore')
-                          // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
                           console.log(err)
@@ -565,22 +523,16 @@ export default function Home() {
                                 console.log(`Upload is ${progress}% done`)
                               },
                               (error) => {
-                                // Handle unsuccessful uploads
                                 console.log(error)
                               },
                               () => {
-                                // Handle successful uploads on complete
-                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                                 getDownloadURL(uploadTask.snapshot.ref).then(
                                   async (downloadURL) => {
                                     console.log(
                                       'File available at',
                                       downloadURL,
                                     )
-                                    // get the document we just made so that we can set the image in there as well
                                     const docSnap = await getDoc(docRef)
-
-                                    // if the pin document that we just made, add the picture to that specific pin file
                                     if (docSnap.exists()) {
                                       setDoc(
                                         docRef,
@@ -588,7 +540,6 @@ export default function Home() {
                                         { merge: true },
                                       )
                                     } else {
-                                      // otherwise, the pin does not exist
                                       console.log('No such document!')
                                     }
                                   },
@@ -627,18 +578,13 @@ export default function Home() {
                                 { merge: true },
                               )
                             } else {
-                              // otherwise, the pin does not exist
                               console.log('No such document!')
                             }
                           }
-                          // clear description from textbox
                           setDescription('')
-                          // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
-                          // redirects to explore component
                           navigation.navigate('Explore')
-                          // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
                           console.log(err)
@@ -702,22 +648,16 @@ export default function Home() {
                                 console.log(`Upload is ${progress}% done`)
                               },
                               (error) => {
-                                // Handle unsuccessful uploads
                                 console.log(error)
                               },
                               () => {
-                                // Handle successful uploads on complete
-                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                                 getDownloadURL(uploadTask.snapshot.ref).then(
                                   async (downloadURL) => {
                                     console.log(
                                       'File available at',
                                       downloadURL,
                                     )
-                                    // get the document we just made so that we can set the image in there as well
                                     const docSnap = await getDoc(docRef)
-
-                                    // if the pin document that we just made, add the picture to that specific pin file
                                     if (docSnap.exists()) {
                                       setDoc(
                                         docRef,
@@ -725,7 +665,6 @@ export default function Home() {
                                         { merge: true },
                                       )
                                     } else {
-                                      // otherwise, the pin does not exist
                                       console.log('No such document!')
                                     }
                                   },
@@ -755,7 +694,6 @@ export default function Home() {
                             )
                               .then((r) => r.json())
                               .catch((err) => console.log(err))
-                            console.log(data.secure_url)
                             const docSnap = await getDoc(docRef)
                             if (docSnap.exists()) {
                               setDoc(
@@ -764,18 +702,13 @@ export default function Home() {
                                 { merge: true },
                               )
                             } else {
-                              // otherwise, the pin does not exist
                               console.log('No such document!')
                             }
                           }
-                          // clear description from textbox
                           setDescription('')
-                          // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
-                          // redirects to explore component
                           navigation.navigate('Explore')
-                          // close the modal once the transaction is finished
                           toggleModal()
                         } catch (err) {
                           console.log(err)
@@ -839,22 +772,16 @@ export default function Home() {
                                 console.log(`Upload is ${progress}% done`)
                               },
                               (error) => {
-                                // Handle unsuccessful uploads
                                 console.log(error)
                               },
                               () => {
-                                // Handle successful uploads on complete
-                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                                 getDownloadURL(uploadTask.snapshot.ref).then(
                                   async (downloadURL) => {
                                     console.log(
                                       'File available at',
                                       downloadURL,
                                     )
-                                    // get the document we just made so that we can set the image in there as well
                                     const docSnap = await getDoc(docRef)
-
-                                    // if the pin document that we just made, add the picture to that specific pin file
                                     if (docSnap.exists()) {
                                       setDoc(
                                         docRef,
@@ -862,7 +789,6 @@ export default function Home() {
                                         { merge: true },
                                       )
                                     } else {
-                                      // otherwise, the pin does not exist
                                       console.log('No such document!')
                                     }
                                   },
@@ -901,18 +827,13 @@ export default function Home() {
                                 { merge: true },
                               )
                             } else {
-                              // otherwise, the pin does not exist
                               console.log('No such document!')
                             }
                           }
-                          // clear description from textbox
                           setDescription('')
-                          // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
-                          // close the modal once the transaction is finished
                           toggleModal()
-                          // redirects to explore component
                           navigation.navigate('Explore')
                         } catch (err) {
                           console.log(err)
@@ -976,22 +897,16 @@ export default function Home() {
                                 console.log(`Upload is ${progress}% done`)
                               },
                               (error) => {
-                                // Handle unsuccessful uploads
                                 console.log(error)
                               },
                               () => {
-                                // Handle successful uploads on complete
-                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                                 getDownloadURL(uploadTask.snapshot.ref).then(
                                   async (downloadURL) => {
                                     console.log(
                                       'File available at',
                                       downloadURL,
                                     )
-                                    // get the document we just made so that we can set the image in there as well
                                     const docSnap = await getDoc(docRef)
-
-                                    // if the pin document that we just made, add the picture to that specific pin file
                                     if (docSnap.exists()) {
                                       setDoc(
                                         docRef,
@@ -999,7 +914,6 @@ export default function Home() {
                                         { merge: true },
                                       )
                                     } else {
-                                      // otherwise, the pin does not exist
                                       console.log('No such document!')
                                     }
                                   },
@@ -1038,18 +952,13 @@ export default function Home() {
                                 { merge: true },
                               )
                             } else {
-                              // otherwise, the pin does not exist
                               console.log('No such document!')
                             }
                           }
-                          // clear description from textbox
                           setDescription('')
-                          // remove the image from state so it clears out
                           setImage(null)
                           setRecord(null)
-                          // close the modal once the transaction is finished
                           toggleModal()
-                          // redirects to explore component
                           navigation.navigate('Explore')
                         } catch (err) {
                           console.log(err)
@@ -1073,9 +982,6 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  // imageContainer: {
-  //   position: 'absolute',
-  // },
   actionButtonIcon: {
     fontSize: 20,
     height: 22,
