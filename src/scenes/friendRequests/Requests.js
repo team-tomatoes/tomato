@@ -13,7 +13,7 @@ import {
   arrayRemove,
 } from 'firebase/firestore'
 import { Avatar } from 'react-native-elements'
-import { Ionicons, Feather } from 'react-native-vector-icons'
+import { Entypo, Feather } from 'react-native-vector-icons'
 import { ColorSchemeContext } from '../../context/ColorSchemeContext'
 import { UserDataContext } from '../../context/UserDataContext'
 import ScreenTemplate from '../../components/ScreenTemplate'
@@ -148,7 +148,7 @@ export default function Requests() {
                 <View style={styles.buttonContainer}>
                   <TouchableHighlight onPress={() => onPressAcceptRequest(item)}>
                     <View>
-                      <Feather name="check" size={40} color="#74B63E" />
+                      <Entypo name="check" size={37} color="#74B63E" />
                     </View>
                   </TouchableHighlight>
                   {/* <Button
@@ -161,7 +161,7 @@ export default function Requests() {
                   <View style={styles.space} />
                   <TouchableHighlight onPress={() => onPressDeleteRequest(item)}>
                     <View>
-                      <Ionicons name="remove-circle-outline" size={35} color="#FE7A71" />
+                      <Entypo name="cross" size={42} color="#FE7A71" />
                     </View>
                   </TouchableHighlight>
                   {/* <Button
