@@ -44,7 +44,7 @@ const API_KEY = '[API KEY HERE]'
 export default APIKey
 ```
 
-After creating this file, you can start editing or run ```expo start``` to view a simulation.
+After creating this file, you can start editing or run ```expo start --no-dev --minify``` to view a simulation.
 
 ## License
 
