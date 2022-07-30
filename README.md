@@ -1,5 +1,5 @@
 <img src="https://github.com/team-tomatoes/tomato/blob/main/assets/images/icon-loading.png" width="150" height="150" />
-DEMO VIDEO: https://www.youtube.com/watch?v=KxWHyDPIZ5o&list=PLx0iOsdUOUmk87kPt6w6Ga6o1sfVoMugS&index=5
+DEMO VIDEO: https://www.youtube.com/watch?v=KxWHyDPIZ5o
 
 ## Tomato: Interactive Social Media Map
 <div style="display: flex;">
