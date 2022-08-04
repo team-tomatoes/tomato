@@ -12,6 +12,14 @@ DEMO VIDEO: https://www.youtube.com/watch?v=KxWHyDPIZ5o
 
 Tomato is a new and unique way to connect live with your friends and your community. Tomato allows you to drop a pin to your precise location with a message, a photo, or a video to broadcast events to your friends and the world. 
 
+## Collaborators
+
+* Cindy Yueh: [LinkedIn](https://www.linkedin.com/in/cindyyuehh/)
+* Elizabeth Lau: [LinkedIn](https://www.linkedin.com/in/elizabeth-lau-bs-rn/)
+* Kat Keffner: [LinkedIn](https://www.linkedin.com/in/kkeffner/)
+* Rachel Jiang: [LinkedIn](https://www.linkedin.com/in/rachel--jiang/)
+* Tina Zarbaliev: [LinkedIn](https://www.linkedin.com/in/tinazarb/)
+
 ## Getting Started
 
 
